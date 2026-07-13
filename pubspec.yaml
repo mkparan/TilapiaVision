@@ -1,0 +1,54 @@
+name: tilapiavision
+description: "TilapiaVision — offline hemorrhagic lesion screening for Nile Tilapia."
+publish_to: 'none'
+version: 0.2.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  provider: ^6.1.2
+
+  # Local, offline-first storage — CSV log + cached images only.
+  # No SQL database: per panel feedback, a full relational DB was
+  # unnecessary overhead for a single flat log of scan results.
+  csv: ^6.0.0
+  path: ^1.9.0
+  path_provider: ^2.1.3
+  shared_preferences: ^2.2.3
+  share_plus: ^10.1.2
+
+  # Camera + image handling
+  camera: ^0.10.6
+  image: ^4.2.0
+  image_picker: ^1.2.2
+  permission_handler: ^11.3.1
+
+  # On-device inference (wired up on integration day — see
+  # lib/services/detection/tflite_detection_engine.dart)
+  # NOTE: pinned to >=0.12.1 — 0.11.0 pulls in tensorflow-lite 2.11.0,
+  # whose three native artifacts (tensorflow-lite, -gpu, -api) all
+  # declare the same Android namespace, which current AGP rejects as
+  # a manifest merge error. 0.12.1 resolves this. See README's
+  # "Known Android Toolchain Setup Issues" section.
+  tflite_flutter: ^0.12.1
+
+  # UI
+  lucide_icons_flutter: ^3.1.14
+  google_fonts: ^6.2.1
+  intl: ^0.19.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/models/
