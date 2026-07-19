@@ -3,16 +3,17 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tilapiavision/core/constants.dart';
 import 'package:tilapiavision/data/models/detection_result.dart';
-import 'package:tilapiavision/services/detection/mock_detection_engine.dart';
+import 'package:tilapiavision/services/detection/simulated_detection_engine.dart';
 
-/// This is the pattern referenced throughout the masterplan: drive
-/// every test off [MockDetectionEngine] with a forced [MockMode] so
-/// each branch of the detection flow is exercised deterministically,
-/// with zero dependency on a trained model or real camera hardware.
+/// Drives every test off [SimulatedDetectionEngine] with a forced
+/// [SimulatedMode] so each branch of the detection flow is exercised
+/// deterministically, with zero dependency on a trained model, a
+/// loaded `.tflite` file, or real camera hardware. The running app
+/// uses [TFLiteDetectionEngine] instead — see that class.
 void main() {
-  group('MockDetectionEngine', () {
+  group('SimulatedDetectionEngine', () {
     test('forcePositive returns a Presumptive Positive above the operating threshold', () async {
-      final engine = MockDetectionEngine(mode: MockMode.forcePositive);
+      final engine = SimulatedDetectionEngine(mode: SimulatedMode.forcePositive);
       await engine.initialize();
 
       final result = await engine.analyze(File('test.jpg'), farmProfile: 'Test Farm');
@@ -23,7 +24,7 @@ void main() {
     });
 
     test('forceLowMatch returns a score between the floor and the operating threshold', () async {
-      final engine = MockDetectionEngine(mode: MockMode.forceLowMatch);
+      final engine = SimulatedDetectionEngine(mode: SimulatedMode.forceLowMatch);
       await engine.initialize();
 
       final result = await engine.analyze(File('test.jpg'), farmProfile: 'Test Farm');
@@ -34,7 +35,7 @@ void main() {
     });
 
     test('forceClear returns no bounding box', () async {
-      final engine = MockDetectionEngine(mode: MockMode.forceClear);
+      final engine = SimulatedDetectionEngine(mode: SimulatedMode.forceClear);
       await engine.initialize();
 
       final result = await engine.analyze(File('test.jpg'), farmProfile: 'Test Farm');
@@ -44,7 +45,7 @@ void main() {
     });
 
     test('forceTimeout outlasts the configured inference timeout', () async {
-      final engine = MockDetectionEngine(mode: MockMode.forceTimeout);
+      final engine = SimulatedDetectionEngine(mode: SimulatedMode.forceTimeout);
       await engine.initialize();
 
       final future = engine.analyze(File('test.jpg'), farmProfile: 'Test Farm').timeout(

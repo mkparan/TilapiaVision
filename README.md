@@ -1,13 +1,10 @@
-# TilapiaVision — App Project Template (v2.2)
+# TilapiaVision — App Project Template (v2.3)
 
 An offline mobile app for presumptive screening of hemorrhagic lesions
-in Nile Tilapia, built with Flutter. This revision removes the SQLite
-database per panel feedback, switches to Lucide icons throughout, and
-gives the UI a cleaner, more modern pass.
-
-Built to run entirely on a mock detection engine so app work never
-has to wait on model training — see
-[Development Approach](#development-approach) below.
+in Nile Tilapia, built with Flutter. **This revision wires up real,
+on-device YOLO11n inference** — the app no longer runs on simulated
+results by default. Drop your exported model into
+`assets/models/`, and the app is ready to test against it.
 
 **This version's setup section has been rewritten end-to-end after a
 real first-install run surfaced several Android toolchain issues.**
@@ -19,18 +16,19 @@ avoid the whole ordeal.
 
 ## What Changed in This Revision
 
-| Area | v1 | v2 | v2.1 | v2.2 |
-|---|---|---|---|---|
-| Local storage | SQLite (`sqflite`) | **Flat CSV log** (`csv` package) + cached images | — | — |
-| Export | None | **Export CSV** button on History (native share sheet) | — | **+ per-record export** (photo + text summary) from the new detail screen |
-| Icons | Material Icons | **Lucide Icons** (`lucide_icons_flutter`) throughout | — | — |
-| Typography | System default | Google Fonts — Plus Jakarta Sans (headings) + Inter (body) | — | — |
-| Visual style | Bordered cards | Soft-shadow cards, no hard borders, more whitespace | — | — |
-| `tflite_flutter` | — | `^0.11.0` | **`^0.12.1`** — fixes an AGP namespace collision | — |
-| Camera screen | Static flash icon (non-functional) | — | — | **Real flash/torch toggle**, top-left icon replaced with an "Offline" status pill, **gallery picker button** added beside the shutter |
-| History screen | List only | — | — | Cards are now **tappable → detail screen** with delete + export; **30-day retention notice** banner added |
-| Image cleanup | `clearExpiredImages()` defined but never called | — | — | **Now actually runs** on app startup |
-| Setup docs | Basic | Basic | Full real-world Android setup path | — |
+| Area | v1 | v2 | v2.1 | v2.2 | v2.3 |
+|---|---|---|---|---|---|
+| Local storage | SQLite (`sqflite`) | **Flat CSV log** (`csv` package) + cached images | — | — | — |
+| Export | None | **Export CSV** button on History (native share sheet) | — | **+ per-record export** (photo + text summary) from the new detail screen | — |
+| Icons | Material Icons | **Lucide Icons** (`lucide_icons_flutter`) throughout | — | — | — |
+| Typography | System default | Google Fonts — Plus Jakarta Sans (headings) + Inter (body) | — | — | — |
+| Visual style | Bordered cards | Soft-shadow cards, no hard borders, more whitespace | — | — | — |
+| `tflite_flutter` | — | `^0.11.0` | **`^0.12.1`** — fixes an AGP namespace collision | — | — |
+| Camera screen | Static flash icon (non-functional) | — | — | **Real flash/torch toggle**, top-left icon replaced with an "Offline" status pill, **gallery picker button** added beside the shutter | — |
+| History screen | List only | — | — | Cards are now **tappable → detail screen** with delete + export; **30-day retention notice** banner added | — |
+| Image cleanup | `clearExpiredImages()` defined but never called | — | — | **Now actually runs** on app startup | — |
+| Setup docs | Basic | Basic | Full real-world Android setup path | — | — |
+| Detection engine | — | `MockDetectionEngine` (fake, active by default) | — | — | **`TFLiteDetectionEngine` is now the active engine — real inference, not simulated.** The old mock engine is renamed `SimulatedDetectionEngine` and demoted to test-only use. |
 
 **Why drop SQLite?** The panel's feedback was correct: this app never
 does anything a relational database is for. There's one table, no
@@ -81,24 +79,38 @@ flutter pub get
 flutter create --platforms=android .
 ```
 
-**Now, before your first `flutter run`, apply one required Gradle
-setting** — this avoids a build failure you will otherwise hit with
-this exact dependency set:
+**Now, before your first `flutter run`, apply the Gradle settings
+below** — this is the exact `android/gradle.properties` configuration
+that took this project from repeatedly failing to actually building,
+verified against a real successful install. Skipping this and hoping
+for the best is how that whole ordeal happened in the first place.
 
-Open `android/gradle.properties` and add this line:
+Open `android/gradle.properties` and add these three lines:
 ```properties
 kotlin.jvm.target.validation.mode=warning
+org.gradle.parallel=false
+kotlin.incremental=false
 ```
 
-**Why this is needed:** three plugins this app depends on
-(`tflite_flutter`, `share_plus`, `shared_preferences_android`) don't
-consistently declare their Java/Kotlin compile targets, and current
-Android Gradle Plugin treats any mismatch as a hard build failure by
-default. This setting downgrades that specific check to a warning
-instead of a failure — see
+**Why each one is needed:**
+
+- **`kotlin.jvm.target.validation.mode=warning`** — three plugins
+  this app depends on (`tflite_flutter`, `share_plus`,
+  `shared_preferences_android`) don't consistently declare their
+  Java/Kotlin compile targets, and current Android Gradle Plugin
+  treats any mismatch as a hard build failure by default. This
+  downgrades that specific check to a warning instead.
+- **`org.gradle.parallel=false`** and **`kotlin.incremental=false`**
+  — prevent a Kotlin incremental-compilation daemon cache corruption
+  ("Storage for [...] is already registered") that surfaces when
+  multiple modules compile concurrently under this same dependency
+  set. Builds are a little slower with these off; that's a small,
+  known trade for a build that actually completes.
+
+See
 [Known Android Toolchain Setup Issues](#known-android-toolchain-setup-issues)
-below for the full story if you're curious, or if this ever needs
-revisiting.
+below for the full story on each of these, including the several
+things that were tried first and didn't work.
 
 Then:
 ```bash
@@ -119,7 +131,7 @@ flutter test
 ```
 
 This runs two suites:
-- `test/widget_test.dart` — exercises every `MockDetectionEngine`
+- `test/widget_test.dart` — exercises every `SimulatedDetectionEngine`
   outcome (Presumptive Positive, Low Match, Clear, Timeout).
 - `test/csv_store_test.dart` — verifies the CSV row ↔ `DetectionResult`
   conversion round-trips exactly, including the null-`imagePath` edge
@@ -195,10 +207,17 @@ case) inconsistency as fatal.
 
 ### "Storage for [...] is already registered" / "Could not close incremental caches"
 
-A Kotlin incremental-compilation daemon cache corruption, most often
-seen after several failed builds in a row (the daemon is a separate
-long-lived process from Gradle itself, and doesn't get reset by
-`flutter clean` alone). Fix:
+A Kotlin incremental-compilation daemon cache corruption. It shows up
+after multiple modules compile concurrently under this dependency
+set, and gets worse the more failed builds accumulate, since the
+daemon is a separate long-lived process from Gradle itself and
+doesn't get reset by `flutter clean` alone.
+
+**This is already prevented by the `org.gradle.parallel=false` and
+`kotlin.incremental=false` lines in the [Setup](#setup) section** —
+if you added those, you shouldn't see this at all. If you're reading
+this because you skipped that step, or because a corrupted cache
+already built up before you added those lines, clear it out first:
 
 ```bash
 cd android
@@ -208,17 +227,10 @@ taskkill //F //IM java.exe //T   # Windows; kills the stale daemon process
 flutter clean
 rm -rf build
 rm -rf android/build
-flutter run
 ```
 
-This shouldn't happen on a clean first install — it's specifically a
-symptom of cycling through several failed builds. If you hit it
-repeatedly, you can add these two lines to `android/gradle.properties`
-as a more permanent (but slower-build) workaround:
-```properties
-org.gradle.parallel=false
-kotlin.incremental=false
-```
+Then confirm `android/gradle.properties` has both lines from
+[Setup](#setup) and run `flutter run` again.
 
 ### "Namespace ... is used in multiple modules and/or libraries" (tensorflow-lite)
 
@@ -268,7 +280,7 @@ tilapiavision_app/
 │   └── models/
 │       └── README.md                  # Placeholder — trained model goes here later
 ├── test/
-│   ├── widget_test.dart               # MockDetectionEngine outcome tests
+│   ├── widget_test.dart               # SimulatedDetectionEngine outcome tests
 │   └── csv_store_test.dart            # CSV round-trip tests
 └── lib/
     ├── main.dart                       # App entry point, provider wiring
@@ -287,9 +299,9 @@ tilapiavision_app/
     │       └── farm_profile_repository.dart   # SharedPreferences-backed (unchanged)
     ├── services/
     │   ├── detection/
-    │   │   ├── i_detection_engine.dart         # Strategy interface
-    │   │   ├── mock_detection_engine.dart      # ← the app runs on this today
-    │   │   └── tflite_detection_engine.dart    # ← stub; wire up on integration day
+    │   │   ├── i_detection_engine.dart          # Strategy interface
+    │   │   ├── tflite_detection_engine.dart     # ← the app runs on this — real inference
+    │   │   └── simulated_detection_engine.dart  # ← test-only, not used by the running app
     │   ├── verification/
     │   │   ├── i_tilapia_verifier.dart
     │   │   └── stub_tilapia_verifier.dart      # ← always returns true for now
@@ -398,53 +410,94 @@ id, farm_profile, timestamp, disease_class, confidence_score, image_path, label
 
 ---
 
-## Development Approach
+## Model Integration — Ready Now
 
-**The whole app is built and tested against a fake model so app work
-never has to wait on model training.** Everything behind
-`IDetectionEngine` is swappable:
+**The real model integration is done — this isn't a "wire it up
+later" checklist anymore.** `TFLiteDetectionEngine`
+(`lib/services/detection/tflite_detection_engine.dart`) is a full,
+working implementation, and `main.dart` uses it by default. What's
+left is genuinely just:
 
-```dart
-abstract class IDetectionEngine {
-  Future<void> initialize();
-  bool get isReady;
-  Future<DetectionResult> analyze(File image, {required String farmProfile});
-}
+```bash
+# 1. Drop your exported model in place (filename must match, or
+#    update _modelAssetPath in tflite_detection_engine.dart)
+cp your_model.tflite assets/models/best_int8.tflite
+
+# 2. Run the app
+flutter run
 ```
 
-Right now, `main.dart` wires up `MockDetectionEngine()`, which returns
-a plausible fake result after a realistic delay. Force any outcome
-for testing:
+That's it — no code changes required for a standard export. Read on
+for exactly what "standard" means here and how to verify it.
 
-```dart
-MockDetectionEngine(mode: MockMode.forcePositive)   // amber, written to CSV log
-MockDetectionEngine(mode: MockMode.forceLowMatch)   // gray, NOT written to CSV log
-MockDetectionEngine(mode: MockMode.forceClear)      // mint, no bounding box
-MockDetectionEngine(mode: MockMode.forceTimeout)    // exercises the timeout path
-MockDetectionEngine(mode: MockMode.random)           // random each run
+### What the real engine actually does
+
+1. Loads the model via `Interpreter.fromAsset`, wrapped in an
+   `IsolateInterpreter` so inference runs off the main thread (this
+   is the literal "Dart Isolate for inference" from your tech stack —
+   not just a name, the actual mechanism).
+2. **Reads the model's real input/output tensor shape and type at
+   load time** — it does not hardcode an input resolution or assume
+   float32 vs. quantized. Whatever your export actually is, the
+   preprocessing and dequantization logic adapts to it automatically.
+3. Preprocesses the captured photo: decode → resize to the model's
+   actual input size → normalize (0–1 float, or raw pixel values if
+   the input tensor is uint8/int8 — determined dynamically, not
+   guessed).
+4. Runs inference, then decodes the raw output through the exact
+   pipeline your methodology describes: **confidence floor → Non-Max
+   Suppression → operating threshold** (see below).
+
+### The one assumption that can't be introspected — verify this
+
+Tensor shape and quantization are read from the model file itself, so
+those adapt automatically. **The output *layout* can't be — TFLite
+doesn't encode "this is a YOLO detection head" anywhere in the file.**
+This implementation assumes a single-class, raw Ultralytics-style
+output (a tensor with one dimension of size 5 — 4 box values + 1
+class confidence — and the other equal to the anchor count, NMS *not*
+baked into the graph). This is Ultralytics' default TFLite export
+behavior, and it matches your own methodology's separate NMS step, so
+it's the reasonable default assumption — but it's still an assumption
+about a file I've never seen.
+
+**First thing to do when you drop the model in:** run the app, make
+one capture, and check the console output. `initialize()` logs a line
+like:
 ```
-
-The same swappable pattern applies to the Tilapia verification gate
-(`ITilapiaVerifier` / `StubTilapiaVerifier`) — see that class's doc
-comment for the recommended next step (a small MobileNetV2 binary
-classifier, much lighter than a second full detector).
+TFLiteDetectionEngine loaded — input: shape=[1, 640, 640, 3] type=float32 | output: shape=[1, 5, 8400] type=float32.
+```
+Compare that against what you know about your own export (input size,
+whether you used `nms=True`). If the output shape doesn't look like
+"one dimension is 5, the other is a few thousand," the output-parsing
+assumption above is wrong for your file, and `_parseOutput()` in
+`tflite_detection_engine.dart` is the one place to adjust it — the
+rest of the pipeline (floor → NMS → threshold → `DetectionResult`)
+doesn't need to change.
 
 ### The detection algorithm — order of operations
 
 This is the part the panel asked to have double-checked, so it's
-documented explicitly in `lib/core/constants.dart` and repeated here.
-Every raw model prediction is processed in this fixed order:
+documented explicitly in `lib/core/constants.dart`, in
+`tflite_detection_engine.dart`, and repeated here. Every raw model
+prediction is processed in this fixed order:
 
 1. **Confidence floor (0.50)** — discard any candidate box below this
-   score. This is noise rejection, not a decision.
+   score during output parsing. This is noise rejection, not a
+   decision.
 2. **Non-Max Suppression (IoU 0.70)** — among surviving boxes, collapse
    duplicate/overlapping boxes around the same lesion down to one.
+   Implemented as a real greedy IoU-based algorithm in
+   `TFLiteDetectionEngine._nonMaxSuppression` — this only had
+   somewhere to run once real (non-simulated) multi-box output
+   existed, which is why it's new in this revision.
 3. **Operating threshold (placeholder 0.70)** — of what's left, this
    line separates *Presumptive Positive* from *Low Match* for the UI.
-   It's a placeholder until Sprint 5's empirical calibration
-   (Chapter 3, Section 3.9) determines the real number — update
-   `DetectionConfig.operatingThreshold` and nothing else when that
-   happens.
+   **This is still a placeholder** until your Sprint 5 empirical
+   calibration (Chapter 3, Section 3.9) determines the real number —
+   update `DetectionConfig.operatingThreshold` and nothing else when
+   that happens. Wiring up the real model didn't remove this
+   dependency; calibration is a separate, later step.
 
 **Terminology, precisely:** nothing in this app displays an
 "accuracy" figure at runtime. `DetectionResult.confidenceScore` is a
@@ -455,23 +508,27 @@ are never something the app itself calculates. This distinction is
 enforced in the code's doc comments so it doesn't quietly blur in UI
 copy later.
 
-### Integration checklist — once the trained model exists
+### Testing without a device handy
 
-1. Drop the exported model at `assets/models/best_int8.tflite`
-   (already registered in `pubspec.yaml`).
-2. Implement `TFLiteDetectionEngine` (see the detailed checklist in
-   that file's doc comment) — load the interpreter, run inference,
-   apply the confidence floor → NMS → operating threshold pipeline
-   described above.
-3. Update `DetectionConfig.operatingThreshold` with the Sprint 5
-   calibrated value.
-4. In `main.dart`, change one line:
-   `engine: MockDetectionEngine()` → `engine: TFLiteDetectionEngine()`.
-5. Re-run `flutter test`. If it still passes without modification to
-   any screen, the abstraction boundary held.
+`SimulatedDetectionEngine` (`lib/services/detection/simulated_detection_engine.dart`)
+still exists, purely for `flutter test` — it lets the automated suite
+exercise every Result-screen branch deterministically without needing
+a loaded model or camera hardware. It is **not** used by the running
+app; `main.dart` wires up `TFLiteDetectionEngine` unconditionally.
+If you ever want to force a specific outcome for manual UI testing
+without a model loaded, you'd temporarily swap the engine in
+`main.dart` — but that's a deliberate, visible one-line change now,
+not the default behavior.
 
-No screen, provider, or widget needs to change — that's the entire
-point of building against the interface from day one.
+### The Tilapia Verification Gate — separate, still open
+
+The two-stage pipeline's *first* stage (confirming the subject is a
+Nile Tilapia before disease detection runs) is a different model from
+the one this section covers, and remains a stub
+(`StubTilapiaVerifier`, always returns `true`). Nothing in this
+revision changes that — see that class's doc comment for the
+recommended next step (a small MobileNetV2 binary classifier) if/when
+that model exists too.
 
 ---
 
@@ -508,8 +565,10 @@ point of building against the interface from day one.
 This is a starting scaffold, not a finished app. Things intentionally
 left for you to build next:
 
-- `TFLiteDetectionEngine` and a real `ITilapiaVerifier` implementation
-  (both currently stubs/mocks by design — see above).
+- A real `ITilapiaVerifier` implementation — the verification gate
+  remains a stub (`StubTilapiaVerifier`, always returns `true`); see
+  [Model Integration](#model-integration--ready-now) for why this is
+  a separate model from the one this revision wires up.
 - Runtime camera/storage permission request flow (the `camera` plugin
   handles the OS permission prompt on first use, but you may want a
   friendlier pre-permission explainer screen).

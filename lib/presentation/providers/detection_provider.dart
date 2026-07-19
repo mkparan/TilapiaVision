@@ -18,9 +18,9 @@ enum ScanStatus { idle, processing, success, timeout, error }
 /// [DetectionRepository].
 ///
 /// This is the one place that knows which [IDetectionEngine] is
-/// active. Swap `MockDetectionEngine()` for `TFLiteDetectionEngine()`
-/// wherever this provider is constructed (see `main.dart`) and
-/// nothing else in the app needs to change.
+/// active — [TFLiteDetectionEngine] by default (see `main.dart`).
+/// Swap in [SimulatedDetectionEngine] only for tests; nothing else in
+/// the app needs to change either way.
 class DetectionProvider extends ChangeNotifier {
   DetectionProvider({
     required IDetectionEngine engine,
