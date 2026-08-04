@@ -66,13 +66,9 @@ class DetectionResult {
   /// Column order for the CSV log. Keep [toCsvRow] and [fromCsvRow]
   /// in sync with this if the schema ever changes.
   static const csvHeader = [
-    'id',
-    'farm_profile',
-    'timestamp',
-    'disease_class',
-    'confidence_score',
-    'image_path',
-    'label',
+    'id', 'farm_profile', 'timestamp', 'disease_class',
+    'confidence_score', 'image_path', 'label',
+    'bbox_left', 'bbox_top', 'bbox_width', 'bbox_height', // add these
   ];
 
   List<Object?> toCsvRow() {
@@ -84,10 +80,22 @@ class DetectionResult {
       confidenceScore,
       imagePath ?? '',
       label.name,
+      boundingBox?.left ?? '',
+      boundingBox?.top ?? '',
+      boundingBox?.width ?? '',
+      boundingBox?.height ?? '',
     ];
   }
 
   factory DetectionResult.fromCsvRow(List<dynamic> row) {
+    double? parseOrNull(dynamic v) => v == null || v.toString().isEmpty
+        ? null
+        : double.tryParse(v.toString());
+    final left = parseOrNull(row.length > 7 ? row[7] : null);
+    final top = parseOrNull(row.length > 8 ? row[8] : null);
+    final width = parseOrNull(row.length > 9 ? row[9] : null);
+    final height = parseOrNull(row.length > 10 ? row[10] : null);
+
     return DetectionResult(
       id: int.tryParse(row[0].toString()),
       farmProfile: row[1].toString(),
@@ -96,9 +104,12 @@ class DetectionResult {
       confidenceScore: double.tryParse(row[4].toString()) ?? 0.0,
       imagePath: row[5].toString().isEmpty ? null : row[5].toString(),
       label: DetectionLabel.values.firstWhere(
-        (e) => e.name == row[6].toString(),
-        orElse: () => DetectionLabel.lowMatch,
-      ),
+          (e) => e.name == row[6].toString(),
+          orElse: () => DetectionLabel.lowMatch),
+      boundingBox:
+          (left != null && top != null && width != null && height != null)
+              ? BoundingBox(left: left, top: top, width: width, height: height)
+              : null,
     );
   }
 }
