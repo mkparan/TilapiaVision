@@ -98,7 +98,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
     setState(() => _busy = true);
     try {
       final picker = ImagePicker();
-      final XFile? picked = await picker.pickImage(source: ImageSource.gallery, imageQuality: 90);
+      final XFile? picked =
+          await picker.pickImage(source: ImageSource.gallery, imageQuality: 90);
       if (picked == null) return;
       await _goToResult(File(picked.path));
     } finally {
@@ -107,7 +108,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
   }
 
   Future<void> _goToResult(File image) async {
-    final farmName = context.read<FarmProfileProvider>().profile?.name ?? 'Unknown Farm';
+    final farmName =
+        context.read<FarmProfileProvider>().profile?.name ?? 'Unknown Farm';
     if (!mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute(
@@ -131,13 +133,15 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                     future: _initializeFuture,
                     builder: (context, snapshot) {
                       final controller = _controller;
-                      if (controller != null && controller.value.isInitialized) {
+                      if (controller != null &&
+                          controller.value.isInitialized) {
                         return CameraPreview(controller);
                       }
                       return const ColoredBox(
                         color: Color(0xFF101827),
                         child: Center(
-                          child: Icon(LucideIcons.camera, color: Colors.white24, size: 56),
+                          child: Icon(LucideIcons.camera,
+                              color: Colors.white24, size: 56),
                         ),
                       );
                     },
@@ -180,7 +184,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                     left: 0,
                     right: 0,
                     child: Center(
-                      child: _Pill(icon: LucideIcons.focus, text: 'Hold 15–30cm away'),
+                      child: _Pill(
+                          icon: LucideIcons.focus, text: 'Hold 15–30cm away'),
                     ),
                   ),
                   const Positioned(
@@ -188,7 +193,9 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                     left: 0,
                     right: 0,
                     child: Center(
-                      child: _Pill(icon: LucideIcons.sun, text: 'Avoid direct flash / sunlight glare'),
+                      child: _Pill(
+                          icon: LucideIcons.sun,
+                          text: 'Avoid direct flash / sunlight glare'),
                     ),
                   ),
                 ],
@@ -213,7 +220,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                       child: _busy
                           ? const Padding(
                               padding: EdgeInsets.all(20),
-                              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.navy),
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: AppColors.navy),
                             )
                           : null,
                     ),
@@ -232,7 +240,8 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 }
 
 class _RoundGlassButton extends StatelessWidget {
-  const _RoundGlassButton({required this.icon, this.onTap, this.active = false});
+  const _RoundGlassButton(
+      {required this.icon, this.onTap, this.active = false});
 
   final IconData icon;
   final VoidCallback? onTap;
@@ -246,7 +255,9 @@ class _RoundGlassButton extends StatelessWidget {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: active ? AppColors.amber.withOpacity(0.9) : Colors.black.withOpacity(0.4),
+          color: active
+              ? AppColors.amber.withOpacity(0.9)
+              : Colors.black.withOpacity(0.4),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: Colors.white, size: 18),
@@ -297,7 +308,11 @@ class _Pill extends StatelessWidget {
         children: [
           Icon(icon, size: 13, color: Colors.white),
           const SizedBox(width: 6),
-          Text(text, style: const TextStyle(color: Colors.white, fontSize: 11.5, fontWeight: FontWeight.w600)),
+          Text(text,
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 11.5,
+                  fontWeight: FontWeight.w600)),
         ],
       ),
     );

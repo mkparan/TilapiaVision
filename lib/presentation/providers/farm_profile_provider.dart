@@ -1,3 +1,4 @@
+
 import 'package:flutter/foundation.dart';
 
 import '../../data/models/farm_profile.dart';
@@ -32,3 +33,4 @@ class FarmProfileProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+

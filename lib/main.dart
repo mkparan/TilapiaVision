@@ -9,7 +9,7 @@ import 'presentation/app_shell.dart';
 import 'presentation/providers/detection_provider.dart';
 import 'presentation/providers/farm_profile_provider.dart';
 import 'presentation/screens/onboarding/disclaimer_gate_screen.dart';
-import 'services/detection/tflite_detection_engine.dart';
+import 'services/detection/mock_detection_engine.dart';
 import 'services/storage_service.dart';
 
 void main() {
@@ -39,11 +39,12 @@ class TilapiaVisionApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FarmProfileProvider()..load()),
         ChangeNotifierProvider(
           create: (_) => DetectionProvider(
-            // The real, on-device engine — see
+            // Swap MockDetectionEngine() -> TFLiteDetectionEngine() on
+            // integration day — see
             // lib/services/detection/tflite_detection_engine.dart for
-            // exactly what it assumes about your model's export and
-            // how to verify those assumptions on first run.
-            engine: TFLiteDetectionEngine(),
+            // the full checklist. Nothing else in the app needs to
+            // change.
+            engine: MockDetectionEngine(),
             repository: DetectionRepository(),
             storageService: StorageService(),
           ),

@@ -7,7 +7,7 @@ import 'package:tilapiavision/data/models/detection_result.dart';
 /// wrong and every history entry silently corrupts.
 void main() {
   group('DetectionResult CSV round-trip', () {
-    test('toCsvRow -> fromCsvRow preserves all fields', () {
+    test('toCsvRow -> fromCsvRow preserves all fields, including boundingBox', () {
       final original = DetectionResult(
         id: 7,
         farmProfile: 'Doongan Grow-Out Pond',
@@ -16,6 +16,7 @@ void main() {
         confidenceScore: 0.87,
         imagePath: '/data/visual_archive/12345.jpg',
         label: DetectionLabel.presumptivePositive,
+        boundingBox: const BoundingBox(left: 0.32, top: 0.30, width: 0.34, height: 0.26),
       );
 
       final row = original.toCsvRow();
@@ -28,6 +29,26 @@ void main() {
       expect(restored.confidenceScore, original.confidenceScore);
       expect(restored.imagePath, original.imagePath);
       expect(restored.label, original.label);
+      expect(restored.boundingBox, isNotNull);
+      expect(restored.boundingBox!.left, original.boundingBox!.left);
+      expect(restored.boundingBox!.top, original.boundingBox!.top);
+      expect(restored.boundingBox!.width, original.boundingBox!.width);
+      expect(restored.boundingBox!.height, original.boundingBox!.height);
+    });
+
+    test('a null boundingBox round-trips as null, not as zeros', () {
+      final original = DetectionResult(
+        farmProfile: 'Test Farm',
+        timestamp: DateTime.now(),
+        diseaseClass: 'none',
+        confidenceScore: 0.0,
+        label: DetectionLabel.clear,
+        // no boundingBox
+      );
+
+      final restored = DetectionResult.fromCsvRow(original.toCsvRow());
+
+      expect(restored.boundingBox, isNull);
     });
 
     test('a null imagePath round-trips as null, not the string "null"', () {
@@ -44,7 +65,7 @@ void main() {
       expect(restored.imagePath, isNull);
     });
 
-    test('row order matches csvHeader exactly', () {
+    test('row order and length match csvHeader exactly (11 columns incl. bbox_*)', () {
       final result = DetectionResult(
         id: 1,
         farmProfile: 'F',
@@ -64,7 +85,18 @@ void main() {
         'confidence_score',
         'image_path',
         'label',
+        'bbox_left',
+        'bbox_top',
+        'bbox_width',
+        'bbox_height',
       ]);
+    });
+
+    test('a legacy 7-column row (pre-bbox schema) still parses, with a null boundingBox', () {
+      final legacyRow = [1, 'Farm', DateTime.now().toIso8601String(), 'x', 0.5, '', 'lowMatch'];
+      final restored = DetectionResult.fromCsvRow(legacyRow);
+      expect(restored.boundingBox, isNull);
+      expect(restored.farmProfile, 'Farm');
     });
 
     test('an unrecognized label string falls back to lowMatch rather than throwing', () {

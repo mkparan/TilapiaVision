@@ -34,13 +34,18 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                     Container(
                       width: 68,
                       height: 68,
-                      decoration: const BoxDecoration(color: AppColors.teal, shape: BoxShape.circle),
-                      child: const Icon(LucideIcons.fish, color: Colors.white, size: 30),
+                      decoration: const BoxDecoration(
+                          color: AppColors.teal, shape: BoxShape.circle),
+                      child: const Icon(LucideIcons.fish,
+                          color: Colors.white, size: 30),
                     ),
                     const SizedBox(height: 18),
                     Text(
                       'TilapiaVision',
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(color: Colors.white, fontSize: 26),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(color: Colors.white, fontSize: 26),
                     ),
                     const SizedBox(height: 8),
                     const Padding(
@@ -71,11 +76,15 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                       Container(
                         width: 34,
                         height: 34,
-                        decoration: BoxDecoration(color: AppColors.ice, borderRadius: BorderRadius.circular(10)),
-                        child: const Icon(LucideIcons.triangleAlert, size: 17, color: AppColors.teal),
+                        decoration: BoxDecoration(
+                            color: AppColors.ice,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: const Icon(LucideIcons.triangleAlert,
+                            size: 17, color: AppColors.teal),
                       ),
                       const SizedBox(width: 10),
-                      Text('Before You Begin', style: Theme.of(context).textTheme.headlineSmall),
+                      Text('Before You Begin',
+                          style: Theme.of(context).textTheme.headlineSmall),
                     ],
                   ),
                   const SizedBox(height: 14),
@@ -83,7 +92,8 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                     'TilapiaVision screens for visual signs consistent with hemorrhagic disease. '
                     'It is a detection support tool — not a veterinary diagnosis. Always confirm '
                     'results with a qualified professional before treatment.',
-                    style: TextStyle(fontSize: 13, color: Colors.black87, height: 1.55),
+                    style: TextStyle(
+                        fontSize: 13, color: Colors.black87, height: 1.55),
                   ),
                   const SizedBox(height: 18),
                   InkWell(
@@ -91,14 +101,17 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                     borderRadius: BorderRadius.circular(14),
                     child: Container(
                       padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(color: AppColors.ice, borderRadius: BorderRadius.circular(14)),
+                      decoration: BoxDecoration(
+                          color: AppColors.ice,
+                          borderRadius: BorderRadius.circular(14)),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Checkbox(
                             value: _acknowledged,
                             activeColor: AppColors.deepBlue,
-                            onChanged: (v) => setState(() => _acknowledged = v ?? false),
+                            onChanged: (v) =>
+                                setState(() => _acknowledged = v ?? false),
                           ),
                           const Expanded(
                             child: Padding(
@@ -119,7 +132,9 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                     child: ElevatedButton(
                       onPressed: _acknowledged
                           ? () => Navigator.of(context).push(
-                                MaterialPageRoute(builder: (_) => const FarmProfileSetupScreen()),
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        const FarmProfileSetupScreen()),
                               )
                           : null,
                       child: const Text('Continue'),

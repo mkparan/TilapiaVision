@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 /// Gate that confirms the photographed subject is actually a Nile
@@ -11,3 +12,4 @@ import 'dart:io';
 abstract class ITilapiaVerifier {
   Future<bool> isTilapia(File image);
 }
+

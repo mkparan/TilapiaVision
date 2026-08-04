@@ -15,12 +15,14 @@ const _tips = [
   _BioTip(
     icon: LucideIcons.hand,
     title: 'Sanitize hands between ponds',
-    body: 'Wash or sanitize before and after handling fish from a different enclosure.',
+    body:
+        'Wash or sanitize before and after handling fish from a different enclosure.',
   ),
   _BioTip(
     icon: LucideIcons.package,
     title: 'Disinfect nets & equipment',
-    body: 'Shared nets and basins are a common way disease travels between grow-out ponds.',
+    body:
+        'Shared nets and basins are a common way disease travels between grow-out ponds.',
   ),
   _BioTip(
     icon: LucideIcons.smartphone,
@@ -30,7 +32,8 @@ const _tips = [
   _BioTip(
     icon: LucideIcons.triangleAlert,
     title: 'Isolate suspected cases',
-    body: 'Move a Presumptive Positive fish to a separate holding container while you seek verification.',
+    body:
+        'Move a Presumptive Positive fish to a separate holding container while you seek verification.',
   ),
 ];
 
@@ -64,19 +67,24 @@ class BiosecurityTipsScreen extends StatelessWidget {
                         color: Colors.white.withOpacity(0.16),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: const Icon(LucideIcons.shieldCheck, color: Colors.white, size: 17),
+                      child: const Icon(LucideIcons.shieldCheck,
+                          color: Colors.white, size: 17),
                     ),
                     const SizedBox(width: 10),
                     const Text(
                       'Biosecurity Tips',
-                      style: TextStyle(color: Colors.white, fontSize: 21, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 21,
+                          fontWeight: FontWeight.bold),
                     ),
                   ],
                 ),
                 const SizedBox(height: 10),
                 const Text(
                   'Simple habits that reduce the risk of spreading disease between ponds.',
-                  style: TextStyle(color: Color(0xFFD7ECF2), fontSize: 12.5, height: 1.5),
+                  style: TextStyle(
+                      color: Color(0xFFD7ECF2), fontSize: 12.5, height: 1.5),
                 ),
               ],
             ),
@@ -101,17 +109,26 @@ class BiosecurityTipsScreen extends StatelessWidget {
                       Container(
                         width: 40,
                         height: 40,
-                        decoration: BoxDecoration(color: AppColors.ice, borderRadius: BorderRadius.circular(12)),
-                        child: Icon(tip.icon, size: 19, color: AppColors.deepBlue),
+                        decoration: BoxDecoration(
+                            color: AppColors.ice,
+                            borderRadius: BorderRadius.circular(12)),
+                        child:
+                            Icon(tip.icon, size: 19, color: AppColors.deepBlue),
                       ),
                       const SizedBox(width: 13),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(tip.title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                            Text(tip.title,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 13)),
                             const SizedBox(height: 3),
-                            Text(tip.body, style: const TextStyle(fontSize: 11.5, color: Colors.black54, height: 1.5)),
+                            Text(tip.body,
+                                style: const TextStyle(
+                                    fontSize: 11.5,
+                                    color: Colors.black54,
+                                    height: 1.5)),
                           ],
                         ),
                       ),
