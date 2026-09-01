@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 import '../../data/models/detection_result.dart';
@@ -50,3 +51,4 @@ class TFLiteDetectionEngine implements IDetectionEngine {
     );
   }
 }
+

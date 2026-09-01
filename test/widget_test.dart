@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -54,4 +55,39 @@ void main() {
       await expectLater(future, throwsA(isA<Exception>()));
     });
   });
+
+  group('MockDetectionEngine random mode', () {
+    test('over many runs, random mode produces all four outcomes, not just one', () async {
+      // Regression test for the original bug: random mode used to
+      // pick a uniformly random confidence value, which could never
+      // land in the timeout branch at all (timeout wasn't
+      // confidence-driven) and skewed heavily toward Clear (its
+      // confidence range is by far the widest of the three labels).
+      final seenPositive = <bool>{};
+      final seenClear = <bool>{};
+      final seenLowMatch = <bool>{};
+
+      // Sample enough runs that seeing all three labels is
+      // essentially certain if the distribution is genuinely
+      // balanced, and essentially impossible if it isn't.
+      for (var i = 0; i < 60; i++) {
+        final engine = MockDetectionEngine(mode: MockMode.random);
+        await engine.initialize();
+        final result = await engine.analyze(File('test.jpg'), farmProfile: 'Test Farm');
+        seenPositive.add(result.label == DetectionLabel.presumptivePositive);
+        seenClear.add(result.label == DetectionLabel.clear);
+        seenLowMatch.add(result.label == DetectionLabel.lowMatch);
+      }
+
+      expect(seenPositive.contains(true), isTrue, reason: 'never saw a Presumptive Positive in 60 runs');
+      expect(seenClear.contains(true), isTrue, reason: 'never saw a Clear result in 60 runs');
+      expect(seenLowMatch.contains(true), isTrue, reason: 'never saw a Low Match in 60 runs');
+    });
+
+    test('default constructor uses random mode', () {
+      final engine = MockDetectionEngine();
+      expect(engine.mode, MockMode.random);
+    });
+  });
 }
+

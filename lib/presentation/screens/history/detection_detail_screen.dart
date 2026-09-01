@@ -10,6 +10,7 @@ import '../../../core/constants.dart';
 import '../../../data/models/detection_result.dart';
 import '../../../services/storage_service.dart';
 import '../../providers/detection_provider.dart';
+import '../../widgets/bounding_box_painter.dart';
 
 /// Full detail view for one detection record — reachable by tapping
 /// any card on [DetectionHistoryScreen]. Shows the cached photo (or
@@ -31,7 +32,9 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
   Future<void> _handleExport() async {
     setState(() => _busy = true);
     try {
-      await context.read<DetectionProvider>().exportSingleDetection(widget.result);
+      await context
+          .read<DetectionProvider>()
+          .exportSingleDetection(widget.result);
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -52,7 +55,9 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete', style: TextStyle(color: AppColors.amberDark, fontWeight: FontWeight.bold)),
+            child: const Text('Delete',
+                style: TextStyle(
+                    color: AppColors.amberDark, fontWeight: FontWeight.bold)),
           ),
         ],
       ),
@@ -94,27 +99,48 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
               return SizedBox(
                 height: 260,
                 width: double.infinity,
-                child: available
-                    ? Image.file(File(result.imagePath!), fit: BoxFit.cover)
-                    : Container(
-                        color: AppColors.slateLight,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(LucideIcons.imageOff, size: 34, color: AppColors.slate),
-                            const SizedBox(height: 10),
-                            const Text(
-                              'Image Expired',
-                              style: TextStyle(color: AppColors.slate, fontWeight: FontWeight.bold),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    available
+                        ? Image.file(File(result.imagePath!), fit: BoxFit.cover)
+                        : Container(
+                            color: AppColors.slateLight,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Icon(LucideIcons.imageOff,
+                                    size: 34, color: AppColors.slate),
+                                const SizedBox(height: 10),
+                                const Text(
+                                  'Image Expired',
+                                  style: TextStyle(
+                                      color: AppColors.slate,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Photos are removed after ${DetectionConfig.imageRetentionDays} days',
+                                  style: const TextStyle(
+                                      color: AppColors.slate, fontSize: 11.5),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Photos are removed after ${DetectionConfig.imageRetentionDays} days',
-                              style: const TextStyle(color: AppColors.slate, fontSize: 11.5),
-                            ),
-                          ],
+                          ),
+                    if (available && result.boundingBox != null)
+                      CustomPaint(
+                        painter: BoundingBoxPainter(
+                          box: result.boundingBox!,
+                          color:
+                              result.label == DetectionLabel.presumptivePositive
+                                  ? AppColors.amber
+                                  : AppColors.slate,
+                          label: '${(result.confidenceScore * 100).round()}%',
+                          dashed: result.label == DetectionLabel.lowMatch,
                         ),
                       ),
+                  ],
+                ),
               );
             },
           ),
@@ -124,21 +150,32 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(color: theme.badgeBg, borderRadius: BorderRadius.circular(20)),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                      color: theme.badgeBg,
+                      borderRadius: BorderRadius.circular(20)),
                   child: Text(
                     theme.badgeText,
-                    style: TextStyle(color: theme.badgeFg, fontWeight: FontWeight.bold, fontSize: 12),
+                    style: TextStyle(
+                        color: theme.badgeFg,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12),
                   ),
                 ),
                 const SizedBox(height: 14),
-                Text(theme.heading, style: Theme.of(context).textTheme.headlineSmall),
+                Text(theme.heading,
+                    style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 20),
-                _InfoRow(icon: LucideIcons.user, label: 'Farm Profile', value: result.farmProfile),
+                _InfoRow(
+                    icon: LucideIcons.user,
+                    label: 'Farm Profile',
+                    value: result.farmProfile),
                 _InfoRow(
                   icon: LucideIcons.clock,
                   label: 'Date & Time',
-                  value: DateFormat('MMM d, yyyy — h:mm a').format(result.timestamp),
+                  value: DateFormat('MMM d, yyyy — h:mm a')
+                      .format(result.timestamp),
                 ),
                 if (result.label != DetectionLabel.clear)
                   _InfoRow(
@@ -146,7 +183,10 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                     label: 'Confidence',
                     value: '${(result.confidenceScore * 100).round()}%',
                   ),
-                _InfoRow(icon: LucideIcons.fileSpreadsheet, label: 'Detected Class', value: result.diseaseClass),
+                _InfoRow(
+                    icon: LucideIcons.fileSpreadsheet,
+                    label: 'Detected Class',
+                    value: result.diseaseClass),
               ],
             ),
           ),
@@ -179,7 +219,8 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                     ? const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2, color: Colors.white),
                       )
                     : const Text('Export'),
               ),
@@ -192,7 +233,8 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
 }
 
 class _InfoRow extends StatelessWidget {
-  const _InfoRow({required this.icon, required this.label, required this.value});
+  const _InfoRow(
+      {required this.icon, required this.label, required this.value});
 
   final IconData icon;
   final String label;
@@ -213,12 +255,18 @@ class _InfoRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(fontSize: 11, color: AppColors.slate, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.slate,
+                      fontWeight: FontWeight.w600),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(fontSize: 14, color: AppColors.ink, fontWeight: FontWeight.w600),
+                  style: const TextStyle(
+                      fontSize: 14,
+                      color: AppColors.ink,
+                      fontWeight: FontWeight.w600),
                 ),
               ],
             ),

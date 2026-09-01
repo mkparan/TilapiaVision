@@ -20,8 +20,11 @@ enum DetectionLabel { presumptivePositive, lowMatch, clear }
 /// source image's width/height so it can be rendered onto any
 /// display size without needing the original image's pixel dimensions.
 ///
-/// Not persisted to the CSV log — it's only meaningful immediately
-/// after a fresh detection, not for redisplaying history later.
+/// Persisted to the CSV log as four extra columns (bbox_left,
+/// bbox_top, bbox_width, bbox_height) so it survives a reload — this
+/// is what lets the History/Detail screens redraw the same box a
+/// fresh detection shows, not just the Result screen right after
+/// capture.
 class BoundingBox {
   const BoundingBox({
     required this.left,
@@ -37,8 +40,7 @@ class BoundingBox {
 }
 
 /// One row of the `detection_log.csv` file (see [csvHeader] for exact
-/// column order) plus, transiently, the [boundingBox] returned by a
-/// fresh detection.
+/// column order) including the [boundingBox], if any.
 class DetectionResult {
   const DetectionResult({
     this.id,
@@ -73,6 +75,10 @@ class DetectionResult {
     'confidence_score',
     'image_path',
     'label',
+    'bbox_left',
+    'bbox_top',
+    'bbox_width',
+    'bbox_height',
   ];
 
   List<Object?> toCsvRow() {
@@ -84,10 +90,22 @@ class DetectionResult {
       confidenceScore,
       imagePath ?? '',
       label.name,
+      boundingBox?.left ?? '',
+      boundingBox?.top ?? '',
+      boundingBox?.width ?? '',
+      boundingBox?.height ?? '',
     ];
   }
 
   factory DetectionResult.fromCsvRow(List<dynamic> row) {
+    double? parseOrNull(dynamic v) =>
+        v == null || v.toString().isEmpty ? null : double.tryParse(v.toString());
+
+    final left = parseOrNull(row.length > 7 ? row[7] : null);
+    final top = parseOrNull(row.length > 8 ? row[8] : null);
+    final width = parseOrNull(row.length > 9 ? row[9] : null);
+    final height = parseOrNull(row.length > 10 ? row[10] : null);
+
     return DetectionResult(
       id: int.tryParse(row[0].toString()),
       farmProfile: row[1].toString(),
@@ -99,6 +117,9 @@ class DetectionResult {
         (e) => e.name == row[6].toString(),
         orElse: () => DetectionLabel.lowMatch,
       ),
+      boundingBox: (left != null && top != null && width != null && height != null)
+          ? BoundingBox(left: left, top: top, width: width, height: height)
+          : null,
     );
   }
 }

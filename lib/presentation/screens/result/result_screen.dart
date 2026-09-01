@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/app_theme.dart';
@@ -77,20 +76,20 @@ class _ProcessingView extends StatelessWidget {
           Center(
             child: Container(
               margin: const EdgeInsets.symmetric(horizontal: 40),
-              padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 30),
+              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 28),
               decoration: BoxDecoration(
                 color: const Color(0xFF0F1424).withOpacity(0.85),
-                borderRadius: BorderRadius.circular(24),
+                borderRadius: BorderRadius.circular(22),
               ),
               child: const Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   SizedBox(
-                    width: 54,
-                    height: 54,
-                    child: CircularProgressIndicator(strokeWidth: 3.5, color: AppColors.mint),
+                    width: 56,
+                    height: 56,
+                    child: CircularProgressIndicator(strokeWidth: 4, color: AppColors.mint),
                   ),
-                  SizedBox(height: 18),
+                  SizedBox(height: 16),
                   Text(
                     'Analyzing image…',
                     style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
@@ -127,7 +126,7 @@ class _ErrorView extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(LucideIcons.circleAlert, size: 40, color: AppColors.slate),
+              const Icon(Icons.error_outline, size: 40, color: AppColors.slate),
               const SizedBox(height: 12),
               Text(message, textAlign: TextAlign.center),
               const SizedBox(height: 20),
@@ -144,26 +143,22 @@ class _ResultTheme {
   const _ResultTheme({
     required this.accentColor,
     required this.dashed,
-    required this.badgeIcon,
     required this.badgeBg,
     required this.badgeFg,
     required this.badgeText,
     required this.heading,
     required this.body,
-    required this.actionIcon,
     required this.actionBg,
     required this.actionText,
   });
 
   final Color accentColor;
   final bool dashed;
-  final IconData badgeIcon;
   final Color badgeBg;
   final Color badgeFg;
   final String badgeText;
   final String heading;
   final String body;
-  final IconData actionIcon;
   final Color actionBg;
   final String actionText;
 
@@ -173,14 +168,12 @@ class _ResultTheme {
         return const _ResultTheme(
           accentColor: AppColors.amber,
           dashed: false,
-          badgeIcon: LucideIcons.triangleAlert,
           badgeBg: Color(0xFFFFF3DC),
           badgeFg: AppColors.amberDark,
           badgeText: 'Presumptive Positive',
           heading: 'Hemorrhagic Ulcer Detected',
           body: 'Visual signs consistent with Aeromonas hydrophila (MAS). '
               'This is a presumptive screening result — not a lab-confirmed diagnosis.',
-          actionIcon: LucideIcons.shieldCheck,
           actionBg: Color(0xFFFFF6E5),
           actionText: 'Recommended: Isolate this fish and consult a veterinary or '
               'aquaculture technician for confirmation.',
@@ -189,13 +182,11 @@ class _ResultTheme {
         return const _ResultTheme(
           accentColor: AppColors.slate,
           dashed: true,
-          badgeIcon: LucideIcons.circleAlert,
           badgeBg: AppColors.slateLight,
           badgeFg: Color(0xFF475569),
           badgeText: 'Low Match',
           heading: 'Inconclusive Result',
           body: 'Some visual signs were detected, but confidence fell below the reliable threshold.',
-          actionIcon: LucideIcons.rotateCcw,
           actionBg: AppColors.slateLight,
           actionText: 'Recommended: Retake the photo in better lighting, or have a technician verify in person.',
         );
@@ -203,13 +194,11 @@ class _ResultTheme {
         return const _ResultTheme(
           accentColor: AppColors.mint,
           dashed: false,
-          badgeIcon: LucideIcons.circleCheck,
           badgeBg: Color(0xFFDBF7EF),
           badgeFg: AppColors.mintDark,
           badgeText: 'No Lesions Detected',
           heading: 'Looks Clear',
           body: 'No hemorrhagic lesions were detected in this image. Continue routine monitoring.',
-          actionIcon: LucideIcons.info,
           actionBg: Color(0xFFE4FBF4),
           actionText: 'This screens only visible external symptoms — it does not rule out '
               'internal or asymptomatic conditions.',
@@ -257,7 +246,7 @@ class _ResultView extends StatelessWidget {
                     child: CircleAvatar(
                       backgroundColor: Colors.black45,
                       child: IconButton(
-                        icon: const Icon(LucideIcons.arrowLeft, color: Colors.white, size: 19),
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
@@ -275,36 +264,23 @@ class _ResultView extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(color: theme.badgeBg, borderRadius: BorderRadius.circular(20)),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(theme.badgeIcon, size: 13, color: theme.badgeFg),
-                        const SizedBox(width: 6),
-                        Text(
-                          theme.badgeText,
-                          style: TextStyle(color: theme.badgeFg, fontWeight: FontWeight.bold, fontSize: 12),
-                        ),
-                      ],
+                    child: Text(
+                      theme.badgeText,
+                      style: TextStyle(color: theme.badgeFg, fontWeight: FontWeight.bold, fontSize: 12),
                     ),
                   ),
-                  const SizedBox(height: 14),
-                  Text(theme.heading, style: Theme.of(context).textTheme.headlineSmall),
+                  const SizedBox(height: 12),
+                  Text(
+                    theme.heading,
+                    style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: AppColors.navy),
+                  ),
                   const SizedBox(height: 8),
                   Text(theme.body, style: const TextStyle(fontSize: 13, height: 1.5, color: Colors.black54)),
                   const SizedBox(height: 14),
                   Container(
                     padding: const EdgeInsets.all(13),
                     decoration: BoxDecoration(color: theme.actionBg, borderRadius: BorderRadius.circular(14)),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Icon(theme.actionIcon, size: 17, color: theme.badgeFg),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(theme.actionText, style: const TextStyle(fontSize: 11.8, height: 1.55)),
-                        ),
-                      ],
-                    ),
+                    child: Text(theme.actionText, style: const TextStyle(fontSize: 11.8, height: 1.5)),
                   ),
                 ],
               ),
@@ -316,7 +292,7 @@ class _ResultView extends StatelessWidget {
         padding: const EdgeInsets.fromLTRB(22, 14, 22, 20),
         decoration: const BoxDecoration(
           color: Colors.white,
-          border: Border(top: BorderSide(color: AppColors.border)),
+          border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

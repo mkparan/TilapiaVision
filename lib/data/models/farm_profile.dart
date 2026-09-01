@@ -1,3 +1,4 @@
+
 /// A local-only identity used in place of a user account, per the
 /// No-Login Architecture described in the UI/UX design philosophy.
 class FarmProfile {
@@ -23,3 +24,4 @@ class FarmProfile {
         acknowledgedStorageNotice: json['acknowledgedStorageNotice'] as bool? ?? false,
       );
 }
+

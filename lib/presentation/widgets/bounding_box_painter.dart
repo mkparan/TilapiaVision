@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../../data/models/detection_result.dart';
@@ -76,3 +77,4 @@ class BoundingBoxPainter extends CustomPainter {
     return oldDelegate.box != box || oldDelegate.color != color || oldDelegate.label != label || oldDelegate.dashed != dashed;
   }
 }
+

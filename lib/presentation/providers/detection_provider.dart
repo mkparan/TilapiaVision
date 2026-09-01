@@ -10,17 +10,19 @@ import '../../data/repositories/detection_repository.dart';
 import '../../services/detection/i_detection_engine.dart';
 import '../../services/storage_service.dart';
 
+/// The states a capture-to-result cycle can be in, driving which
+/// view [ResultScreen] renders.
 enum ScanStatus { idle, processing, success, timeout, error }
 
-/// Orchestrates a single scan: runs the active [IDetectionEngine],
-/// caches the photo (unless the result is a Low Match — see the
-/// note below), and appends the result to the CSV log via
-/// [DetectionRepository].
+/// Orchestrates a single detection: runs the active [IDetectionEngine]
+/// (Mock today, TFLite once the trained model lands), caches the
+/// photo, and hands off to [DetectionRepository] for CSV persistence.
 ///
-/// This is the one place that knows which [IDetectionEngine] is
-/// active. Swap `MockDetectionEngine()` for `TFLiteDetectionEngine()`
-/// wherever this provider is constructed (see `main.dart`) and
-/// nothing else in the app needs to change.
+/// Swapping detection engines is the entire integration-day change:
+/// only the `engine:` this is constructed with needs to differ once
+/// [TFLiteDetectionEngine] is active. Swap `MockDetectionEngine()` for
+/// `TFLiteDetectionEngine()` wherever this provider is constructed
+/// (see `main.dart`) and nothing else in the app needs to change.
 class DetectionProvider extends ChangeNotifier {
   DetectionProvider({
     required IDetectionEngine engine,

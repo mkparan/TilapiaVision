@@ -1,0 +1,448 @@
+Resolving dependencies...
+Downloading packages...
+  camera 0.10.6 (0.12.0+2 available)
+  camera_avfoundation 0.9.23+2 (0.10.2 available)
+  csv 6.0.0 (8.0.0 available)
+  flutter_lints 4.0.0 (6.0.0 available)
+  google_fonts 6.3.3 (8.2.1 available)
+  hooks 2.0.2 (2.1.0 available)
+  intl 0.19.0 (0.20.3 available)
+  jni 1.0.0 (1.0.3 available)
+  jni_flutter 1.0.1 (1.0.2 available)
+  lints 4.0.0 (6.1.0 available)
+  matcher 0.12.19 (0.12.20 available)
+  meta 1.18.0 (1.19.0 available)
+  objective_c 9.4.1 (9.5.0 available)
+  package_config 2.2.0 (3.0.0 available)
+  permission_handler 11.4.0 (13.0.0 available)
+  permission_handler_android 12.1.0 (14.0.0 available)
+  permission_handler_apple 9.4.10 (9.5.0 available)
+  permission_handler_html 0.1.3+5 (0.1.4+1 available)
+  permission_handler_platform_interface 4.3.0 (4.4.0 available)
+  permission_handler_windows 0.2.1 (0.2.2 available)
+  posix 6.5.0 (6.5.2 available)
+  record_use 0.6.0 (1.0.0 available)
+  share_plus 10.1.4 (13.3.0 available)
+  share_plus_platform_interface 5.0.2 (7.2.0 available)
+  shared_preferences_android 2.4.26 (2.4.27 available)
+  test_api 0.7.11 (0.7.13 available)
+  uuid 4.5.3 (4.6.0 available)
+  vector_math 2.2.0 (2.4.2 available)
+  win32 5.15.0 (6.3.0 available)
+Got dependencies!
+29 packages have newer versions incompatible with dependency constraints.
+Try `flutter pub outdated` for more information.
+Launching lib\main.dart on 23129RAA4G in debug mode...
+Running Gradle task 'assembleDebug'...                          
+WARNING: Your app uses the following plugins that apply Kotlin Gradle Plugin (KGP): share_plus
+Future versions of Flutter will fail to build if your app uses plugins that apply KGP.
+
+Please check the changelogs of these plugins and upgrade to a version that supports Built-in Kotlin.
+If no such version exists, report the issue to the plugin. If necessary, here is a guide on filing 
+an issue against a plugin: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-app-developers#report-incompatible-kotlin-gradle-plugin-usage-to-plugin-authors
+
+If you are a plugin author, please migrate your plugin to Built-in Kotlin using this guide: https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors
+Running Gradle task 'assembleDebug'...                              7.8s
+√ Built build\app\outputs\flutter-apk\app-debug.apk
+Installing build\app\outputs\flutter-apk\app-debug.apk...          32.0s
+Error: ADB exited with exit code 1
+Performing Streamed Install
+
+adb.exe: failed to install D:\tilapiavision_app\build\app\outputs\flutter-apk\app-debug.apk: Failure [INSTALL_FAILED_USER_RESTRICTED: Install canceled by user]
+Uninstalling old version...
+Installing build\app\outputs\flutter-apk\app-debug.apk...          17.8s
+I/FlutterActivityAndFragmentDelegate(15119): If you are attempting to set --enable-dart-profiling via Intent extras to launch a Flutter component outside of using the Flutter CLI, note that support for setting engine flags on Android via Intent will soon be dropped; see https://github.com/flutter/flutter/issues/180686 for more information on this breaking change. To migrate, set --enable-dart-profiling or any other flags specified via Intent extras on the command line instead or see https://github.com/flutter/flutter/blob/main/docs/engine/Flutter-Android-Engine-Flags.md for alternative methods.
+D/FlutterJNI(15119): Beginning load of flutter...
+D/FlutterJNI(15119): flutter (null) was loaded normally!
+I/flutter (15119): [IMPORTANT:flutter/shell/platform/android/android_context_vk_impeller.cc(62)] Using the Impeller rendering backend (Vulkan).
+I/flutter (15119): [IMPORTANT:flutter/shell/platform/android/android_context_gl_impeller.cc(104)] Using the Impeller rendering backend (OpenGLES).
+D/FlutterRenderer(15119): Width is zero. 0,0
+W/HWUI    (15119): Unknown dataspace 0
+I/ForceDarkHelperStubImpl(15119): setViewRootImplForceDark: false for com.example.tilapiavision.MainActivity@e32e12f, reason: AppDarkModeEnable
+Syncing files to device 23129RAA4G...                              154ms
+
+Flutter run key commands.
+r Hot reload. 
+R Hot restart.
+h List all available interactive commands.
+d Detach (terminate "flutter run" but leave application running).
+c Clear the screen
+q Quit (terminate the application on the device).
+
+A Dart VM Service on 23129RAA4G is available at: http://127.0.0.1:56271/AV32pUex0ik=/
+The Flutter DevTools debugger and profiler on 23129RAA4G is available at: http://127.0.0.1:56271/AV32pUex0ik=/devtools/?uri=ws://127.0.0.1:56271/AV32pUex0ik=/ws
+W/MIUIScout App(15119): Enter APP_SCOUT_SLOW state
+I/Choreographer(15119): Skipped 194 frames!  The application may be doing too much work on its main thread.
+D/UserSceneDetector(15119): invoke error.
+I/WindowExtensionsImpl(15119): Initializing Window Extensions, vendor API level=6, activity embedding enabled=true
+D/FlutterRenderer(15119): Width is zero. 0,0
+W/e.tilapiavision(15119): type=1400 audit(0.0:804397): avc:  denied  { read } for  name="u:object_r:vendor_display_prop:s0" dev="tmpfs" ino=457 scontext=u:r:untrusted_app:s0:c126,c257,c512,c768 tcontext=u:object_r:vendor_display_prop:s0 tclass=file permissive=0 app=com.example.tilapiavision
+I/e.tilapiavision(15119): Compiler allocated 5225KB to compile void android.view.ViewRootImpl.performTraversals()
+W/libc    (15119): Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+W/libc    (15119): Access denied finding property "vendor.gpp.create_frc_extension"
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/VRI[MainActivity](15119): vri.reportNextDraw android.view.ViewRootImpl.performTraversals:4923 android.view.ViewRootImpl.doTraversal:3553 android.view.ViewRootImpl$TraversalRunnable.run:11520 android.view.Choreographer$CallbackRecord.run:1730 android.view.Choreographer$CallbackRecord.run:1739 
+D/SurfaceView(15119): UPDATE null, mIsCastMode = false
+W/libc    (15119): Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+W/libc    (15119): Access denied finding property "vendor.gpp.create_frc_extension"
+W/e.tilapiavision(15119): type=1400 audit(0.0:804398): avc:  denied  { read } for  name="u:object_r:vendor_display_prop:s0" dev="tmpfs" ino=457 scontext=u:r:untrusted_app:s0:c126,c257,c512,c768 tcontext=u:object_r:vendor_display_prop:s0 tclass=file permissive=0 app=com.example.tilapiavision
+E/LB      (15119): fail to open file: No such file or directory
+E/LB      (15119): fail to open node: No such file or directory
+E/LB      (15119): fail to open node: No such file or directory
+D/ProfileInstaller(15119): Installing profile for com.example.tilapiavision
+I/Choreographer(15119): Skipped 120 frames!  The application may be doing too much work on its main thread.
+D/UserSceneDetector(15119): invoke error.
+D/VRI[MainActivity](15119): vri.reportNextDraw android.view.ViewRootImpl.performTraversals:4923 android.view.ViewRootImpl.doTraversal:3553 android.view.ViewRootImpl$TraversalRunnable.run:11520 android.view.Choreographer$CallbackRecord.run:1730 android.view.Choreographer$CallbackRecord.run:1739 
+D/SurfaceView(15119): UPDATE Surface(name=SurfaceView[com.example.tilapiavision/com.example.tilapiavision.MainActivity]#142589)/@0x74d3c5d, mIsProjectionMode = false
+D/VRI[MainActivity](15119): vri.Setup new sync=wmsSync-VRI[MainActivity]#1
+D/UserSceneDetector(15119): invoke error.
+D/HWUI    (15119): makeCurrent grContext:0xb400006fad354750 reset mTextureAvailable
+D/e.tilapiavision(15119): MiuiProcessManagerServiceStub setSchedFifo
+I/MiuiProcessManagerImpl(15119): setSchedFifo pid:15119, mode:3
+D/VRI[MainActivity](15119): vri.reportDrawFinished
+I/HWUI    (15119): Davey! duration=2107ms; Flags=1, FrameTimelineVsyncId=143719978, IntendedVsync=558476750429228, Vsync=558478754888588, InputEventId=0, HandleInputStart=558478760469717, AnimationStart=558478760473883, PerformTraversalsStart=558478760491852, DrawStart=558478777931748, FrameDeadline=558476767095894, FrameInterval=558478759204092, FrameStartTime=16703828, FlingPosition=0, FlingFrameInterval=0, SyncQueued=558478783305185, SyncStart=558478783681956, IssueDrawCommandsStart=558478788326383, SwapBuffers=558478838909977, FrameCompleted=558478857903102, DequeueBufferDuration=14650782, QueueBufferDuration=1331198, GpuCompleted=558478857903102, SwapBuffersCompleted=558478841522373, DisplayPresentTime=0, CommandSubmissionCompleted=558478838909977, 
+I/HandWritingStubImpl(15119): refreshLastKeyboardType: 1
+I/HandWritingStubImpl(15119): getCurrentKeyboardType: 1
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+I/HandWritingStubImpl(15119): getCurrentKeyboardType: 1
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_DOWN, id[0]=0, pointerCount=1, eventTime=558481051, downTime=558481051, phoneEventTime=04:00:11.197 } moveCount:0
+W/MirrorManager(15119): this model don't Support
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_UP, id[0]=0, pointerCount=1, eventTime=558481116, downTime=558481051, phoneEventTime=04:00:11.262 } moveCount:0
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_DOWN, id[0]=0, pointerCount=1, eventTime=558482111, downTime=558482111, phoneEventTime=04:00:12.257 } moveCount:0
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_UP, id[0]=0, pointerCount=1, eventTime=558482168, downTime=558482111, phoneEventTime=04:00:12.314 } moveCount:0
+W/WindowOnBackDispatcher(15119): OnBackInvokedCallback is not enabled for the application.
+W/WindowOnBackDispatcher(15119): Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_DOWN, id[0]=0, pointerCount=1, eventTime=558488407, downTime=558488407, phoneEventTime=04:00:18.552 } moveCount:0
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_UP, id[0]=0, pointerCount=1, eventTime=558488475, downTime=558488407, phoneEventTime=04:00:18.621 } moveCount:0
+E/e.tilapiavision(15119): FrameInsert open fail: No such file or directory
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_DOWN, id[0]=0, pointerCount=1, eventTime=558488941, downTime=558488941, phoneEventTime=04:00:19.087 } moveCount:0
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_UP, id[0]=0, pointerCount=1, eventTime=558488978, downTime=558488941, phoneEventTime=04:00:19.124 } moveCount:0
+I/ImeTracker(15119): com.example.tilapiavision:40512112: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+I/HandWritingStubImpl(15119): refreshLastKeyboardType: 1
+I/HandWritingStubImpl(15119): getCurrentKeyboardType: 1
+D/InputMethodManager(15119): showSoftInput() view=io.flutter.embedding.android.FlutterView{64c32d0 VFE...... .F....ID 0,0-1080,2400 #1 aid=1073741824} flags=0 reason=SHOW_SOFT_INPUT
+I/AssistStructure(15119): Flattened final assist data: 532 bytes, containing 1 windows, 3 views
+D/InputConnectionAdaptor(15119): The input method toggled cursor monitoring on
+D/InsetsController(15119): show(ime(), fromIme=true)
+D/ViewRootImplStubImpl(15119): requestedTypes: 8
+D/ViewRootImplStubImpl(15119): onAnimationStart
+W/InteractionJankMonitor(15119): Initializing without READ_DEVICE_CONFIG permission. enabled=false, interval=1, missedFrameThreshold=3, frameTimeThreshold=64, package=com.example.tilapiavision
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.0
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.04766064
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.16041271
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.29242632
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.42073748
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.5351103
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+W/RenderInspector(15119): DequeueBuffer time out on com.example.tilapiavision/com.example.tilapiavision.MainActivity, count=4, avg=25 ms, max=52 ms.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.63215417
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.7119577
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.7762061
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.8271585
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.8671284
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.89822197
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9222586
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+W/RenderInspector(15119): QueueBuffer time out on com.example.tilapiavision/com.example.tilapiavision.MainActivity, count=1, avg=17 ms, max=17 ms.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9407511
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9549245
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.96575594
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.974014
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9802983
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.98507375
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.98869824
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9914466
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9935291
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.995106
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9962995
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9972026
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9978856
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.99840206
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.9987925
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 1.0
+D/ViewRootImplStubImpl(15119): onAnimationEnd,canceled: false
+I/ImeTracker(15119): com.example.tilapiavision:40512112: onShown
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_DOWN, id[0]=0, pointerCount=1, eventTime=558492323, downTime=558492323, phoneEventTime=04:00:22.469 } moveCount:0
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_UP, id[0]=0, pointerCount=1, eventTime=558492376, downTime=558492323, phoneEventTime=04:00:22.521 } moveCount:0
+I/CameraManagerGlobal(15119): Connecting to camera service
+D/CameraExtStub(15119): init android.hardware.camera2.impl.CameraExtImplXiaoMi
+D/CameraInjector(15119): waitForResult: 
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: E
+D/CameraInjector(15119): isMiviInfo4: use MiviInfo V3.0
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: X
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraExtImplXiaoMi(15119): ignore the status update of camera: 2
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraExtImplXiaoMi(15119): ignore the status update of camera: 3
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraExtImplXiaoMi(15119): ignore the status update of camera: 4
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraExtImplXiaoMi(15119): ignore the status update of camera: 5
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraExtImplXiaoMi(15119): ignore the status update of camera: 6
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraManagerGlobal(15119): ignore the torch status update of camera: 2
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraManagerGlobal(15119): ignore the torch status update of camera: 3
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraManagerGlobal(15119): ignore the torch status update of camera: 4
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraManagerGlobal(15119): ignore the torch status update of camera: 5
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+I/ImeTracker(15119): com.example.tilapiavision:b45a8afc: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+D/InputConnectionAdaptor(15119): The input method toggled cursor monitoring off
+D/InsetsController(15119): hide(ime(), fromIme=true)
+D/ViewRootImplStubImpl(15119): requestedTypes: 8
+D/ViewRootImplStubImpl(15119): onAnimationStart
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.0
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.053800937
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.17842896
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.31967577
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.45277002
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.5680851
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.66345257
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.74010015
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.8005642
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.84766173
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.8840229
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+D/ViewRootImplStubImpl(15119): onAnimationUpdate, value: 0.91191924
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+I/ImeTracker(15119): com.example.tilapiavision:b45a8afc: onCancelled at PHASE_CLIENT_ANIMATION_CANCEL
+D/ViewRootImplStubImpl(15119): springAnimation ready to cancel:miuix.system.animation.physics.SpringAnimation@679f000android.view.InsetsController$InternalAnimationControlListener.onCancelled:520 android.view.InsetsAnimationControlImpl.cancel:361 android.view.InsetsController.cancelAnimation:1840 android.view.InsetsController.notifyControlRevoked:1823 android.view.InsetsSourceConsumer.setControl:150 
+D/ViewRootImplStubImpl(15119): onAnimationEnd,canceled: true
+D/FlutterJNI(15119): Sending viewport metrics to the engine.
+I/ImeTracker(15119): com.example.tilapiavision:6b09dc0c: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+I/ImeTracker(15119): com.example.tilapiavision:6b09dc0c: onFailed at PHASE_CLIENT_VIEW_SERVED
+D/ActivityThread(15119): handleBoundsCompatInfoChanged remove: name=com.example.tilapiavision
+W/MessageMonitor(15119): PerfMonitor: Slow Operation: Activity com.example.tilapiavision/.MainActivity onActivityResult took 116ms
+D/SecurityManager(15119): checkAccessControl flag1
+I/HandWritingStubImpl(15119): refreshLastKeyboardType: 1
+I/HandWritingStubImpl(15119): getCurrentKeyboardType: 1
+W/e.tilapiavision(15119): type=1400 audit(0.0:804467): avc:  denied  { read } for  name="u:object_r:vendor_display_prop:s0" dev="tmpfs" ino=457 scontext=u:r:untrusted_app:s0:c126,c257,c512,c768 tcontext=u:object_r:vendor_display_prop:s0 tclass=file permissive=0 app=com.example.tilapiavision
+W/libc    (15119): Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+W/libc    (15119): Access denied finding property "vendor.gpp.create_frc_extension"
+W/libc    (15119): Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+W/libc    (15119): Access denied finding property "vendor.gpp.create_frc_extension"
+W/EpFrameworkFactory(15119): activated: false jar exist: false
+W/EpFrameworkFactory(15119): activated: false jar exist: false
+W/libc    (15119): Access denied finding property "persist.vendor.camera.privapp.list"
+D/CameraExtImplXiaoMi(15119): initCameraDevice: 0
+I/CameraManager(15119): Open camera top activityName is com.example.tilapiavision.MainActivity
+E/CameraManagerGlobal(15119): Camera 4 is not present. Ignore physical camera status change
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraManagerGlobal(15119): ignore the torch status update of camera: 2
+D/CameraInjector(15119): updateCloudCameraControllerInfoAsync: has aleardy start update task.
+D/CameraInjector(15119): waitForResult: 
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelist"
+W/libc    (15119): Access denied finding property "vendor.camera.aux.packagelistext"
+W/CameraManagerGlobal(15119): ignore the torch status update of camera: 3
+I/Camera  (15119): startPreview
+W/libc    (15119): Access denied finding property "vendor.display.enable_optimal_refresh_rate"
+W/libc    (15119): Access denied finding property "vendor.gpp.create_frc_extension"
+D/CameraDevice-JV-0(15119): waitUntilIdle: E. id = 0
+D/CameraDevice-JV-0(15119): waitUntilIdle: X
+W/e.tilapiavision(15119): Long monitor contention with owner CameraBackground (17013) at boolean android.hardware.camera2.impl.CameraDeviceImpl.configureStreamsChecked(android.hardware.camera2.params.InputConfiguration, java.util.List, int, android.hardware.camera2.CaptureRequest, long)(CameraDeviceImpl.java:677) waiters=0 in void android.hardware.camera2.impl.CameraDeviceImpl$4.run() for 836ms
+I/Camera  (15119): CameraCaptureSession onConfigured
+I/Camera  (15119): Updating builder settings
+D/Camera  (15119): Updating builder with feature: ExposureLockFeature
+D/Camera  (15119): Updating builder with feature: ExposurePointFeature
+D/Camera  (15119): Updating builder with feature: ZoomLevelFeature
+D/Camera  (15119): Updating builder with feature: AutoFocusFeature
+D/Camera  (15119): Updating builder with feature: NoiseReductionFeature
+I/Camera  (15119): updateNoiseReduction | currentSetting: fast
+D/Camera  (15119): Updating builder with feature: FocusPointFeature
+D/Camera  (15119): Updating builder with feature: ResolutionFeature
+D/Camera  (15119): Updating builder with feature: SensorOrientationFeature
+D/Camera  (15119): Updating builder with feature: FlashFeature
+D/Camera  (15119): Updating builder with feature: ExposureOffsetFeature
+D/Camera  (15119): Updating builder with feature: FpsRangeFeature
+I/Camera  (15119): refreshPreviewCaptureSession
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_DOWN, id[0]=0, pointerCount=1, eventTime=558498130, downTime=558498130, phoneEventTime=04:00:28.275 } moveCount:0
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+I/MIUIInput(15119): [MotionEvent] ViewRootImpl windowName 'com.example.tilapiavision/com.example.tilapiavision.MainActivity', { action=ACTION_UP, id[0]=0, pointerCount=1, eventTime=558498248, downTime=558498130, phoneEventTime=04:00:28.394 } moveCount:0
+I/Camera  (15119): runPictureAutoFocus
+I/Camera  (15119): lockAutoFocus
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+I/e.tilapiavision(15119): EglImage dataspace changed, need recreate
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_FOCUS | afState: 4 | aeState: 4
+I/Camera  (15119): runPrecaptureSequence
+I/Camera  (15119): refreshPreviewCaptureSession
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_PRECAPTURE_START | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_WAITING_PRECAPTURE_DONE | afState: 4 | aeState: 4
+I/Camera  (15119): captureStillPicture
+D/Camera  (15119): Updating builder with feature: ExposureLockFeature
+D/Camera  (15119): Updating builder with feature: ExposurePointFeature
+D/Camera  (15119): Updating builder with feature: ZoomLevelFeature
+D/Camera  (15119): Updating builder with feature: AutoFocusFeature
+D/Camera  (15119): Updating builder with feature: NoiseReductionFeature
+I/Camera  (15119): updateNoiseReduction | currentSetting: fast
+D/Camera  (15119): Updating builder with feature: FocusPointFeature
+D/Camera  (15119): Updating builder with feature: ResolutionFeature
+D/Camera  (15119): Updating builder with feature: SensorOrientationFeature
+D/Camera  (15119): Updating builder with feature: FlashFeature
+D/Camera  (15119): Updating builder with feature: ExposureOffsetFeature
+D/Camera  (15119): Updating builder with feature: FpsRangeFeature
+I/Camera  (15119): sending capture request
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 1 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 2 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 5
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 4
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 5
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 5
+D/CameraCaptureCallback(15119): CameraCaptureCallback | state: STATE_CAPTURING | afState: 4 | aeState: 5
+I/Camera  (15119): unlockAutoFocus
+I/Camera  (15119): refreshPreviewCaptureSession
+I/Camera  (15119): onImageAvailable
+W/e.tilapiavision(15119): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~XrUa8sFi347j__UCP3Jnyg==/com.google.android.marvin.talkback-xmw0lcHrTw4usj-J7Sb0TA==/base.apk' with 1 weak references
+W/e.tilapiavision(15119): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~XrUa8sFi347j__UCP3Jnyg==/com.google.android.marvin.talkback-xmw0lcHrTw4usj-J7Sb0TA==/split_config.arm64_v8a.apk' with 1 weak references
+W/e.tilapiavision(15119): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Q_5kmeUKAReK-KHlTDkIVw==/com.browser.sekams-47P1AsX1d9kowO9ctFUo4Q==/base.apk' with 1 weak references
+W/e.tilapiavision(15119): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Q_5kmeUKAReK-KHlTDkIVw==/com.browser.sekams-47P1AsX1d9kowO9ctFUo4Q==/split_config.arm64_v8a.apk' with 1 weak references
+W/e.tilapiavision(15119): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Q_5kmeUKAReK-KHlTDkIVw==/com.browser.sekams-47P1AsX1d9kowO9ctFUo4Q==/split_config.xxhdpi.apk' with 1 weak references

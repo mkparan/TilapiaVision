@@ -1,3 +1,4 @@
+
 import 'dart:io';
 
 import '../../data/models/detection_result.dart';
@@ -22,3 +23,4 @@ abstract class IDetectionEngine {
   /// `.timeout(DetectionConfig.inferenceTimeout)`.
   Future<DetectionResult> analyze(File image, {required String farmProfile});
 }
+
