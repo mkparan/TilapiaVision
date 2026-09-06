@@ -9,8 +9,12 @@ import 'presentation/app_shell.dart';
 import 'presentation/providers/detection_provider.dart';
 import 'presentation/providers/farm_profile_provider.dart';
 import 'presentation/screens/onboarding/disclaimer_gate_screen.dart';
-import 'services/detection/mock_detection_engine.dart';
+// To revert to the mock engine for UI testing, uncomment the line
+// below and swap the engine: parameter back to MockDetectionEngine().
+// import 'services/detection/mock_detection_engine.dart';
+import 'services/detection/tflite_detection_engine.dart';
 import 'services/storage_service.dart';
+import 'services/verification/tflite_tilapia_verifier.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,14 +43,13 @@ class TilapiaVisionApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => FarmProfileProvider()..load()),
         ChangeNotifierProvider(
           create: (_) => DetectionProvider(
-            // Swap MockDetectionEngine() -> TFLiteDetectionEngine() on
-            // integration day — see
-            // lib/services/detection/tflite_detection_engine.dart for
-            // the full checklist. Nothing else in the app needs to
-            // change.
-            engine: MockDetectionEngine(),
+            // Real on-device YOLO11n disease detector + species verifier.
+            // To revert to the mock for UI testing, swap engine: back to
+            // MockDetectionEngine() and remove the verifier parameter.
+            engine: TFLiteDetectionEngine(),
             repository: DetectionRepository(),
             storageService: StorageService(),
+            verifier: TFLiteTilapiaVerifier(),
           ),
         ),
       ],

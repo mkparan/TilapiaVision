@@ -9,10 +9,11 @@ import '../../data/models/detection_result.dart';
 import '../../data/repositories/detection_repository.dart';
 import '../../services/detection/i_detection_engine.dart';
 import '../../services/storage_service.dart';
+import '../../services/verification/i_tilapia_verifier.dart';
 
 /// The states a capture-to-result cycle can be in, driving which
 /// view [ResultScreen] renders.
-enum ScanStatus { idle, processing, success, timeout, error }
+enum ScanStatus { idle, processing, success, timeout, error, notTilapia }
 
 /// Orchestrates a single detection: runs the active [IDetectionEngine]
 /// (Mock today, TFLite once the trained model lands), caches the
@@ -28,13 +29,16 @@ class DetectionProvider extends ChangeNotifier {
     required IDetectionEngine engine,
     required DetectionRepository repository,
     required StorageService storageService,
+    ITilapiaVerifier? verifier,
   })  : _engine = engine,
         _repository = repository,
-        _storageService = storageService;
+        _storageService = storageService,
+        _verifier = verifier;
 
   final IDetectionEngine _engine;
   final DetectionRepository _repository;
   final StorageService _storageService;
+  final ITilapiaVerifier? _verifier;
 
   ScanStatus status = ScanStatus.idle;
   DetectionResult? lastResult;
@@ -45,6 +49,17 @@ class DetectionProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Species verification gate — if a verifier is wired in, confirm
+      // the subject is a Tilapia before running the expensive detector.
+      if (_verifier != null) {
+        final isTilapia = await _verifier.isTilapia(image);
+        if (!isTilapia) {
+          status = ScanStatus.notTilapia;
+          notifyListeners();
+          return;
+        }
+      }
+
       if (!_engine.isReady) {
         await _engine.initialize();
       }
@@ -74,7 +89,9 @@ class DetectionProvider extends ChangeNotifier {
       status = ScanStatus.success;
     } on TimeoutException {
       status = ScanStatus.timeout;
-    } catch (_) {
+    } catch (e, st) {
+      debugPrint('DetectionProvider.runDetection FAILED: $e');
+      debugPrint('$st');
       status = ScanStatus.error;
     }
 
