@@ -48,6 +48,13 @@ class _ResultScreenState extends State<ResultScreen> {
               message: 'Something went wrong analyzing this photo.',
               onRetry: () => Navigator.of(context).pop(),
             );
+          case ScanStatus.notTilapia:
+            return _ErrorView(
+              message: 'This doesn\'t appear to be a Tilapia.\n\n'
+                  'Please photograph a Nile Tilapia fish to run the '
+                  'disease screening.',
+              onRetry: () => Navigator.of(context).pop(),
+            );
           case ScanStatus.success:
             final result = provider.lastResult!;
             return _ResultView(imageFile: widget.imageFile, result: result);
