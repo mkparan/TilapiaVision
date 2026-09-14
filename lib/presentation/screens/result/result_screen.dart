@@ -55,6 +55,20 @@ class _ResultScreenState extends State<ResultScreen> {
                   'disease screening.',
               onRetry: () => Navigator.of(context).pop(),
             );
+          case ScanStatus.modelMissing:
+            return _ErrorView(
+              message: provider.errorDetail.isNotEmpty
+                  ? provider.errorDetail
+                  : 'A required model is not installed yet.',
+              onRetry: () => Navigator.of(context).pop(),
+            );
+          case ScanStatus.modelFailed:
+            return _ErrorView(
+              message: provider.errorDetail.isNotEmpty
+                  ? provider.errorDetail
+                  : 'A required model loaded but failed to run.',
+              onRetry: () => Navigator.of(context).pop(),
+            );
           case ScanStatus.success:
             final result = provider.lastResult!;
             return _ResultView(imageFile: widget.imageFile, result: result);

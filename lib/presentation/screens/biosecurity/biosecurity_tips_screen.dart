@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../../core/app_theme.dart';
+import '../settings/about_screen.dart';
+import '../settings/settings_screen.dart';
 
 class _BioTip {
   const _BioTip({required this.icon, required this.title, required this.body});
@@ -71,12 +73,45 @@ class BiosecurityTipsScreen extends StatelessWidget {
                           color: Colors.white, size: 17),
                     ),
                     const SizedBox(width: 10),
-                    const Text(
-                      'Biosecurity Tips',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 21,
-                          fontWeight: FontWeight.bold),
+                    const Expanded(
+                      child: Text(
+                        'Biosecurity Tips',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 21,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    PopupMenuButton<String>(
+                      icon: const Icon(LucideIcons.ellipsisVertical,
+                          color: Colors.white),
+                      tooltip: 'More',
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14)),
+                      onSelected: (v) {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) =>
+                              v == 'settings' ? const SettingsScreen() : const AboutScreen(),
+                        ));
+                      },
+                      itemBuilder: (_) => const [
+                        PopupMenuItem(
+                          value: 'settings',
+                          child: Row(children: [
+                            Icon(LucideIcons.settings, size: 17, color: AppColors.ink),
+                            SizedBox(width: 10),
+                            Text('Settings'),
+                          ]),
+                        ),
+                        PopupMenuItem(
+                          value: 'about',
+                          child: Row(children: [
+                            Icon(LucideIcons.info, size: 17, color: AppColors.ink),
+                            SizedBox(width: 10),
+                            Text('About'),
+                          ]),
+                        ),
+                      ],
                     ),
                   ],
                 ),

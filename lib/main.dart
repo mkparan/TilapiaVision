@@ -8,6 +8,7 @@ import 'data/repositories/detection_repository.dart';
 import 'presentation/app_shell.dart';
 import 'presentation/providers/detection_provider.dart';
 import 'presentation/providers/farm_profile_provider.dart';
+import 'presentation/providers/settings_provider.dart';
 import 'presentation/screens/onboarding/disclaimer_gate_screen.dart';
 // To revert to the mock engine for UI testing, uncomment the line
 // below and swap the engine: parameter back to MockDetectionEngine().
@@ -41,6 +42,10 @@ class TilapiaVisionApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FarmProfileProvider()..load()),
+        // Loads persisted thresholds and applies them to the engines
+        // before any scan can run — see settings_provider.dart. The
+        // root router below waits for this to finish loading.
+        ChangeNotifierProvider(create: (_) => SettingsProvider()..load()),
         ChangeNotifierProvider(
           create: (_) => DetectionProvider(
             // Real on-device YOLO11n disease detector + species verifier.
@@ -65,15 +70,18 @@ class TilapiaVisionApp extends StatelessWidget {
 
 /// Decides which "page zero" to show: the mandatory onboarding flow
 /// for first launch, or straight into the tab-bar app shell for a
-/// returning user with a saved Farm Profile.
+/// returning user with a saved Farm Profile. Waits for both the farm
+/// profile AND the persisted detection settings to finish loading, so
+/// a scan can never run against stale in-memory threshold defaults.
 class _RootRouter extends StatelessWidget {
   const _RootRouter();
 
   @override
   Widget build(BuildContext context) {
     final farmProfileProvider = context.watch<FarmProfileProvider>();
+    final settingsProvider = context.watch<SettingsProvider>();
 
-    if (farmProfileProvider.loading) {
+    if (farmProfileProvider.loading || settingsProvider.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     if (!farmProfileProvider.hasProfile) {

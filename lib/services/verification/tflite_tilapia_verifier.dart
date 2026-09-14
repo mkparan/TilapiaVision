@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as img;
 import 'package:tflite_flutter/tflite_flutter.dart';
 
+import '../model_load_exceptions.dart';
 import 'i_tilapia_verifier.dart';
 
 /// On-device species verification gate backed by
@@ -14,23 +17,19 @@ import 'i_tilapia_verifier.dart';
 /// is skipped entirely.
 ///
 /// Model tensor contract:
-///   INPUT  [1, 224, 224, 3]  uint8    — channels-last, raw pixel bytes
-///   OUTPUT [1, 1]            uint8    — quantised probability
+///   INPUT  [1, 224, 224, 3]  uint8  — channels-last, raw pixel bytes
+///   OUTPUT [1, 1]            uint8  — quantised probability
 ///
-/// Output dequantisation (from model export):
-///   scale      = 0.00390625  (1/256)
-///   zero_point = 0
-///   probability = raw_byte * scale
-///   isTilapia  ⟺  probability >= 0.5
+/// probability = raw_byte * scale (scale/zero_point read from the
+/// model itself, not hardcoded, so a re-exported model stays correct).
 class TFLiteTilapiaVerifier implements ITilapiaVerifier {
   static const _modelAssetPath = 'assets/models/tilapia_verifier_int8.tflite';
-  static const _inputSize = 224;
 
-  /// Output quantisation parameters — obtained from
-  /// `interpreter.get_output_details()[0]['quantization']`.
-  static const double _outputScale = 0.00390625; // 1/256
-  static const int _outputZeroPoint = 0;
-  static const double _tilapiaThreshold = 0.5;
+  /// Preconfigured high (see SettingsRepository.defaultVerifierThreshold)
+  /// to avoid accepting random objects or misframed captures while the
+  /// verifier's own accuracy is still being improved. Adjustable from
+  /// Settings, and that change is what updates this value.
+  static double threshold = 0.85;
 
   Interpreter? _interpreter;
   bool _ready = false;
@@ -38,13 +37,21 @@ class TFLiteTilapiaVerifier implements ITilapiaVerifier {
   bool get isReady => _ready;
 
   Future<void> initialize() async {
-    // Same XNNPack delegate as TFLiteDetectionEngine, for a consistent
-    // execution path across both models (see that class's doc comment
-    // for why this matters — it's what avoids a native tensor-data
-    // error on the disease detector).
+    if (_ready) return;
+
+    final File modelFile;
+    try {
+      modelFile = await _materializeAsset(_modelAssetPath);
+    } on ModelMissingException {
+      rethrow;
+    }
+
     final options = InterpreterOptions()..addDelegate(XNNPackDelegate());
-    _interpreter = await Interpreter.fromAsset(_modelAssetPath, options: options);
-    _interpreter!.allocateTensors();
+    try {
+      _interpreter = Interpreter.fromFile(modelFile, options: options);
+    } catch (e) {
+      throw ModelRunException('species verifier', '$e');
+    }
 
     final inputShape = _interpreter!.getInputTensor(0).shape;
     final outputShape = _interpreter!.getOutputTensor(0).shape;
@@ -58,53 +65,69 @@ class TFLiteTilapiaVerifier implements ITilapiaVerifier {
   Future<bool> isTilapia(File image) async {
     if (!_ready) await initialize();
 
-    // ----------------------------------------------------------
-    // 1. Decode & resize to 224×224
-    // ----------------------------------------------------------
     final bytes = await image.readAsBytes();
-    final decoded = img.decodeImage(bytes);
-    if (decoded == null) {
-      // Can't decode → let it through; the detector will fail or the
-      // user will see an error on the next screen. Failing the gate
-      // here on a decoding issue would be misleading.
-      debugPrint('TFLiteTilapiaVerifier: could not decode image, passing through');
-      return true;
-    }
-    final resized = img.copyResize(decoded, width: _inputSize, height: _inputSize);
+    // Decode/resize on a background isolate so a large phone photo
+    // doesn't stall the UI thread.
+    final input = await compute(_prepareChannelsLastUint8, bytes);
 
-    // ----------------------------------------------------------
-    // 2. Build channels-last flat uint8 input [1, 224, 224, 3]
-    // ----------------------------------------------------------
-    final input = Uint8List(1 * _inputSize * _inputSize * 3);
-    int idx = 0;
-
-    for (int y = 0; y < _inputSize; y++) {
-      for (int x = 0; x < _inputSize; x++) {
-        final pixel = resized.getPixel(x, y);
-        input[idx++] = pixel.r.toInt().clamp(0, 255);
-        input[idx++] = pixel.g.toInt().clamp(0, 255);
-        input[idx++] = pixel.b.toInt().clamp(0, 255);
-      }
-    }
-
-    // ----------------------------------------------------------
-    // 3. Run inference — output [1, 1] uint8
-    // ----------------------------------------------------------
     final output = Uint8List(1);
-    
-    // Passing .buffer bypasses tflite_flutter's slow list conversion
-    _interpreter!.run(input.buffer, output.buffer);
+    try {
+      _interpreter!.run(input.buffer, output.buffer);
+    } catch (e) {
+      throw ModelRunException('species verifier', '$e');
+    }
 
-    // ----------------------------------------------------------
-    // 4. Dequantise & threshold
-    // ----------------------------------------------------------
-    final rawByte = output[0];
-    final probability = (rawByte - _outputZeroPoint) * _outputScale;
-    debugPrint(
-      'TFLiteTilapiaVerifier — raw=$rawByte  prob=${probability.toStringAsFixed(4)}  '
-      'isTilapia=${probability >= _tilapiaThreshold}',
-    );
+    final params = _interpreter!.getOutputTensor(0).params;
+    final scale = params.scale == 0 ? 1 / 256.0 : params.scale;
+    final probability = (output[0] - params.zeroPoint) * scale;
+    debugPrint('TFLiteTilapiaVerifier — raw=${output[0]}  '
+        'prob=${probability.toStringAsFixed(4)}  '
+        'isTilapia=${probability >= threshold}');
 
-    return probability >= _tilapiaThreshold;
+    return probability >= threshold;
   }
+
+  /// Copies the asset to a real file on first use, so loading goes
+  /// through Interpreter.fromFile — the most-tested loading path in
+  /// tflite_flutter — instead of the AssetManager/mmap path that
+  /// fromAsset uses, which can produce a model that loads (correct
+  /// tensor shapes read from the header) but fails at invoke() with
+  /// "Input tensor N lacks data" on some builds.
+  Future<File> _materializeAsset(String assetPath) async {
+    ByteData data;
+    try {
+      data = await rootBundle.load(assetPath);
+    } catch (_) {
+      throw ModelMissingException(assetPath, 'species verifier');
+    }
+    final fileName = assetPath.split('/').last;
+    final file = File('${Directory.systemTemp.path}/$fileName');
+    if (!await file.exists() || (await file.length()) != data.lengthInBytes) {
+      await file.writeAsBytes(data.buffer.asUint8List(), flush: true);
+    }
+    return file;
+  }
+}
+
+/// Runs on a background isolate via [compute]. Decodes the photo,
+/// resizes to 224x224, and lays out a channels-last [1,224,224,3]
+/// uint8 buffer of raw pixel bytes (no normalisation — this model
+/// was exported expecting 0-255 directly).
+Uint8List _prepareChannelsLastUint8(Uint8List bytes) {
+  final decoded = img.decodeImage(bytes);
+  if (decoded == null) throw StateError('Could not decode image');
+  const n = 224;
+  final resized = img.copyResize(decoded, width: n, height: n);
+
+  final input = Uint8List(n * n * 3);
+  var idx = 0;
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < n; x++) {
+      final p = resized.getPixel(x, y);
+      input[idx++] = p.r.toInt().clamp(0, 255);
+      input[idx++] = p.g.toInt().clamp(0, 255);
+      input[idx++] = p.b.toInt().clamp(0, 255);
+    }
+  }
+  return input;
 }
