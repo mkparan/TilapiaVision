@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../data/models/detection_result.dart';
@@ -11,12 +10,16 @@ class BoundingBoxPainter extends CustomPainter {
     required this.color,
     required this.label,
     this.dashed = false,
+    this.strokeWidth = 3,
+    this.labelFontSize = 11,
   });
 
   final BoundingBox box;
   final Color color;
   final String label;
   final bool dashed;
+  final double strokeWidth;
+  final double labelFontSize;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -31,7 +34,7 @@ class BoundingBoxPainter extends CustomPainter {
     final paint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 3;
+      ..strokeWidth = strokeWidth;
 
     if (dashed) {
       _drawDashedRRect(canvas, rrect, paint);
@@ -43,8 +46,8 @@ class BoundingBoxPainter extends CustomPainter {
       text: TextSpan(
         text: ' $label ',
         style: TextStyle(
-          color: Colors.black.withOpacity(0.85),
-          fontSize: 11,
+          color: Colors.black.withValues(alpha: 0.85),
+          fontSize: labelFontSize,
           fontWeight: FontWeight.w800,
           backgroundColor: color,
         ),
@@ -53,7 +56,8 @@ class BoundingBoxPainter extends CustomPainter {
     )..layout();
 
     final aboveBox = Offset(rect.left, rect.top - textPainter.height - 4);
-    final tagOffset = aboveBox.dy < 0 ? Offset(rect.left, rect.top + 4) : aboveBox;
+    final tagOffset =
+        aboveBox.dy < 0 ? Offset(rect.left, rect.top + 4) : aboveBox;
     textPainter.paint(canvas, tagOffset);
   }
 
@@ -74,7 +78,11 @@ class BoundingBoxPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant BoundingBoxPainter oldDelegate) {
-    return oldDelegate.box != box || oldDelegate.color != color || oldDelegate.label != label || oldDelegate.dashed != dashed;
+    return oldDelegate.box != box ||
+        oldDelegate.color != color ||
+        oldDelegate.label != label ||
+        oldDelegate.dashed != dashed ||
+        oldDelegate.strokeWidth != strokeWidth ||
+        oldDelegate.labelFontSize != labelFontSize;
   }
 }
-

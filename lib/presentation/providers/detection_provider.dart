@@ -19,7 +19,16 @@ import '../widgets/bounding_box_painter.dart';
 
 /// The states a capture-to-result cycle can be in, driving which
 /// view [ResultScreen] renders.
-enum ScanStatus { idle, processing, success, timeout, error, notTilapia, modelMissing, modelFailed }
+enum ScanStatus {
+  idle,
+  processing,
+  success,
+  timeout,
+  error,
+  notTilapia,
+  modelMissing,
+  modelFailed
+}
 
 /// Orchestrates a single detection: runs the active [IDetectionEngine]
 /// (Mock today, TFLite once the trained model lands), caches the
@@ -150,7 +159,8 @@ class DetectionProvider extends ChangeNotifier {
     if (files.isEmpty) {
       await Share.share(summary, subject: 'TilapiaVision Detection');
     } else {
-      await Share.shareXFiles(files, text: summary, subject: 'TilapiaVision Detection');
+      await Share.shareXFiles(files,
+          text: summary, subject: 'TilapiaVision Detection');
     }
   }
 
@@ -187,10 +197,15 @@ class DetectionProvider extends ChangeNotifier {
             : AppColors.slate,
         label: '${(result.confidenceScore * 100).round()}%',
         dashed: result.label == DetectionLabel.lowMatch,
+        // The UI overlay is painted in logical pixels, while this export
+        // canvas uses the source photo's full pixel dimensions.
+        strokeWidth: ((w < h ? w : h) * 0.008).clamp(6.0, 14.0).toDouble(),
+        labelFontSize: ((w < h ? w : h) * 0.018).clamp(16.0, 28.0).toDouble(),
       ).paint(canvas, Size(w, h));
 
-      final composited =
-          await recorder.endRecording().toImage(srcImage.width, srcImage.height);
+      final composited = await recorder
+          .endRecording()
+          .toImage(srcImage.width, srcImage.height);
       final pngData =
           await composited.toByteData(format: ui.ImageByteFormat.png);
       if (pngData == null) return srcFile;

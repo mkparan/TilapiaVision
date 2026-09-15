@@ -9,14 +9,9 @@
          permission requested here should map to something the app
          genuinely does on-device. -->
 
-    <!-- NOTE: no android:icon set — no launcher icon PNGs are included
-         in this rebuild (I don't have your brand assets to generate
-         them from). Android falls back to a default icon without one;
-         run `flutter create .` over this project once to regenerate
-         the standard mipmap files, or supply your own via
-         android/app/src/main/res/mipmap-*/ic_launcher.png. -->
     <application
         android:label="TilapiaVision"
+        android:icon="@mipmap/ic_launcher"
         android:name="${applicationName}">
         <activity
             android:name=".MainActivity"

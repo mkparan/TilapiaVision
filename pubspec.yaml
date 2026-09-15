@@ -1,10 +1,10 @@
 name: tilapiavision
 description: "Offline presumptive screening for hemorrhagic lesions in Nile Tilapia."
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -50,3 +50,4 @@ flutter:
 
   assets:
     - assets/models/
+    - assets/images/tilapiavision_logo.png

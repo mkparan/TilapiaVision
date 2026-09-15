@@ -31,13 +31,14 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 68,
-                      height: 68,
-                      decoration: const BoxDecoration(
-                          color: AppColors.teal, shape: BoxShape.circle),
-                      child: const Icon(LucideIcons.fish,
-                          color: Colors.white, size: 30),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(
+                        'assets/images/tilapiavision_logo.png',
+                        width: 68,
+                        height: 68,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     const SizedBox(height: 18),
                     Text(
