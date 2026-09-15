@@ -9,6 +9,8 @@ import 'package:provider/provider.dart';
 import '../../../core/app_theme.dart';
 import '../../providers/farm_profile_provider.dart';
 import '../result/result_screen.dart';
+import '../settings/about_screen.dart';
+import '../settings/settings_screen.dart';
 
 /// The main "Scan" tab. Guided capture enforces the field-condition
 /// guidance from Chapter 3: hold 15–30cm away, fill roughly 50% of
@@ -171,10 +173,49 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                         // isReady/loading state (e.g. "Loading Model…"
                         // -> "Model Ready").
                         const _Pill(icon: LucideIcons.wifiOff, text: 'Offline'),
-                        _RoundGlassButton(
-                          icon: LucideIcons.zap,
-                          active: _flashMode == FlashMode.torch,
-                          onTap: _toggleFlash,
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            PopupMenuButton<String>(
+                              icon: const Icon(LucideIcons.ellipsisVertical,
+                                  color: Colors.white),
+                              tooltip: 'More',
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14)),
+                              onSelected: (value) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => value == 'settings'
+                                      ? const SettingsScreen()
+                                      : const AboutScreen(),
+                                ));
+                              },
+                              itemBuilder: (_) => const [
+                                PopupMenuItem(
+                                  value: 'settings',
+                                  child: Row(children: [
+                                    Icon(LucideIcons.settings,
+                                        size: 17, color: AppColors.ink),
+                                    SizedBox(width: 10),
+                                    Text('Settings'),
+                                  ]),
+                                ),
+                                PopupMenuItem(
+                                  value: 'about',
+                                  child: Row(children: [
+                                    Icon(LucideIcons.info,
+                                        size: 17, color: AppColors.ink),
+                                    SizedBox(width: 10),
+                                    Text('About'),
+                                  ]),
+                                ),
+                              ],
+                            ),
+                            _RoundGlassButton(
+                              icon: LucideIcons.zap,
+                              active: _flashMode == FlashMode.torch,
+                              onTap: _toggleFlash,
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -256,8 +297,8 @@ class _RoundGlassButton extends StatelessWidget {
         height: 38,
         decoration: BoxDecoration(
           color: active
-              ? AppColors.amber.withOpacity(0.9)
-              : Colors.black.withOpacity(0.4),
+              ? AppColors.amber.withValues(alpha: 0.9)
+              : Colors.black.withValues(alpha: 0.4),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: Colors.white, size: 18),
@@ -279,7 +320,7 @@ class _GalleryButton extends StatelessWidget {
         width: 54,
         height: 54,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.45),
+          color: Colors.black.withValues(alpha: 0.45),
           shape: BoxShape.circle,
           border: Border.all(color: Colors.white24, width: 1.5),
         ),
@@ -300,7 +341,7 @@ class _Pill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
