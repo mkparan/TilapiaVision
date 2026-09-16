@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../../data/models/detection_result.dart';
 import '../../providers/detection_provider.dart';
@@ -40,33 +41,31 @@ class _ResultScreenState extends State<ResultScreen> {
             return _ProcessingView(imageFile: widget.imageFile);
           case ScanStatus.timeout:
             return _ErrorView(
-              message: 'Analysis took too long. Try again in better lighting or closer range.',
+              message: context.tr('result_timeout'),
               onRetry: () => Navigator.of(context).pop(),
             );
           case ScanStatus.error:
             return _ErrorView(
-              message: 'Something went wrong analyzing this photo.',
+              message: context.tr('result_error'),
               onRetry: () => Navigator.of(context).pop(),
             );
           case ScanStatus.notTilapia:
             return _ErrorView(
-              message: 'This doesn\'t appear to be a Tilapia.\n\n'
-                  'Please photograph a Nile Tilapia fish to run the '
-                  'disease screening.',
+              message: context.tr('result_not_tilapia'),
               onRetry: () => Navigator.of(context).pop(),
             );
           case ScanStatus.modelMissing:
             return _ErrorView(
               message: provider.errorDetail.isNotEmpty
                   ? provider.errorDetail
-                  : 'A required model is not installed yet.',
+                  : context.tr('result_model_missing'),
               onRetry: () => Navigator.of(context).pop(),
             );
           case ScanStatus.modelFailed:
             return _ErrorView(
               message: provider.errorDetail.isNotEmpty
                   ? provider.errorDetail
-                  : 'A required model loaded but failed to run.',
+                  : context.tr('result_model_failed'),
               onRetry: () => Navigator.of(context).pop(),
             );
           case ScanStatus.success:
@@ -102,24 +101,24 @@ class _ProcessingView extends StatelessWidget {
                 color: const Color(0xFF0F1424).withOpacity(0.85),
                 borderRadius: BorderRadius.circular(22),
               ),
-              child: const Column(
+              child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(
+                  const SizedBox(
                     width: 56,
                     height: 56,
                     child: CircularProgressIndicator(strokeWidth: 4, color: AppColors.mint),
                   ),
-                  SizedBox(height: 16),
+                  const SizedBox(height: 16),
                   Text(
-                    'Analyzing image…',
-                    style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
+                    context.tr('result_processing'),
+                    style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    'Running fully on-device — no internet required',
+                    context.tr('result_processing_sub'),
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.white60, fontSize: 11.5),
+                    style: const TextStyle(color: Colors.white60, fontSize: 11.5),
                   ),
                 ],
               ),
@@ -151,7 +150,10 @@ class _ErrorView extends StatelessWidget {
               const SizedBox(height: 12),
               Text(message, textAlign: TextAlign.center),
               const SizedBox(height: 20),
-              ElevatedButton(onPressed: onRetry, child: const Text('Try Again')),
+              ElevatedButton(
+                onPressed: onRetry,
+                child: Text(context.tr('result_try_again')),
+              ),
             ],
           ),
         ),
@@ -166,22 +168,22 @@ class _ResultTheme {
     required this.dashed,
     required this.badgeBg,
     required this.badgeFg,
-    required this.badgeText,
-    required this.heading,
-    required this.body,
+    required this.badgeKey,
+    required this.headingKey,
+    required this.bodyKey,
     required this.actionBg,
-    required this.actionText,
+    required this.actionKey,
   });
 
   final Color accentColor;
   final bool dashed;
   final Color badgeBg;
   final Color badgeFg;
-  final String badgeText;
-  final String heading;
-  final String body;
+  final String badgeKey;
+  final String headingKey;
+  final String bodyKey;
   final Color actionBg;
-  final String actionText;
+  final String actionKey;
 
   static _ResultTheme of(DetectionLabel label) {
     switch (label) {
@@ -191,13 +193,11 @@ class _ResultTheme {
           dashed: false,
           badgeBg: Color(0xFFFFF3DC),
           badgeFg: AppColors.amberDark,
-          badgeText: 'Presumptive Positive',
-          heading: 'Hemorrhagic Ulcer Detected',
-          body: 'Visual signs consistent with Aeromonas hydrophila (MAS). '
-              'This is a presumptive screening result — not a lab-confirmed diagnosis.',
+          badgeKey: 'badge_presumptive',
+          headingKey: 'heading_presumptive',
+          bodyKey: 'body_presumptive',
           actionBg: Color(0xFFFFF6E5),
-          actionText: 'Recommended: Isolate this fish and consult a veterinary or '
-              'aquaculture technician for confirmation.',
+          actionKey: 'action_presumptive',
         );
       case DetectionLabel.lowMatch:
         return const _ResultTheme(
@@ -205,11 +205,11 @@ class _ResultTheme {
           dashed: true,
           badgeBg: AppColors.slateLight,
           badgeFg: Color(0xFF475569),
-          badgeText: 'Low Match',
-          heading: 'Inconclusive Result',
-          body: 'Some visual signs were detected, but confidence fell below the reliable threshold.',
+          badgeKey: 'badge_low_match',
+          headingKey: 'heading_low_match',
+          bodyKey: 'body_low_match',
           actionBg: AppColors.slateLight,
-          actionText: 'Recommended: Retake the photo in better lighting, or have a technician verify in person.',
+          actionKey: 'action_low_match',
         );
       case DetectionLabel.clear:
         return const _ResultTheme(
@@ -217,12 +217,11 @@ class _ResultTheme {
           dashed: false,
           badgeBg: Color(0xFFDBF7EF),
           badgeFg: AppColors.mintDark,
-          badgeText: 'No Lesions Detected',
-          heading: 'Looks Clear',
-          body: 'No hemorrhagic lesions were detected in this image. Continue routine monitoring.',
+          badgeKey: 'badge_clear',
+          headingKey: 'heading_clear',
+          bodyKey: 'body_clear',
           actionBg: Color(0xFFE4FBF4),
-          actionText: 'This screens only visible external symptoms — it does not rule out '
-              'internal or asymptomatic conditions.',
+          actionKey: 'action_clear',
         );
     }
   }
@@ -286,22 +285,22 @@ class _ResultView extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(color: theme.badgeBg, borderRadius: BorderRadius.circular(20)),
                     child: Text(
-                      theme.badgeText,
+                      context.tr(theme.badgeKey),
                       style: TextStyle(color: theme.badgeFg, fontWeight: FontWeight.bold, fontSize: 12),
                     ),
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    theme.heading,
+                    context.tr(theme.headingKey),
                     style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: AppColors.navy),
                   ),
                   const SizedBox(height: 8),
-                  Text(theme.body, style: const TextStyle(fontSize: 13, height: 1.5, color: Colors.black54)),
+                  Text(context.tr(theme.bodyKey), style: const TextStyle(fontSize: 13, height: 1.5, color: Colors.black54)),
                   const SizedBox(height: 14),
                   Container(
                     padding: const EdgeInsets.all(13),
                     decoration: BoxDecoration(color: theme.actionBg, borderRadius: BorderRadius.circular(14)),
-                    child: Text(theme.actionText, style: const TextStyle(fontSize: 11.8, height: 1.5)),
+                    child: Text(context.tr(theme.actionKey), style: const TextStyle(fontSize: 11.8, height: 1.5)),
                   ),
                 ],
               ),
@@ -326,7 +325,7 @@ class _ResultView extends StatelessWidget {
                     await context.read<DetectionProvider>().saveLastResultToHistory();
                     if (context.mounted) Navigator.of(context).pop();
                   },
-                  child: const Text('Save to History'),
+                  child: Text(context.tr('result_save')),
                 ),
               )
             else
@@ -334,12 +333,12 @@ class _ResultView extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Retake Photo'),
+                  child: Text(context.tr('result_retake')),
                 ),
               ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Scan Another'),
+              child: Text(context.tr('result_scan_another')),
             ),
           ],
         ),

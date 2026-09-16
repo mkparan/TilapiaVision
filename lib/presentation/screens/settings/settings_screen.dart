@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../providers/detection_provider.dart';
 import '../../providers/farm_profile_provider.dart';
+import '../../providers/locale_provider.dart';
 import '../../providers/settings_provider.dart';
 
-/// Reconfigure the farm name and the two detection thresholds.
-/// Every change is saved to disk immediately (see SettingsProvider),
-/// so nothing here is lost by backgrounding or closing the app.
+/// Reconfigure the farm name, the two detection thresholds, and the
+/// app language. Every change is saved to disk immediately (see
+/// SettingsProvider / LocaleProvider), so nothing here is lost by
+/// backgrounding or closing the app.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
   @override
@@ -30,14 +33,29 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final settings = context.watch<SettingsProvider>();
     final detection = context.read<DetectionProvider>();
+    final localeProvider = context.watch<LocaleProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(context.tr('settings_title'))),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text('Farm / Owner Name',
-              style: TextStyle(
+          // ── Language ──────────────────────────────────────────────────
+          Text(context.tr('settings_language'),
+              style: const TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.ink)),
+          const SizedBox(height: 10),
+          _LanguageSelector(
+            current: localeProvider.locale,
+            onChanged: (l) => localeProvider.setLocale(l),
+          ),
+          const SizedBox(height: 28),
+
+          // ── Farm name ─────────────────────────────────────────────────
+          Text(context.tr('settings_farm_label'),
+              style: const TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: AppColors.ink)),
@@ -46,7 +64,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             controller: _farmCtrl,
             textCapitalization: TextCapitalization.words,
             decoration: InputDecoration(
-              hintText: 'Farm name',
+              hintText: context.tr('settings_farm_hint'),
               filled: true,
               fillColor: Colors.white,
               border: OutlineInputBorder(
@@ -61,65 +79,73 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onPressed: () async {
                 final name = _farmCtrl.text.trim();
                 if (name.isEmpty) return;
-                await context
-                    .read<FarmProfileProvider>()
-                    .updateName(name);
+                await context.read<FarmProfileProvider>().updateName(name);
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Farm name saved')));
+                      SnackBar(content: Text(context.tr('settings_farm_saved'))));
                 }
               },
-              child: const Text('Save Farm Name'),
+              child: Text(context.tr('settings_farm_save')),
             ),
           ),
           const SizedBox(height: 28),
-          const Text('Detection Thresholds',
-              style: TextStyle(
+
+          // ── Detection thresholds ──────────────────────────────────────
+          Text(context.tr('settings_thresholds'),
+              style: const TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: AppColors.ink)),
           const SizedBox(height: 4),
-          const Text(
-              'Lower values flag more cases but risk more false '
-              'positives. The species check is set high by default to '
-              'avoid accepting random objects or misframed photos.',
-              style: TextStyle(fontSize: 11.5, color: AppColors.slate, height: 1.5)),
+          Text(context.tr('settings_thresholds_desc'),
+              style: const TextStyle(
+                  fontSize: 11.5, color: AppColors.slate, height: 1.5)),
           const SizedBox(height: 14),
           _slider(
-            'Species check (Tilapia gate)',
+            context.tr('settings_species_gate'),
             settings.verifierThreshold,
             (v) => settings.setVerifierThreshold(v),
           ),
           _slider(
-            'Positive result threshold',
+            context.tr('settings_positive_threshold'),
             settings.operatingThreshold,
             (v) => settings.setOperatingThreshold(v),
           ),
           const SizedBox(height: 28),
-          const Text('Model Status',
-              style: TextStyle(
+
+          // ── Model status ──────────────────────────────────────────────
+          Text(context.tr('settings_model_status'),
+              style: const TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: AppColors.ink)),
           const SizedBox(height: 10),
           _ModelStatusTile(
-            label: 'Species verifier',
+            label: context.tr('settings_verifier'),
+            checkingLabel: context.tr('settings_model_checking'),
+            readyLabel: context.tr('settings_model_ready'),
+            notReadyLabel: context.tr('settings_model_not_ready'),
             future: () => detection.checkVerifierReady(),
           ),
           const SizedBox(height: 8),
           _ModelStatusTile(
-            label: 'Disease detector',
+            label: context.tr('settings_detector'),
+            checkingLabel: context.tr('settings_model_checking'),
+            readyLabel: context.tr('settings_model_ready'),
+            notReadyLabel: context.tr('settings_model_not_ready'),
             future: () => detection.checkDetectorReady(),
           ),
           const SizedBox(height: 28),
-          const Text('Stored Data',
-              style: TextStyle(
+
+          // ── Stored data ───────────────────────────────────────────────
+          Text(context.tr('settings_stored_data'),
+              style: const TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: AppColors.ink)),
           const SizedBox(height: 10),
           _tile(context, LucideIcons.fileSpreadsheet,
-              'Export detection log (CSV)', () => detection.exportCsv()),
+              context.tr('settings_export_csv'), () => detection.exportCsv()),
         ],
       ),
     );
@@ -159,19 +185,105 @@ class _SettingsScreenState extends State<SettingsScreen> {
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           leading: Icon(i, size: 19, color: AppColors.deepBlue),
-          title:
-              Text(t, style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600)),
-          trailing:
-              const Icon(LucideIcons.chevronRight, size: 15, color: AppColors.slate),
+          title: Text(t,
+              style:
+                  const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600)),
+          trailing: const Icon(LucideIcons.chevronRight,
+              size: 15, color: AppColors.slate),
           onTap: onTap,
         ),
       );
 }
 
+// ---------------------------------------------------------------------------
+// Language selector widget
+// ---------------------------------------------------------------------------
+
+class _LanguageSelector extends StatelessWidget {
+  const _LanguageSelector({required this.current, required this.onChanged});
+
+  final AppLocale current;
+  final ValueChanged<AppLocale> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: AppTheme.cardShadow),
+      child: Column(
+        children: AppLocale.values.map((locale) {
+          final isLast = locale == AppLocale.values.last;
+          return Column(
+            children: [
+              InkWell(
+                onTap: () => onChanged(locale),
+                borderRadius: BorderRadius.vertical(
+                  top: locale == AppLocale.values.first
+                      ? const Radius.circular(16)
+                      : Radius.zero,
+                  bottom: isLast ? const Radius.circular(16) : Radius.zero,
+                ),
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                  child: Row(
+                    children: [
+                      Icon(
+                        current == locale
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_off,
+                        size: 20,
+                        color: current == locale
+                            ? AppColors.deepBlue
+                            : AppColors.slate,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        locale.displayName,
+                        style: TextStyle(
+                          fontSize: 13.5,
+                          fontWeight: current == locale
+                              ? FontWeight.w700
+                              : FontWeight.w500,
+                          color: current == locale
+                              ? AppColors.deepBlue
+                              : AppColors.ink,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              if (!isLast)
+                const Divider(height: 1, indent: 48, color: AppColors.border),
+            ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Model status tile
+// ---------------------------------------------------------------------------
+
 class _ModelStatusTile extends StatelessWidget {
-  const _ModelStatusTile({required this.label, required this.future});
+  const _ModelStatusTile({
+    required this.label,
+    required this.future,
+    required this.checkingLabel,
+    required this.readyLabel,
+    required this.notReadyLabel,
+  });
+
   final String label;
   final Future<bool> Function() future;
+  final String checkingLabel;
+  final String readyLabel;
+  final String notReadyLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -194,15 +306,15 @@ class _ModelStatusTile extends StatelessWidget {
                   child: CircularProgressIndicator(strokeWidth: 2))
             else
               Icon(ok ? LucideIcons.circleCheck : LucideIcons.circleX,
-                  size: 18,
-                  color: ok ? AppColors.mintDark : Colors.redAccent),
+                  size: 18, color: ok ? AppColors.mintDark : Colors.redAccent),
             const SizedBox(width: 10),
             Expanded(
               child: Text(label,
-                  style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                  style: const TextStyle(
+                      fontSize: 13, fontWeight: FontWeight.w600)),
             ),
             Text(
-              loading ? 'Checking…' : (ok ? 'Ready' : 'Not ready'),
+              loading ? checkingLabel : (ok ? readyLabel : notReadyLabel),
               style: TextStyle(
                   fontSize: 11.5,
                   color: loading

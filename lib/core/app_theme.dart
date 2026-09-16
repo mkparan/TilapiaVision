@@ -49,7 +49,8 @@ class AppTheme {
           disabledBackgroundColor: const Color(0xFFB9C6D6),
           disabledForegroundColor: const Color(0xFFEDF2F6),
           padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
         ),
       ),

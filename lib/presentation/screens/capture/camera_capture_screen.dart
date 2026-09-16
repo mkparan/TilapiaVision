@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../providers/farm_profile_provider.dart';
 import '../result/result_screen.dart';
@@ -122,6 +123,11 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Pre-capture translated labels from the widget-tree context.
+    // PopupMenuButton's itemBuilder receives an overlay context that is
+    // outside the Provider tree, so context.tr() would fail inside it.
+    final menuSettings = context.tr('camera_menu_settings');
+    final menuAbout = context.tr('camera_menu_about');
     return Scaffold(
       backgroundColor: const Color(0xFF0B0F19),
       body: SafeArea(
@@ -172,7 +178,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                         // for a live status derived from the engine's
                         // isReady/loading state (e.g. "Loading Model…"
                         // -> "Model Ready").
-                        const _Pill(icon: LucideIcons.wifiOff, text: 'Offline'),
+                        _Pill(icon: LucideIcons.wifiOff, text: context.tr('camera_pill_offline')),
                         Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -189,23 +195,23 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                                       : const AboutScreen(),
                                 ));
                               },
-                              itemBuilder: (_) => const [
+                              itemBuilder: (_) => [
                                 PopupMenuItem(
                                   value: 'settings',
                                   child: Row(children: [
-                                    Icon(LucideIcons.settings,
+                                    const Icon(LucideIcons.settings,
                                         size: 17, color: AppColors.ink),
-                                    SizedBox(width: 10),
-                                    Text('Settings'),
+                                    const SizedBox(width: 10),
+                                    Text(menuSettings),
                                   ]),
                                 ),
                                 PopupMenuItem(
                                   value: 'about',
                                   child: Row(children: [
-                                    Icon(LucideIcons.info,
+                                    const Icon(LucideIcons.info,
                                         size: 17, color: AppColors.ink),
-                                    SizedBox(width: 10),
-                                    Text('About'),
+                                    const SizedBox(width: 10),
+                                    Text(menuAbout),
                                   ]),
                                 ),
                               ],
@@ -220,23 +226,23 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                       ],
                     ),
                   ),
-                  const Positioned(
+                  Positioned(
                     top: 62,
                     left: 0,
                     right: 0,
                     child: Center(
                       child: _Pill(
-                          icon: LucideIcons.focus, text: 'Hold 15–30cm away'),
+                          icon: LucideIcons.focus, text: context.tr('camera_pill_hold')),
                     ),
                   ),
-                  const Positioned(
+                  Positioned(
                     top: 100,
                     left: 0,
                     right: 0,
                     child: Center(
                       child: _Pill(
                           icon: LucideIcons.sun,
-                          text: 'Avoid direct flash / sunlight glare'),
+                          text: context.tr('camera_pill_glare')),
                     ),
                   ),
                 ],

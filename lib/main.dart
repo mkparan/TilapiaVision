@@ -8,6 +8,7 @@ import 'data/repositories/detection_repository.dart';
 import 'presentation/app_shell.dart';
 import 'presentation/providers/detection_provider.dart';
 import 'presentation/providers/farm_profile_provider.dart';
+import 'presentation/providers/locale_provider.dart';
 import 'presentation/providers/settings_provider.dart';
 import 'presentation/screens/onboarding/disclaimer_gate_screen.dart';
 // To revert to the mock engine for UI testing, uncomment the line
@@ -42,6 +43,8 @@ class TilapiaVisionApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => FarmProfileProvider()..load()),
+        // Loads the persisted language preference before any UI renders.
+        ChangeNotifierProvider(create: (_) => LocaleProvider()..load()),
         // Loads persisted thresholds and applies them to the engines
         // before any scan can run — see settings_provider.dart. The
         // root router below waits for this to finish loading.
@@ -80,8 +83,9 @@ class _RootRouter extends StatelessWidget {
   Widget build(BuildContext context) {
     final farmProfileProvider = context.watch<FarmProfileProvider>();
     final settingsProvider = context.watch<SettingsProvider>();
+    final localeProvider = context.watch<LocaleProvider>();
 
-    if (farmProfileProvider.loading || settingsProvider.loading) {
+    if (farmProfileProvider.loading || settingsProvider.loading || localeProvider.loading) {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     if (!farmProfileProvider.hasProfile) {

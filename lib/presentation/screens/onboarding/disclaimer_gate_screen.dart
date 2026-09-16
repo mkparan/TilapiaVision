@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import 'farm_profile_setup_screen.dart';
 
@@ -49,12 +50,12 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                           ?.copyWith(color: Colors.white, fontSize: 26),
                     ),
                     const SizedBox(height: 8),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: Text(
-                        'Offline hemorrhagic lesion screening for Nile Tilapia',
+                        context.tr('disclaimer_subtitle'),
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white70, fontSize: 13),
+                        style: const TextStyle(color: Colors.white70, fontSize: 13),
                       ),
                     ),
                   ],
@@ -84,16 +85,14 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                             size: 17, color: AppColors.teal),
                       ),
                       const SizedBox(width: 10),
-                      Text('Before You Begin',
+                      Text(context.tr('disclaimer_section_title'),
                           style: Theme.of(context).textTheme.headlineSmall),
                     ],
                   ),
                   const SizedBox(height: 14),
-                  const Text(
-                    'TilapiaVision screens for visual signs consistent with hemorrhagic disease. '
-                    'It is a detection support tool — not a veterinary diagnosis. Always confirm '
-                    'results with a qualified professional before treatment.',
-                    style: TextStyle(
+                  Text(
+                    context.tr('disclaimer_body'),
+                    style: const TextStyle(
                         fontSize: 13, color: Colors.black87, height: 1.55),
                   ),
                   const SizedBox(height: 18),
@@ -114,12 +113,12 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                             onChanged: (v) =>
                                 setState(() => _acknowledged = v ?? false),
                           ),
-                          const Expanded(
+                          Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(top: 12),
+                              padding: const EdgeInsets.only(top: 12),
                               child: Text(
-                                'I understand this is a presumptive screening tool, not a medical diagnosis.',
-                                style: TextStyle(fontSize: 12.5),
+                                context.tr('disclaimer_checkbox'),
+                                style: const TextStyle(fontSize: 12.5),
                               ),
                             ),
                           ),
@@ -138,7 +137,7 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                                         const FarmProfileSetupScreen()),
                               )
                           : null,
-                      child: const Text('Continue'),
+                      child: Text(context.tr('disclaimer_continue')),
                     ),
                   ),
                 ],

@@ -1,43 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../settings/about_screen.dart';
 import '../settings/settings_screen.dart';
-
-class _BioTip {
-  const _BioTip({required this.icon, required this.title, required this.body});
-
-  final IconData icon;
-  final String title;
-  final String body;
-}
-
-const _tips = [
-  _BioTip(
-    icon: LucideIcons.hand,
-    title: 'Sanitize hands between ponds',
-    body:
-        'Wash or sanitize before and after handling fish from a different enclosure.',
-  ),
-  _BioTip(
-    icon: LucideIcons.package,
-    title: 'Disinfect nets & equipment',
-    body:
-        'Shared nets and basins are a common way disease travels between grow-out ponds.',
-  ),
-  _BioTip(
-    icon: LucideIcons.smartphone,
-    title: 'Keep your phone dry',
-    body: 'Avoid direct device contact with pond water when capturing scans.',
-  ),
-  _BioTip(
-    icon: LucideIcons.triangleAlert,
-    title: 'Isolate suspected cases',
-    body:
-        'Move a Presumptive Positive fish to a separate holding container while you seek verification.',
-  ),
-];
 
 /// Reachable anytime from the tab bar rather than forced on launch —
 /// reduces onboarding friction while staying available to farmers who
@@ -47,6 +14,36 @@ class BiosecurityTipsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Pre-capture translated labels from the widget-tree context.
+    // PopupMenuButton's itemBuilder receives an overlay context that is
+    // outside the Provider tree, so context.tr() would fail inside it.
+    final menuSettings = context.tr('camera_menu_settings');
+    final menuAbout = context.tr('camera_menu_about');
+
+    // Tips are resolved at build time so they respond to language changes.
+    final tips = [
+      _BioTip(
+        icon: LucideIcons.hand,
+        title: context.tr('bio_tip1_title'),
+        body: context.tr('bio_tip1_body'),
+      ),
+      _BioTip(
+        icon: LucideIcons.package,
+        title: context.tr('bio_tip2_title'),
+        body: context.tr('bio_tip2_body'),
+      ),
+      _BioTip(
+        icon: LucideIcons.smartphone,
+        title: context.tr('bio_tip3_title'),
+        body: context.tr('bio_tip3_body'),
+      ),
+      _BioTip(
+        icon: LucideIcons.triangleAlert,
+        title: context.tr('bio_tip4_title'),
+        body: context.tr('bio_tip4_body'),
+      ),
+    ];
+
     return Scaffold(
       body: Column(
         children: [
@@ -73,10 +70,10 @@ class BiosecurityTipsScreen extends StatelessWidget {
                           color: Colors.white, size: 17),
                     ),
                     const SizedBox(width: 10),
-                    const Expanded(
+                    Expanded(
                       child: Text(
-                        'Biosecurity Tips',
-                        style: TextStyle(
+                        context.tr('bio_title'),
+                        style: const TextStyle(
                             color: Colors.white,
                             fontSize: 21,
                             fontWeight: FontWeight.bold),
@@ -90,25 +87,28 @@ class BiosecurityTipsScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(14)),
                       onSelected: (v) {
                         Navigator.of(context).push(MaterialPageRoute(
-                          builder: (_) =>
-                              v == 'settings' ? const SettingsScreen() : const AboutScreen(),
+                          builder: (_) => v == 'settings'
+                              ? const SettingsScreen()
+                              : const AboutScreen(),
                         ));
                       },
-                      itemBuilder: (_) => const [
+                      itemBuilder: (_) => [
                         PopupMenuItem(
                           value: 'settings',
                           child: Row(children: [
-                            Icon(LucideIcons.settings, size: 17, color: AppColors.ink),
-                            SizedBox(width: 10),
-                            Text('Settings'),
+                            const Icon(LucideIcons.settings,
+                                size: 17, color: AppColors.ink),
+                            const SizedBox(width: 10),
+                            Text(menuSettings),
                           ]),
                         ),
                         PopupMenuItem(
                           value: 'about',
                           child: Row(children: [
-                            Icon(LucideIcons.info, size: 17, color: AppColors.ink),
-                            SizedBox(width: 10),
-                            Text('About'),
+                            const Icon(LucideIcons.info,
+                                size: 17, color: AppColors.ink),
+                            const SizedBox(width: 10),
+                            Text(menuAbout),
                           ]),
                         ),
                       ],
@@ -116,9 +116,9 @@ class BiosecurityTipsScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 10),
-                const Text(
-                  'Simple habits that reduce the risk of spreading disease between ponds.',
-                  style: TextStyle(
+                Text(
+                  context.tr('bio_subtitle'),
+                  style: const TextStyle(
                       color: Color(0xFFD7ECF2), fontSize: 12.5, height: 1.5),
                 ),
               ],
@@ -127,10 +127,10 @@ class BiosecurityTipsScreen extends StatelessWidget {
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(18),
-              itemCount: _tips.length,
+              itemCount: tips.length,
               separatorBuilder: (_, __) => const SizedBox(height: 12),
               itemBuilder: (context, i) {
-                final tip = _tips[i];
+                final tip = tips[i];
                 return Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
@@ -177,4 +177,12 @@ class BiosecurityTipsScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class _BioTip {
+  const _BioTip({required this.icon, required this.title, required this.body});
+
+  final IconData icon;
+  final String title;
+  final String body;
 }

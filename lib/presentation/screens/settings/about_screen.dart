@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../../core/constants.dart';
 
@@ -9,7 +10,7 @@ class AboutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('About')),
+      appBar: AppBar(title: Text(context.tr('about_title'))),
       body: ListView(padding: const EdgeInsets.all(22), children: [
         Center(
           child: ClipRRect(
@@ -31,39 +32,22 @@ class AboutScreen extends StatelessWidget {
                   color: AppColors.navy)),
         ),
         const SizedBox(height: 4),
-        const Center(
-          child: Text('Version 1.0.0 — offline build',
-              style: TextStyle(fontSize: 12, color: AppColors.slate)),
+        Center(
+          child: Text(context.tr('about_version'),
+              style: const TextStyle(fontSize: 12, color: AppColors.slate)),
         ),
         const SizedBox(height: 24),
-        _card(
-            'What this app does',
-            'TilapiaVision screens photographs of Nile Tilapia for visual '
-                'signs consistent with Motile Aeromonas Septicemia (hemorrhagic '
-                'lesions). Everything runs on-device — no internet, no account.'),
-        _card(
-            'How it works',
-            'Two models run in sequence. A species check first confirms the '
-                'photo shows a tilapia; only then does the lesion detector run. '
-                'That is why photographing something else returns "Not a '
-                'Tilapia" rather than a disease result.'),
-        _card(
-            'Important limitation',
-            'This is a presumptive screening tool, not a veterinary '
-                'diagnosis. It detects only visible external symptoms and '
-                'cannot rule out internal or asymptomatic conditions. Always '
-                'confirm with a qualified professional before treatment.'),
-        _card(
-            'Your data',
-            'Detection photos are deleted automatically after '
-                '${DetectionConfig.imageRetentionDays} days. Detection records '
-                'stay until you delete or export them. Nothing leaves your '
-                'device unless you share it yourself.'),
+        _card(context, 'about_card1_title', 'about_card1_body'),
+        _card(context, 'about_card2_title', 'about_card2_body'),
+        _card(context, 'about_card3_title', 'about_card3_body'),
+        _cardFmt(context, 'about_card4_title', 'about_card4_body',
+            {'days': '${DetectionConfig.imageRetentionDays}'}),
       ]),
     );
   }
 
-  Widget _card(String t, String b) => Container(
+  Widget _card(BuildContext ctx, String titleKey, String bodyKey) =>
+      Container(
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -71,13 +55,35 @@ class AboutScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(16),
             boxShadow: AppTheme.cardShadow),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(t,
+          Text(ctx.tr(titleKey),
               style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 13.5,
                   color: AppColors.navy)),
           const SizedBox(height: 6),
-          Text(b,
+          Text(ctx.tr(bodyKey),
+              style: const TextStyle(
+                  fontSize: 12.5, height: 1.6, color: Colors.black54)),
+        ]),
+      );
+
+  Widget _cardFmt(BuildContext ctx, String titleKey, String bodyKey,
+          Map<String, String> args) =>
+      Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: AppTheme.cardShadow),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(ctx.tr(titleKey),
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13.5,
+                  color: AppColors.navy)),
+          const SizedBox(height: 6),
+          Text(ctx.trFmt(bodyKey, args),
               style: const TextStyle(
                   fontSize: 12.5, height: 1.6, color: Colors.black54)),
         ]),

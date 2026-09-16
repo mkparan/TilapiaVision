@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../app_shell.dart';
 import '../../providers/farm_profile_provider.dart';
@@ -52,18 +53,18 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Set Up Your Farm Profile',
+                    Text(context.tr('setup_title'),
                         style: Theme.of(context).textTheme.headlineSmall),
                     const SizedBox(height: 6),
-                    const Text(
-                      'No account or internet needed — everything stays on this device.',
-                      style: TextStyle(
+                    Text(
+                      context.tr('setup_subtitle'),
+                      style: const TextStyle(
                           fontSize: 12.5, color: Colors.black54, height: 1.5),
                     ),
                     const SizedBox(height: 26),
-                    const Text(
-                      'FARM / OWNER NAME',
-                      style: TextStyle(
+                    Text(
+                      context.tr('setup_field_label'),
+                      style: const TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.bold,
                           color: Colors.black54,
@@ -73,9 +74,9 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
                     TextField(
                       controller: _nameController,
                       onChanged: (_) => setState(() {}),
-                      decoration: const InputDecoration(
-                        hintText: 'e.g., Doongan Grow-Out Pond',
-                        prefixIcon: Icon(LucideIcons.user, size: 19),
+                      decoration: InputDecoration(
+                        hintText: context.tr('setup_field_hint'),
+                        prefixIcon: const Icon(LucideIcons.user, size: 19),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -84,17 +85,16 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
                       decoration: BoxDecoration(
                           color: AppColors.ice,
                           borderRadius: BorderRadius.circular(14)),
-                      child: const Row(
+                      child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(LucideIcons.info,
+                          const Icon(LucideIcons.info,
                               size: 18, color: AppColors.teal),
-                          SizedBox(width: 10),
+                          const SizedBox(width: 10),
                           Expanded(
                             child: Text(
-                              'Detection photos auto-delete after 30 days to save space. '
-                              'Detection records stay in your local CSV log until you clear or export them.',
-                              style: TextStyle(fontSize: 11.5, height: 1.55),
+                              context.tr('setup_storage_notice'),
+                              style: const TextStyle(fontSize: 11.5, height: 1.55),
                             ),
                           ),
                         ],
@@ -118,10 +118,10 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
                               onChanged: (v) =>
                                   setState(() => _acknowledged = v ?? false),
                             ),
-                            const Expanded(
+                            Expanded(
                               child: Text(
-                                'I acknowledge the 30-day photo storage notice above.',
-                                style: TextStyle(fontSize: 12),
+                                context.tr('setup_checkbox'),
+                                style: const TextStyle(fontSize: 12),
                               ),
                             ),
                           ],
@@ -148,7 +148,7 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
                         child: CircularProgressIndicator(
                             strokeWidth: 2.4, color: Colors.white),
                       )
-                    : const Text('Create Profile & Start Scanning'),
+                    : Text(context.tr('setup_cta')),
               ),
             ),
           ],
