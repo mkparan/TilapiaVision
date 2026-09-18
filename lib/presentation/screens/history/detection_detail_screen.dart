@@ -42,6 +42,10 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
   }
 
   Future<void> _handleDelete() async {
+    // Capture the provider before any await so context is never accessed
+    // across an async gap (use_build_context_synchronously).
+    final detectionProvider = context.read<DetectionProvider>();
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -69,7 +73,7 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
     if (id == null) return;
 
     setState(() => _busy = true);
-    await context.read<DetectionProvider>().deleteDetection(id);
+    await detectionProvider.deleteDetection(id);
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -110,12 +114,12 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(LucideIcons.imageOff,
+                                Icon(LucideIcons.imageOff,
                                     size: 34, color: AppColors.slate),
                                 const SizedBox(height: 10),
                                 Text(
                                   context.tr('detail_image_expired'),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: AppColors.slate,
                                       fontWeight: FontWeight.bold),
                                 ),
@@ -123,7 +127,7 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                                 Text(
                                   context.trFmt('detail_image_expired_sub',
                                       {'days': '${DetectionConfig.imageRetentionDays}'}),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       color: AppColors.slate, fontSize: 11.5),
                                 ),
                               ],
@@ -196,8 +200,8 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.fromLTRB(22, 14, 22, 20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
           border: Border(top: BorderSide(color: AppColors.border)),
         ),
         child: Row(
@@ -257,7 +261,7 @@ class _InfoRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 11,
                       color: AppColors.slate,
                       fontWeight: FontWeight.w600),
@@ -265,7 +269,7 @@ class _InfoRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 14,
                       color: AppColors.ink,
                       fontWeight: FontWeight.w600),
@@ -294,24 +298,25 @@ class _DetailTheme {
 }
 
 _DetailTheme _detailThemeFor(DetectionLabel label) {
+  final isDark = AppColors.isDark;
   switch (label) {
     case DetectionLabel.presumptivePositive:
-      return const _DetailTheme(
-        badgeBg: Color(0xFFFFF3DC),
+      return _DetailTheme(
+        badgeBg: isDark ? const Color(0xFF3D2E0F) : const Color(0xFFFFF3DC),
         badgeFg: AppColors.amberDark,
         badgeKey: 'detail_badge_presumptive',
         headingKey: 'detail_heading_presumptive',
       );
     case DetectionLabel.lowMatch:
-      return const _DetailTheme(
+      return _DetailTheme(
         badgeBg: AppColors.slateLight,
-        badgeFg: Color(0xFF475569),
+        badgeFg: isDark ? const Color(0xFFC3CCDA) : const Color(0xFF475569),
         badgeKey: 'detail_badge_low_match',
         headingKey: 'detail_heading_low_match',
       );
     case DetectionLabel.clear:
-      return const _DetailTheme(
-        badgeBg: Color(0xFFDBF7EF),
+      return _DetailTheme(
+        badgeBg: isDark ? const Color(0xFF10382E) : const Color(0xFFDBF7EF),
         badgeFg: AppColors.mintDark,
         badgeKey: 'detail_badge_clear',
         headingKey: 'detail_heading_clear',

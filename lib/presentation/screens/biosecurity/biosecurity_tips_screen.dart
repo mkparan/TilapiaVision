@@ -51,6 +51,8 @@ class BiosecurityTipsScreen extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.fromLTRB(22, 52, 22, 26),
             decoration: const BoxDecoration(
+              // Fixed brand teal header — deliberately unchanged in
+              // dark mode, matching the other tab headers.
               color: AppColors.teal,
               borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
             ),
@@ -63,7 +65,7 @@ class BiosecurityTipsScreen extends StatelessWidget {
                       width: 34,
                       height: 34,
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.16),
+                        color: Colors.white.withValues(alpha: 0.16),
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: const Icon(LucideIcons.shieldCheck,
@@ -96,7 +98,7 @@ class BiosecurityTipsScreen extends StatelessWidget {
                         PopupMenuItem(
                           value: 'settings',
                           child: Row(children: [
-                            const Icon(LucideIcons.settings,
+                            Icon(LucideIcons.settings,
                                 size: 17, color: AppColors.ink),
                             const SizedBox(width: 10),
                             Text(menuSettings),
@@ -105,7 +107,7 @@ class BiosecurityTipsScreen extends StatelessWidget {
                         PopupMenuItem(
                           value: 'about',
                           child: Row(children: [
-                            const Icon(LucideIcons.info,
+                            Icon(LucideIcons.info,
                                 size: 17, color: AppColors.ink),
                             const SizedBox(width: 10),
                             Text(menuAbout),
@@ -134,7 +136,7 @@ class BiosecurityTipsScreen extends StatelessWidget {
                 return Container(
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: AppColors.surface,
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: AppTheme.cardShadow,
                   ),
@@ -156,13 +158,15 @@ class BiosecurityTipsScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(tip.title,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 13)),
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: AppColors.ink)),
                             const SizedBox(height: 3),
                             Text(tip.body,
-                                style: const TextStyle(
+                                style: TextStyle(
                                     fontSize: 11.5,
-                                    color: Colors.black54,
+                                    color: AppColors.slate,
                                     height: 1.5)),
                           ],
                         ),

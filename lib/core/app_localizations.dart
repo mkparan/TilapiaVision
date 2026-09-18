@@ -182,6 +182,9 @@ class AppLocalizations {
       'settings_farm_hint': 'Farm name',
       'settings_farm_save': 'Save Farm Name',
       'settings_farm_saved': 'Farm name saved',
+      'settings_appearance': 'Appearance',
+      'settings_dark_mode': 'Dark Mode',
+      'settings_dark_mode_desc': 'Use a dark color scheme throughout the app',
       'settings_thresholds': 'Detection Thresholds',
       'settings_thresholds_desc':
           'Lower values flag more cases but risk more false positives. '
@@ -364,6 +367,10 @@ class AppLocalizations {
       'settings_farm_hint': 'Pangalan ng bukid',
       'settings_farm_save': 'I-save ang Pangalan ng Bukid',
       'settings_farm_saved': 'Na-save ang pangalan ng bukid',
+      'settings_appearance': 'Hitsura',
+      'settings_dark_mode': 'Madilim na Mode',
+      'settings_dark_mode_desc':
+          'Gamitin ang madilim na kulay sa buong app',
       'settings_thresholds': 'Mga Threshold ng Detection',
       'settings_thresholds_desc':
           'Ang mas mababang halaga ay nagtatanda ng mas maraming kaso ngunit nagdudulot ng mas maraming maling positibo. '
@@ -547,6 +554,10 @@ class AppLocalizations {
       'settings_farm_hint': 'Ngalan sa pond',
       'settings_farm_save': 'I-save ang Ngalan sa Pond',
       'settings_farm_saved': 'Na-save ang ngalan sa pond',
+      'settings_appearance': 'Panagway',
+      'settings_dark_mode': 'Ngitngit nga Mode',
+      'settings_dark_mode_desc':
+          'Gamita ang ngitngit nga kolor sa tibuok app',
       'settings_thresholds': 'Mga Threshold sa Detection',
       'settings_thresholds_desc':
           'Ang mas ubos nga kantidad nagmarka og mas daghang kaso apan nagdugon og mas daghang sayop nga positibo. '

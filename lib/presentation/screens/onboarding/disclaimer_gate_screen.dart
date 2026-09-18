@@ -65,9 +65,9 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(24, 26, 24, 28),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,8 +92,8 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                   const SizedBox(height: 14),
                   Text(
                     context.tr('disclaimer_body'),
-                    style: const TextStyle(
-                        fontSize: 13, color: Colors.black87, height: 1.55),
+                    style: TextStyle(
+                        fontSize: 13, color: AppColors.ink, height: 1.55),
                   ),
                   const SizedBox(height: 18),
                   InkWell(

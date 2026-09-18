@@ -84,6 +84,8 @@ class _ProcessingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Deliberately fixed dark chrome regardless of app theme — this is
+    // a full-bleed photo-review overlay, not a themed page.
     return Scaffold(
       backgroundColor: const Color(0xFF0B0F19),
       body: Stack(
@@ -98,7 +100,7 @@ class _ProcessingView extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 40),
               padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 28),
               decoration: BoxDecoration(
-                color: const Color(0xFF0F1424).withOpacity(0.85),
+                color: const Color(0xFF0F1424).withValues(alpha: 0.85),
                 borderRadius: BorderRadius.circular(22),
               ),
               child: Column(
@@ -146,7 +148,7 @@ class _ErrorView extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline, size: 40, color: AppColors.slate),
+              Icon(Icons.error_outline, size: 40, color: AppColors.slate),
               const SizedBox(height: 12),
               Text(message, textAlign: TextAlign.center),
               const SizedBox(height: 20),
@@ -186,25 +188,26 @@ class _ResultTheme {
   final String actionKey;
 
   static _ResultTheme of(DetectionLabel label) {
+    final isDark = AppColors.isDark;
     switch (label) {
       case DetectionLabel.presumptivePositive:
-        return const _ResultTheme(
+        return _ResultTheme(
           accentColor: AppColors.amber,
           dashed: false,
-          badgeBg: Color(0xFFFFF3DC),
+          badgeBg: isDark ? const Color(0xFF3D2E0F) : const Color(0xFFFFF3DC),
           badgeFg: AppColors.amberDark,
           badgeKey: 'badge_presumptive',
           headingKey: 'heading_presumptive',
           bodyKey: 'body_presumptive',
-          actionBg: Color(0xFFFFF6E5),
+          actionBg: isDark ? const Color(0xFF2E2410) : const Color(0xFFFFF6E5),
           actionKey: 'action_presumptive',
         );
       case DetectionLabel.lowMatch:
-        return const _ResultTheme(
+        return _ResultTheme(
           accentColor: AppColors.slate,
           dashed: true,
           badgeBg: AppColors.slateLight,
-          badgeFg: Color(0xFF475569),
+          badgeFg: isDark ? const Color(0xFFC3CCDA) : const Color(0xFF475569),
           badgeKey: 'badge_low_match',
           headingKey: 'heading_low_match',
           bodyKey: 'body_low_match',
@@ -212,15 +215,15 @@ class _ResultTheme {
           actionKey: 'action_low_match',
         );
       case DetectionLabel.clear:
-        return const _ResultTheme(
+        return _ResultTheme(
           accentColor: AppColors.mint,
           dashed: false,
-          badgeBg: Color(0xFFDBF7EF),
+          badgeBg: isDark ? const Color(0xFF10382E) : const Color(0xFFDBF7EF),
           badgeFg: AppColors.mintDark,
           badgeKey: 'badge_clear',
           headingKey: 'heading_clear',
           bodyKey: 'body_clear',
-          actionBg: Color(0xFFE4FBF4),
+          actionBg: isDark ? const Color(0xFF102D25) : const Color(0xFFE4FBF4),
           actionKey: 'action_clear',
         );
     }
@@ -292,15 +295,15 @@ class _ResultView extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(
                     context.tr(theme.headingKey),
-                    style: const TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: AppColors.navy),
+                    style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, color: AppColors.heading),
                   ),
                   const SizedBox(height: 8),
-                  Text(context.tr(theme.bodyKey), style: const TextStyle(fontSize: 13, height: 1.5, color: Colors.black54)),
+                  Text(context.tr(theme.bodyKey), style: TextStyle(fontSize: 13, height: 1.5, color: AppColors.slate)),
                   const SizedBox(height: 14),
                   Container(
                     padding: const EdgeInsets.all(13),
                     decoration: BoxDecoration(color: theme.actionBg, borderRadius: BorderRadius.circular(14)),
-                    child: Text(context.tr(theme.actionKey), style: const TextStyle(fontSize: 11.8, height: 1.5)),
+                    child: Text(context.tr(theme.actionKey), style: TextStyle(fontSize: 11.8, height: 1.5, color: AppColors.ink)),
                   ),
                 ],
               ),
@@ -310,9 +313,9 @@ class _ResultView extends StatelessWidget {
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.fromLTRB(22, 14, 22, 20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          border: Border(top: BorderSide(color: AppColors.border)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

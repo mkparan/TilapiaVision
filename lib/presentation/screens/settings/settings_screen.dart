@@ -9,10 +9,10 @@ import '../../providers/farm_profile_provider.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/settings_provider.dart';
 
-/// Reconfigure the farm name, the two detection thresholds, and the
-/// app language. Every change is saved to disk immediately (see
-/// SettingsProvider / LocaleProvider), so nothing here is lost by
-/// backgrounding or closing the app.
+/// Reconfigure the farm name, appearance (dark mode), the two
+/// detection thresholds, and the app language. Every change is saved
+/// to disk immediately (see SettingsProvider / LocaleProvider), so
+/// nothing here is lost by backgrounding or closing the app.
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
   @override
@@ -42,7 +42,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         children: [
           // ── Language ──────────────────────────────────────────────────
           Text(context.tr('settings_language'),
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: AppColors.ink)),
@@ -55,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // ── Farm name ─────────────────────────────────────────────────
           Text(context.tr('settings_farm_label'),
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: AppColors.ink)),
@@ -66,10 +66,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
             decoration: InputDecoration(
               hintText: context.tr('settings_farm_hint'),
               filled: true,
-              fillColor: Colors.white,
+              fillColor: AppColors.surface,
               border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(14),
-                  borderSide: const BorderSide(color: AppColors.border)),
+                  borderSide: BorderSide(color: AppColors.border)),
             ),
           ),
           const SizedBox(height: 10),
@@ -90,15 +90,50 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 28),
 
+          // ── Appearance ────────────────────────────────────────────────
+          Text(context.tr('settings_appearance'),
+              style: TextStyle(
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.ink)),
+          const SizedBox(height: 10),
+          Container(
+            decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: AppTheme.cardShadow),
+            child: SwitchListTile(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              secondary: Icon(
+                  settings.darkModeEnabled
+                      ? LucideIcons.moon
+                      : LucideIcons.sun,
+                  size: 19,
+                  color: AppColors.deepBlue),
+              title: Text(context.tr('settings_dark_mode'),
+                  style: TextStyle(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.ink)),
+              subtitle: Text(context.tr('settings_dark_mode_desc'),
+                  style: TextStyle(fontSize: 11.5, color: AppColors.slate)),
+              value: settings.darkModeEnabled,
+              activeThumbColor: AppColors.deepBlue,
+              onChanged: (v) => settings.setDarkMode(v),
+            ),
+          ),
+          const SizedBox(height: 28),
+
           // ── Detection thresholds ──────────────────────────────────────
           Text(context.tr('settings_thresholds'),
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: AppColors.ink)),
           const SizedBox(height: 4),
           Text(context.tr('settings_thresholds_desc'),
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 11.5, color: AppColors.slate, height: 1.5)),
           const SizedBox(height: 14),
           _slider(
@@ -115,7 +150,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // ── Model status ──────────────────────────────────────────────
           Text(context.tr('settings_model_status'),
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: AppColors.ink)),
@@ -139,7 +174,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
           // ── Stored data ───────────────────────────────────────────────
           Text(context.tr('settings_stored_data'),
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: 12.5,
                   fontWeight: FontWeight.bold,
                   color: AppColors.ink)),
@@ -157,7 +192,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text(label,
-                style: const TextStyle(fontSize: 12.5, color: AppColors.ink)),
+                style: TextStyle(fontSize: 12.5, color: AppColors.ink)),
             Text('${(value * 100).round()}%',
                 style: const TextStyle(
                     fontSize: 12.5,
@@ -178,7 +213,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _tile(BuildContext c, IconData i, String t, VoidCallback onTap) =>
       Container(
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.surface,
             borderRadius: BorderRadius.circular(16),
             boxShadow: AppTheme.cardShadow),
         child: ListTile(
@@ -186,9 +221,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           leading: Icon(i, size: 19, color: AppColors.deepBlue),
           title: Text(t,
-              style:
-                  const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600)),
-          trailing: const Icon(LucideIcons.chevronRight,
+              style: TextStyle(
+                  fontSize: 13.5,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.ink)),
+          trailing: Icon(LucideIcons.chevronRight,
               size: 15, color: AppColors.slate),
           onTap: onTap,
         ),
@@ -209,7 +246,7 @@ class _LanguageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppColors.surface,
           borderRadius: BorderRadius.circular(16),
           boxShadow: AppTheme.cardShadow),
       child: Column(
@@ -257,7 +294,7 @@ class _LanguageSelector extends StatelessWidget {
                 ),
               ),
               if (!isLast)
-                const Divider(height: 1, indent: 48, color: AppColors.border),
+                Divider(height: 1, indent: 48, color: AppColors.border),
             ],
           );
         }).toList(),
@@ -295,7 +332,7 @@ class _ModelStatusTile extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(14),
               boxShadow: AppTheme.cardShadow),
           child: Row(children: [
@@ -310,8 +347,10 @@ class _ModelStatusTile extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: Text(label,
-                  style: const TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.w600)),
+                  style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.ink)),
             ),
             Text(
               loading ? checkingLabel : (ok ? readyLabel : notReadyLabel),

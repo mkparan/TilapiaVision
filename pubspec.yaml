@@ -1,7 +1,7 @@
 name: tilapiavision
 description: "Offline presumptive screening for hemorrhagic lesions in Nile Tilapia."
 publish_to: "none"
-version: 1.0.0+1
+version: 1.0.0-alpha+5
 
 environment:
   sdk: ">=3.3.0 <4.0.0"

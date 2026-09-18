@@ -199,7 +199,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                                 PopupMenuItem(
                                   value: 'settings',
                                   child: Row(children: [
-                                    const Icon(LucideIcons.settings,
+                                    Icon(LucideIcons.settings,
                                         size: 17, color: AppColors.ink),
                                     const SizedBox(width: 10),
                                     Text(menuSettings),
@@ -208,7 +208,7 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                                 PopupMenuItem(
                                   value: 'about',
                                   child: Row(children: [
-                                    const Icon(LucideIcons.info,
+                                    Icon(LucideIcons.info,
                                         size: 17, color: AppColors.ink),
                                     const SizedBox(width: 10),
                                     Text(menuAbout),

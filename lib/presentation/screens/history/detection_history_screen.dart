@@ -105,7 +105,7 @@ class _RetentionNotice extends StatelessWidget {
             Expanded(
               child: Text(
                 context.trFmt('history_retention_notice', {'days': '${DetectionConfig.imageRetentionDays}'}),
-                style: const TextStyle(fontSize: 11.3, height: 1.5, color: AppColors.ink),
+                style: TextStyle(fontSize: 11.3, height: 1.5, color: AppColors.ink),
               ),
             ),
           ],
@@ -131,7 +131,7 @@ class _EmptyState extends StatelessWidget {
             child: const Icon(LucideIcons.history, size: 26, color: AppColors.teal),
           ),
           const SizedBox(height: 14),
-          Text(context.tr('history_empty'), style: const TextStyle(color: AppColors.slate, fontSize: 13)),
+          Text(context.tr('history_empty'), style: TextStyle(color: AppColors.slate, fontSize: 13)),
         ],
       ),
     );
@@ -159,7 +159,7 @@ class _HistoryCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
               boxShadow: AppTheme.cardShadow,
             ),
@@ -177,11 +177,11 @@ class _HistoryCard extends StatelessWidget {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(LucideIcons.imageOff, size: 17, color: AppColors.slate),
+                                Icon(LucideIcons.imageOff, size: 17, color: AppColors.slate),
                                 const SizedBox(height: 2),
                                 Text(
                                   context.tr('history_expired'),
-                                  style: const TextStyle(fontSize: 7, color: AppColors.slate, fontWeight: FontWeight.bold),
+                                  style: TextStyle(fontSize: 7, color: AppColors.slate, fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
@@ -205,7 +205,7 @@ class _HistoryCard extends StatelessWidget {
                           const SizedBox(width: 5),
                           Text(
                             DateFormat('MMM d, h:mm a').format(result.timestamp),
-                            style: const TextStyle(fontSize: 11, color: AppColors.slate),
+                            style: TextStyle(fontSize: 11, color: AppColors.slate),
                           ),
                         ],
                       ),
@@ -217,7 +217,7 @@ class _HistoryCard extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: _dotColorFor(result.label)),
                 ),
                 const SizedBox(width: 6),
-                const Icon(LucideIcons.chevronRight, size: 14, color: AppColors.slate),
+                Icon(LucideIcons.chevronRight, size: 14, color: AppColors.slate),
               ],
             ),
           ),

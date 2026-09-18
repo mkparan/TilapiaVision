@@ -58,16 +58,16 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
                     const SizedBox(height: 6),
                     Text(
                       context.tr('setup_subtitle'),
-                      style: const TextStyle(
-                          fontSize: 12.5, color: Colors.black54, height: 1.5),
+                      style: TextStyle(
+                          fontSize: 12.5, color: AppColors.slate, height: 1.5),
                     ),
                     const SizedBox(height: 26),
                     Text(
                       context.tr('setup_field_label'),
-                      style: const TextStyle(
+                      style: TextStyle(
                           fontSize: 11.5,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black54,
+                          color: AppColors.slate,
                           letterSpacing: 0.4),
                     ),
                     const SizedBox(height: 8),
@@ -135,8 +135,8 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(22, 16, 22, 22),
-              decoration: const BoxDecoration(
-                color: Colors.white,
+              decoration: BoxDecoration(
+                color: AppColors.surface,
                 border: Border(top: BorderSide(color: AppColors.border)),
               ),
               child: ElevatedButton(
