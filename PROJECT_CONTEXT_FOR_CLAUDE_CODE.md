@@ -8,7 +8,7 @@ decisions, and the traps that have already cost time.
 ## What this is
 
 Offline Android app for small-scale tilapia farmers in Butuan/Caraga,
-Philippines. Photograph a fish → get a presumptive screening result for
+Philippines. Photograph a tilapia → get a presumptive screening result for
 Motile Aeromonas Septicemia (hemorrhagic lesions).
 
 **Capstone research**, Caraga State University. Positioned explicitly as
@@ -57,8 +57,8 @@ The app builds and runs **without** model files and reports
   budget devices. Model capacity is not the bottleneck.
 - **CSV, not SQLite.** Panel feedback. The log is a flat table with no
   joins, and the CSV doubles as the export format.
-- **The verifier must accept diseased fish.** It gates the detector. If
-  it rejects sick fish it blocks exactly what the app exists to find.
+- **The verifier must accept diseased tilapia.** It gates the detector. If
+  it rejects sick tilapia it blocks exactly what the app exists to find.
   Never "clean" diseased tilapia out of its tilapia class.
 - **Datasets are compiled from public sources**, not original field
   photography. Describe them that way.
@@ -90,7 +90,7 @@ photo. Anything that exports an image must composite them first — see
 **6. Shortcut learning in the verifier.** The first version hit 93% in
 testing but ~70% in the field: 64.5% of its tilapia examples had lesions
 and 0% of its negatives did, so it learned lesions instead of species,
-and rejected healthy fish. Fixed by rebuilding at exactly 50/50
+and rejected healthy tilapia. Fixed by rebuilding at exactly 50/50
 healthy/diseased. **If you ever rebuild that dataset, keep the balance
 and keep reporting healthy vs diseased recall separately.**
 
@@ -119,8 +119,8 @@ labeling needed. The detector is still training on ~209 unique
 specimens while ~3,042 sit unused. This is the largest available gain.
 
 When merging: cap the old v6 data to ~3 variants per source photo. It
-averages ~8 images per fish versus ~1.1 in the new data; without
-capping, 207 old fish outweigh 1,600 new ones.
+averages ~8 images per tilapia versus ~1.1 in the new data; without
+capping, 207 old tilapia outweigh 1,600 new ones.
 
 **2. Install the models and test on a device.** See
 `MODEL_INTEGRATION_INSTRUCTIONS.md`.
@@ -151,3 +151,42 @@ capping, 207 old fish outweigh 1,600 new ones.
   prompt, so no disk write.
 - `ScanStatus` has 7 values. Adding one requires updating the switch in
   `result_screen.dart` or it won't compile.
+- **Save to Gallery** (Result screen after a scan, and History detail
+  screen) is one shared widget, `SaveToGalleryButton`, backed by
+  `DetectionProvider.saveDetectionToGallery` and the `gal` package.
+  On the detail screen it is the filled primary button (`filled: true`,
+  the old Export button's design and position, next to Delete); on the
+  Result screen it stays the outlined full-width button. It saves the
+  box-burned-in image plus a caption strip under the photo (farm name,
+  result and date; result text in the app's language) into a
+  `TilapiaVision` album. The old single-scan Share/Export button (and
+  `exportSingleDetection`) was removed on purpose; only the whole-log
+  **Export CSV** (`exportCsv`) remains. Android 11+ needs no permission (MediaStore);
+  the manifest declares `WRITE_EXTERNAL_STORAGE` capped at
+  `maxSdkVersion="29"` plus `requestLegacyExternalStorage` for Android
+  10 and older only. `flutter pub get` is needed after pulling this.
+- **About screen states the app's scope**: Aeromonas only, Nile Tilapia
+  only (`about_scope_*` keys, all three languages).
+- **Developer options**: the two threshold sliders (species verifier +
+  lesion detector) are hidden in the normal app. Tapping the logo on the
+  About screen 7 times in quick succession (`TapSequence`, max 2 s
+  between taps; a countdown shows for the last 3 taps) sets
+  `SettingsProvider.developerOptionsEnabled`, which is persisted, and
+  the sliders appear in Settings under "Developer Options". A Hide
+  button there locks them again. Hiding does NOT reset the thresholds;
+  saved values keep applying. Event-handler code must not call
+  `context.tr` (it uses `context.watch`, only legal during build) — see
+  `AboutScreen._onLogoTap` and `SaveToGalleryButton._save` for the
+  `AppLocalizations(context.read<LocaleProvider>().locale)` pattern.
+- **Multiple bounding boxes per scan (do not revert to a single box).**
+  `DetectionResult.boundingBoxes` is a list (highest confidence first);
+  `boundingBox` is only a convenience getter for the first one. Each
+  `BoundingBox` carries its own `confidence`. `TFLiteDetectionEngine`
+  returns every box that survives NMS (confidence floor 0.50, IoU 0.70),
+  not just the best one, and logs the candidate count before and after
+  NMS plus the top scores. `MultiBoxPainter` (in `bounding_box_painter.dart`)
+  draws all of them on the Result screen, the History detail screen and
+  the shared / gallery-saved image. The CSV log uses the v2 schema (a
+  single `bboxes` JSON column); v1 rows (four `bbox_*` columns) and
+  older still load. Two boxes appear only when two lesions are spatially
+  distinct (IoU below 0.70) and each scores at or above the 0.50 floor.

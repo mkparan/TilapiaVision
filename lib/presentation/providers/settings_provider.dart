@@ -19,12 +19,17 @@ class SettingsProvider extends ChangeNotifier {
   double operatingThreshold = SettingsRepository.defaultOperatingThreshold;
   double verifierThreshold = SettingsRepository.defaultVerifierThreshold;
   bool darkModeEnabled = SettingsRepository.defaultDarkMode;
+
+  /// Whether the developer options (threshold sliders) are unlocked.
+  /// Off for the normal app; switched on from the About screen.
+  bool developerOptionsEnabled = SettingsRepository.defaultDeveloperOptions;
   bool loading = true;
 
   Future<void> load() async {
     operatingThreshold = await _repository.getOperatingThreshold();
     verifierThreshold = await _repository.getVerifierThreshold();
     darkModeEnabled = await _repository.getDarkMode();
+    developerOptionsEnabled = await _repository.getDeveloperOptions();
     _apply();
     loading = false;
     notifyListeners();
@@ -49,6 +54,12 @@ class SettingsProvider extends ChangeNotifier {
     _apply();
     notifyListeners();
     await _repository.setDarkMode(enabled);
+  }
+
+  Future<void> setDeveloperOptionsEnabled(bool enabled) async {
+    developerOptionsEnabled = enabled;
+    notifyListeners();
+    await _repository.setDeveloperOptions(enabled);
   }
 
   void _apply() {

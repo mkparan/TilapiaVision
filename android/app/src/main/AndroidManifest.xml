@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
     <!-- Camera capture — Section 3.8.2 Input Layer -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" android:required="true" />
@@ -9,10 +10,24 @@
          permission requested here should map to something the app
          genuinely does on-device. -->
 
+    <!-- Save to Gallery (detection detail screen). Android 11+ saves
+         through MediaStore and needs NO storage permission — this is
+         declared only for Android 10 and older (maxSdkVersion caps it
+         so it is not requested on newer phones).
+         The camera plugin declares this same permission capped at 28.
+         Saving into an album on Android 10 (API 29) needs it, so we
+         override the cap to 29; without tools:replace the manifest
+         merger fails the build on the conflicting values. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29"
+        tools:replace="android:maxSdkVersion" />
+
     <application
         android:label="TilapiaVision"
         android:icon="@mipmap/ic_launcher"
-        android:name="${applicationName}">
+        android:name="${applicationName}"
+        android:requestLegacyExternalStorage="true">
         <activity
             android:name=".MainActivity"
             android:exported="true"

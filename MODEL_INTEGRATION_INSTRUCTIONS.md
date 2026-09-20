@@ -87,8 +87,8 @@ probability = (raw_byte - zero_point) * scale
 1. **Diseased tilapia** → boxes drawn, "Presumptive Positive"
 2. **Healthy tilapia** → passes the gate, no boxes
 3. **Your hand / a bucket** → stopped with "not a tilapia"
-4. **A different fish species** → also stopped
-5. **Export from history** → the saved image **has the box burned in**
+4. **A different tilapia species** → also stopped
+5. **Save to Gallery from a history entry** → the saved image **has every box burned in**
 
 Case 3 is your panel demo. Case 5 was a real bug — verify it.
 

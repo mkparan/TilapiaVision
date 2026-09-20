@@ -35,6 +35,11 @@ dependencies:
   intl: ^0.19.0
   share_plus: ^10.0.2
 
+  # "Save to Gallery" on the detection detail screen — writes the
+  # annotated result photo into the phone's photo gallery (MediaStore
+  # on Android 10+, so no storage permission is needed there).
+  gal: ^2.3.3
+
   # Icons — matches the shipped UI prototype exactly
   lucide_icons_flutter: ^3.0.5
 

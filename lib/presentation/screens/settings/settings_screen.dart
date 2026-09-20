@@ -125,28 +125,64 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           const SizedBox(height: 28),
 
-          // ── Detection thresholds ──────────────────────────────────────
-          Text(context.tr('settings_thresholds'),
-              style: TextStyle(
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.ink)),
-          const SizedBox(height: 4),
-          Text(context.tr('settings_thresholds_desc'),
-              style: TextStyle(
-                  fontSize: 11.5, color: AppColors.slate, height: 1.5)),
-          const SizedBox(height: 14),
-          _slider(
-            context.tr('settings_species_gate'),
-            settings.verifierThreshold,
-            (v) => settings.setVerifierThreshold(v),
-          ),
-          _slider(
-            context.tr('settings_positive_threshold'),
-            settings.operatingThreshold,
-            (v) => settings.setOperatingThreshold(v),
-          ),
-          const SizedBox(height: 28),
+          // ── Developer options ─────────────────────────────────────────
+          // The two threshold sliders (species verifier + lesion
+          // detector) are hidden in the normal app. Tapping the logo on
+          // the About screen several times unlocks them; "Hide" locks
+          // them again. Values already saved keep applying either way.
+          if (settings.developerOptionsEnabled) ...[
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: AppTheme.cardShadow),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(children: [
+                    const Icon(Icons.developer_mode,
+                        size: 18, color: AppColors.amberDark),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(context.tr('dev_options_title'),
+                          style: TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.ink)),
+                    ),
+                    TextButton(
+                      onPressed: () =>
+                          settings.setDeveloperOptionsEnabled(false),
+                      child: Text(context.tr('dev_options_hide')),
+                    ),
+                  ]),
+                  const SizedBox(height: 10),
+                  Text(context.tr('settings_thresholds'),
+                      style: TextStyle(
+                          fontSize: 12.5,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.ink)),
+                  const SizedBox(height: 4),
+                  Text(context.tr('settings_thresholds_desc'),
+                      style: TextStyle(
+                          fontSize: 11.5, color: AppColors.slate, height: 1.5)),
+                  const SizedBox(height: 14),
+                  _slider(
+                    context.tr('settings_species_gate'),
+                    settings.verifierThreshold,
+                    (v) => settings.setVerifierThreshold(v),
+                  ),
+                  _slider(
+                    context.tr('settings_positive_threshold'),
+                    settings.operatingThreshold,
+                    (v) => settings.setOperatingThreshold(v),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 28),
+          ],
 
           // ── Model status ──────────────────────────────────────────────
           Text(context.tr('settings_model_status'),

@@ -12,12 +12,13 @@ import '../../../data/models/detection_result.dart';
 import '../../../services/storage_service.dart';
 import '../../providers/detection_provider.dart';
 import '../../widgets/bounding_box_painter.dart';
+import '../../widgets/save_to_gallery_button.dart';
 
 /// Full detail view for one detection record — reachable by tapping
 /// any card on [DetectionHistoryScreen]. Shows the cached photo (or
 /// the expired-archive fallback if it's past the 30-day window),
-/// every stored field, and lets the farmer delete the record or
-/// export the photo + a text summary together.
+/// every stored field, and lets the farmer delete the record or save
+/// the annotated photo to the phone's gallery.
 class DetectionDetailScreen extends StatefulWidget {
   const DetectionDetailScreen({super.key, required this.result});
 
@@ -29,17 +30,6 @@ class DetectionDetailScreen extends StatefulWidget {
 
 class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
   bool _busy = false;
-
-  Future<void> _handleExport() async {
-    setState(() => _busy = true);
-    try {
-      await context
-          .read<DetectionProvider>()
-          .exportSingleDetection(widget.result);
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
 
   Future<void> _handleDelete() async {
     // Capture the provider before any await so context is never accessed
@@ -83,17 +73,7 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
     final theme = _detailThemeFor(result.label);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(context.tr('detail_title')),
-        actions: [
-          IconButton(
-            tooltip: context.tr('detail_export_tooltip'),
-            onPressed: _busy ? null : _handleExport,
-            icon: const Icon(LucideIcons.share2),
-          ),
-          const SizedBox(width: 6),
-        ],
-      ),
+      appBar: AppBar(title: Text(context.tr('detail_title'))),
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -137,9 +117,10 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                       CustomPaint(
                         painter: MultiBoxPainter(
                           boxes: result.boundingBoxes,
-                          color: result.label == DetectionLabel.presumptivePositive
-                              ? AppColors.amber
-                              : AppColors.slate,
+                          color:
+                              result.label == DetectionLabel.presumptivePositive
+                                  ? AppColors.amber
+                                  : AppColors.slate,
                           fallbackLabel: '${(result.confidenceScore * 100).round()}%',
                           dashed: result.label == DetectionLabel.lowMatch,
                         ),
@@ -218,16 +199,10 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
             const SizedBox(width: 12),
             Expanded(
               flex: 2,
-              child: ElevatedButton(
-                onPressed: _busy ? null : _handleExport,
-                child: _busy
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : Text(context.tr('detail_export')),
+              child: SaveToGalleryButton(
+                result: result,
+                filled: true,
+                enabled: !_busy,
               ),
             ),
           ],

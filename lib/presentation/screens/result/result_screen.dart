@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/app_localizations.dart';
@@ -8,6 +10,7 @@ import '../../../core/app_theme.dart';
 import '../../../data/models/detection_result.dart';
 import '../../providers/detection_provider.dart';
 import '../../widgets/bounding_box_painter.dart'; // exports BoundingBoxPainter & MultiBoxPainter
+import '../../widgets/save_to_gallery_button.dart';
 
 /// Runs detection on [imageFile] via [DetectionProvider] and renders
 /// whichever state comes back: processing, timeout, error, or one of
@@ -305,6 +308,50 @@ class _ResultView extends StatelessWidget {
                     decoration: BoxDecoration(color: theme.actionBg, borderRadius: BorderRadius.circular(14)),
                     child: Text(context.tr(theme.actionKey), style: TextStyle(fontSize: 11.8, height: 1.5, color: AppColors.ink)),
                   ),
+
+                  // Detection details. Shown here so a farmer sees the
+                  // same figures the History detail screen reports,
+                  // without needing to save first and navigate back in.
+                  //
+                  // Confidence is deliberately hidden for a Clear
+                  // result: with no detection there is no prediction to
+                  // attach a confidence to, and showing "0%" would read
+                  // as "0% chance of disease" rather than "nothing was
+                  // found", which is the opposite of what it means.
+                  const SizedBox(height: 20),
+                  Text(
+                    context.tr('result_details_heading'),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.slate,
+                      letterSpacing: 0.4,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  _DetailRow(
+                    icon: LucideIcons.user,
+                    label: context.tr('detail_label_farm'),
+                    value: result.farmProfile,
+                  ),
+                  _DetailRow(
+                    icon: LucideIcons.clock,
+                    label: context.tr('detail_label_datetime'),
+                    value: DateFormat('MMM d, yyyy — h:mm a')
+                        .format(result.timestamp),
+                  ),
+                  if (result.label != DetectionLabel.clear)
+                    _DetailRow(
+                      icon: LucideIcons.circleAlert,
+                      label: context.tr('detail_label_confidence'),
+                      value: '${(result.confidenceScore * 100).round()}%',
+                      valueColor: theme.badgeFg,
+                    ),
+                  _DetailRow(
+                    icon: LucideIcons.fileSpreadsheet,
+                    label: context.tr('detail_label_class'),
+                    value: result.diseaseClass,
+                  ),
                 ],
               ),
             ),
@@ -339,12 +386,68 @@ class _ResultView extends StatelessWidget {
                   child: Text(context.tr('result_retake')),
                 ),
               ),
+            // Keep the annotated photo on the phone. Works for every
+            // outcome, including Low Match (which is never written to
+            // History) — the farmer decides whether to keep it.
+            const SizedBox(height: 10),
+            SaveToGalleryButton(result: result),
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Text(context.tr('result_scan_another')),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// One label/value line in the Result screen's detection details
+/// block. Mirrors the `_InfoRow` used by the History detail screen so
+/// the same detection reads identically in both places.
+class _DetailRow extends StatelessWidget {
+  const _DetailRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.valueColor,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+  final Color? valueColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 14),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 17, color: AppColors.slate),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(fontSize: 11.5, color: AppColors.slate),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: valueColor ?? AppColors.ink,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

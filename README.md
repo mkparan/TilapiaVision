@@ -321,7 +321,7 @@ tilapiavision_app/
         │   │   └── result_screen.dart           # Handles all scan outcomes
         │   ├── history/
         │   │   ├── detection_history_screen.dart   # + Export CSV button, tappable cards
-        │   │   └── detection_detail_screen.dart     # Per-record view: delete + export
+        │   │   └── detection_detail_screen.dart     # Per-record view: delete + save to gallery
         │   └── biosecurity/
         │       └── biosecurity_tips_screen.dart
         └── widgets/
@@ -361,10 +361,12 @@ whatever Flutter/AGP version you actually have installed.
   stored field, and two actions:
   - **Delete** — asks for confirmation, then permanently removes the
     row from the CSV log via `CsvStore.deleteById`.
-  - **Export** — shares the cached photo *and* a text summary
-    together in one share-sheet action (`DetectionProvider.exportSingleDetection`).
-    If the photo has already expired, it falls back to a text-only
-    share rather than failing.
+  - **Save to Gallery** — saves the annotated photo (all bounding boxes
+    burned in, plus a caption strip with farm, result and date) into a
+    `TilapiaVision` album via `DetectionProvider.saveDetectionToGallery`.
+    If the photo has already expired, a message says so instead of
+    failing. (The old single-scan share-sheet Export was removed; the
+    whole-log **Export CSV** action is unchanged.)
 - A retention notice banner at the top of the History screen states
   the 30-day photo deletion policy explicitly. This is now backed by
   real behavior, not just UI copy — see the next section.
@@ -491,7 +493,7 @@ prediction is processed in this fixed order:
    `TFLiteDetectionEngine._nonMaxSuppression` — this only had
    somewhere to run once real (non-simulated) multi-box output
    existed, which is why it's new in this revision.
-3. **Operating threshold (placeholder 0.70)** — of what's left, this
+3. **Operating threshold (placeholder 0.60)** — of what's left, this
    line separates *Presumptive Positive* from *Low Match* for the UI.
    **This is still a placeholder** until your Sprint 5 empirical
    calibration (Chapter 3, Section 3.9) determines the real number —

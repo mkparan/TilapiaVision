@@ -198,7 +198,7 @@ class _SplashScreenState extends State<_SplashScreen>
 
                 // -- Tagline -----------------------------------------------
                 const Text(
-                  'AI-Powered Fish Health Detection',
+                  'AI-Powered Tilapia Disease Detection',
                   style: TextStyle(
                     color: AppColors.mint,
                     fontSize: 13,

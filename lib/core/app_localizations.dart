@@ -92,9 +92,8 @@ class AppLocalizations {
       'result_timeout':
           'Analysis took too long. Try again in better lighting or closer range.',
       'result_error': 'Something went wrong analyzing this photo.',
-      'result_not_tilapia':
-          'This doesn\'t appear to be a Tilapia.\n\n'
-              'Please photograph a Nile Tilapia fish to run the disease screening.',
+      'result_not_tilapia': 'This doesn\'t appear to be a Tilapia.\n\n'
+          'Please photograph a Nile Tilapia to run the disease screening.',
       'result_model_missing': 'A required model is not installed yet.',
       'result_model_failed': 'A required model loaded but failed to run.',
       'result_save': 'Save to History',
@@ -107,7 +106,7 @@ class AppLocalizations {
           'Visual signs consistent with Aeromonas hydrophila (MAS). '
               'This is a presumptive screening result — not a lab-confirmed diagnosis.',
       'action_presumptive':
-          'Recommended: Isolate this fish and consult a veterinary or '
+          'Recommended: Isolate this tilapia and consult a veterinary or '
               'aquaculture technician for confirmation.',
       'badge_low_match': 'Low Match',
       'heading_low_match': 'Inconclusive Result',
@@ -116,7 +115,8 @@ class AppLocalizations {
       'action_low_match':
           'Recommended: Retake the photo in better lighting, or have a technician verify in person.',
       'badge_clear': 'No Lesions Detected',
-      'heading_clear': 'Looks Clear',
+      'heading_clear':
+          'No lesions detected by the app. This is not confirmation the tilapia is healthy.',
       'body_clear':
           'No hemorrhagic lesions were detected in this image. Continue routine monitoring.',
       'action_clear':
@@ -136,13 +136,20 @@ class AppLocalizations {
 
       // --- Detail ---
       'detail_title': 'Detection Details',
-      'detail_export_tooltip': 'Export',
       'detail_label_farm': 'Farm Profile',
       'detail_label_datetime': 'Date & Time',
       'detail_label_confidence': 'Confidence',
       'detail_label_class': 'Detected Class',
+      'result_details_heading': 'DETECTION DETAILS',
       'detail_delete': 'Delete',
-      'detail_export': 'Export',
+      'detail_save_gallery': 'Save to Gallery',
+      'detail_gallery_saved': 'Saved to your gallery (TilapiaVision album).',
+      'detail_gallery_no_photo':
+          'The photo for this record has expired, so there is nothing to save.',
+      'detail_gallery_denied':
+          'Gallery access was denied. Allow it in your phone settings to save photos.',
+      'detail_gallery_failed':
+          'Could not save to the gallery. Please try again.',
       'detail_image_expired': 'Image Expired',
       'detail_image_expired_sub': 'Photos are removed after {days} days',
       'detail_dialog_title': 'Delete this detection?',
@@ -156,7 +163,8 @@ class AppLocalizations {
       'detail_badge_low_match': 'Low Match',
       'detail_heading_low_match': 'Inconclusive Result',
       'detail_badge_clear': 'No Lesions Detected',
-      'detail_heading_clear': 'Looks Clear',
+      'detail_heading_clear':
+          'No lesions detected by the app. This is not confirmation the tilapia is healthy.',
 
       // --- Biosecurity ---
       'bio_title': 'Biosecurity Tips',
@@ -164,7 +172,7 @@ class AppLocalizations {
           'Simple habits that reduce the risk of spreading disease between ponds.',
       'bio_tip1_title': 'Sanitize hands between ponds',
       'bio_tip1_body':
-          'Wash or sanitize before and after handling fish from a different enclosure.',
+          'Wash or sanitize before and after handling tilapia from a different enclosure.',
       'bio_tip2_title': 'Disinfect nets & equipment',
       'bio_tip2_body':
           'Shared nets and basins are a common way disease travels between grow-out ponds.',
@@ -173,7 +181,7 @@ class AppLocalizations {
           'Avoid direct device contact with pond water when capturing scans.',
       'bio_tip4_title': 'Isolate suspected cases',
       'bio_tip4_body':
-          'Move a Presumptive Positive fish to a separate holding container while you seek verification.',
+          'Move a Presumptive Positive tilapia to a separate holding container while you seek verification.',
 
       // --- Settings ---
       'settings_title': 'Settings',
@@ -200,6 +208,13 @@ class AppLocalizations {
       'settings_model_ready': 'Ready',
       'settings_model_not_ready': 'Not ready',
 
+      // --- Developer options (unlocked from the About screen) ---
+      'dev_options_title': 'Developer Options',
+      'dev_options_hide': 'Hide',
+      'dev_tap_progress': 'Developer options — taps remaining: {n}',
+      'dev_unlocked': 'Developer options enabled. Find them in Settings.',
+      'dev_already': 'Developer options are already enabled.',
+
       // --- About ---
       'about_title': 'About',
       'about_version': 'Version 1.0.0 — offline build',
@@ -208,6 +223,11 @@ class AppLocalizations {
           'TilapiaVision screens photographs of Nile Tilapia for visual '
               'signs consistent with Motile Aeromonas Septicemia (hemorrhagic '
               'lesions). Everything runs on-device — no internet, no account.',
+      'about_scope_title': 'What it can detect',
+      'about_scope_body':
+          'Only Aeromonas (Motile Aeromonas Septicemia) is detected, and only '
+              'in Nile Tilapia. Other diseases, parasites, and other fish '
+              'species are not covered by this app.',
       'about_card2_title': 'How it works',
       'about_card2_body':
           'Two models run in sequence. A species check first confirms the '
@@ -230,374 +250,395 @@ class AppLocalizations {
     // ── TAGALOG ──────────────────────────────────────────────────────────────
     AppLocale.tagalog: {
       // --- Nav bar ---
-      'nav_scan': 'I-scan',
-      'nav_history': 'Kasaysayan',
-      'nav_tips': 'Mga Tip',
+      'nav_scan': 'Scan',
+      'nav_history': 'History',
+      'nav_tips': 'Tips',
 
       // --- Disclaimer gate ---
       'disclaimer_subtitle':
-          'Offline na pagsusuri ng hemorrhagic lesion para sa Nile Tilapia',
+          'Offline screening para sa sakit ng Nile Tilapia',
       'disclaimer_section_title': 'Bago Magsimula',
       'disclaimer_body':
-          'Sinusuri ng TilapiaVision ang mga biswal na palatandaan na naaayon sa hemorrhagic na sakit. '
-              'Ito ay isang pantulong na kagamitan sa pagtukoy — hindi isang beterinaryong diagnosis. '
-              'Palaging kumpirmahin ang mga resulta sa isang kwalipikadong propesyonal bago mag-treat.',
+          'Ang TilapiaVision ay sumusuri ng mga senyales ng hemorrhagic disease. '
+              'Ito ay gabay lamang — hindi kapalit ng check-up sa beterinaryo. '
+              'Laging komunsulta sa propesyonal bago magbigay ng lunas.',
       'disclaimer_checkbox':
-          'Naiintindihan ko na ito ay isang presumptive na kagamitan sa pag-screen, hindi isang medikal na diagnosis.',
+          'Naiintindihan ko na ito ay gabay lamang at hindi pinal na diagnosis.',
       'disclaimer_continue': 'Magpatuloy',
 
       // --- Farm profile setup ---
-      'setup_title': 'I-set Up ang Iyong Profile ng Bukid',
+      'setup_title': 'I-setup ang Iyong Farm Profile',
       'setup_subtitle':
-          'Walang account o internet na kailangan — lahat ay nananatili sa device na ito.',
-      'setup_field_label': 'PANGALAN NG BUKID / MAY-ARI',
-      'setup_field_hint': 'hal., Doongan Grow-Out Pond',
+          'Hindi kailangan ng account o internet — lahat ng data ay mananatili sa device mo.',
+      'setup_field_label': 'PANGALAN NG FARM / MAY-ARI',
+      'setup_field_hint': 'hal. Doongan Grow-Out Pond',
       'setup_storage_notice':
-          'Ang mga larawan ng detection ay awtomatikong natatanggal pagkatapos ng 30 araw upang makatipid ng espasyo. '
-              'Ang mga rekord ng detection ay nananatili sa iyong lokal na CSV log hanggang i-clear o i-export mo ang mga ito.',
+          'Awtomatikong nabubura ang mga pictures pagkalipas ng 30 araw para makatipid sa space. '
+              'Ang mga detection record ay mananatili sa iyong log hanggang i-delete o i-export mo.',
       'setup_checkbox':
-          'Tinatanggap ko ang abiso sa 30-araw na imbakan ng larawan sa itaas.',
-      'setup_cta': 'Lumikha ng Profile at Magsimulang Mag-scan',
+          'Naiintindihan ko ang 30-day storage notice ng mga pictures.',
+      'setup_cta': 'Gumawa ng Profile at Mag-scan',
 
       // --- Camera capture ---
       'camera_pill_offline': 'Offline',
       'camera_pill_hold': 'Hawakan ng 15–30cm ang layo',
-      'camera_pill_glare': 'Iwasan ang direktang flash / araw na sinag',
-      'camera_menu_settings': 'Mga Setting',
-      'camera_menu_about': 'Tungkol Sa',
+      'camera_pill_glare': 'Iwasan ang direktang araw o glare',
+      'camera_menu_settings': 'Settings',
+      'camera_menu_about': 'About',
 
       // --- Result screen ---
-      'result_processing': 'Sinusuri ang larawan…',
+      'result_processing': 'Ina-analyze ang picture…',
       'result_processing_sub':
-          'Tumatakbo nang buo sa device — walang internet na kailangan',
-      'result_try_again': 'Subukang Muli',
+          'Gumagana mismo sa device — hindi kailangan ng internet',
+      'result_try_again': 'Subukan Ulit',
       'result_timeout':
-          'Masyadong matagal ang pagsusuri. Subukang muli sa mas magandang ilaw o mas malapit na layo.',
-      'result_error': 'May nangyaring mali sa pagsusuri ng larawang ito.',
-      'result_not_tilapia':
-          'Mukhang hindi ito Tilapia.\n\n'
-              'Mangyaring kumuha ng larawan ng isang Nile Tilapia upang patakbuhin ang pagsusuri ng sakit.',
+          'Masyadong matagal ang pag-analyze. Subukan ulit nang mas malapit o mas maliwanag.',
+      'result_error': 'May nangyaring error sa pag-analyze ng picture na ito.',
+      'result_not_tilapia': 'Mukhang hindi ito Tilapia.\n\n'
+          'Kumuha ng picture ng Nile Tilapia para i-scan.',
       'result_model_missing':
-          'Ang isang kinakailangang modelo ay hindi pa naka-install.',
-      'result_model_failed':
-          'Ang isang kinakailangang modelo ay na-load ngunit nabigo sa pagpapatakbo.',
-      'result_save': 'I-save sa Kasaysayan',
-      'result_retake': 'Kumuha Muli ng Larawan',
-      'result_scan_another': 'Mag-scan ng Isa Pa',
+          'Wala pa ang kailangang model.',
+      'result_model_failed': 'Nag-fail ang model sa pag-run.',
+      'result_save': 'I-save sa History',
+      'result_retake': 'Kumuha Ulit ng Picture',
+      'result_scan_another': 'Mag-scan Ulit',
       // result labels
-      'badge_presumptive': 'Presumptive Positibo',
-      'heading_presumptive': 'Natuklasang Hemorrhagic Ulcer',
+      'badge_presumptive': 'Posibleng Positibo',
+      'heading_presumptive': 'May Nakitang Hemorrhagic Ulcer',
       'body_presumptive':
-          'Mga biswal na palatandaan na naaayon sa Aeromonas hydrophila (MAS). '
-              'Ito ay isang presumptive na resulta ng pag-screen — hindi isang lab-confirmed na diagnosis.',
+          'May mga senyales na posibleng Aeromonas hydrophila (MAS). '
+              'Ito ay gabay lamang — hindi kumpirmadong diagnosis.',
       'action_presumptive':
-          'Inirerekomenda: Ihiwalay angisdang ito at kumonsulta sa isang beterinaryo o '
-              'aquaculture technician para sa kumpirmasyon.',
-      'badge_low_match': 'Mababang Tugma',
-      'heading_low_match': 'Hindi Malinaw na Resulta',
+          'Recommended: Ihiwalay ang isdang ito at kumonsulta sa beterinaryo o technician.',
+      'badge_low_match': 'Inconclusive',
+      'heading_low_match': 'Hindi Malinaw ang Resulta',
       'body_low_match':
-          'Ilang biswal na palatandaan ang natuklasan, ngunit ang kumpiyansa ay bumaba sa ibaba ng maaasahang threshold.',
+          'May nakitang ilang senyales, pero hindi umabot sa tamang confidence level para makumpirma.',
       'action_low_match':
-          'Inirerekomenda: Kumuha muli ng larawan sa mas magandang ilaw, o hayaang i-verify ng technician nang personal.',
-      'badge_clear': 'Walang Natuklasang Lesyon',
-      'heading_clear': 'Mukhang Malinaw',
+          'Recommended: Kumuha ulit ng picture sa mas maliwanag na lugar, o ipa-check sa technician.',
+      'badge_clear': 'Walang Nakitang Sugat',
+      'heading_clear': 'Mukhang Malinis',
       'body_clear':
-          'Walang hemorrhagic lesyon ang natuklasan sa larawang ito. Magpatuloy sa regular na pagsubaybay.',
+          'Walang nakitang hemorrhagic lesions sa picture. Ipagpatuloy ang regular na pag-monitor.',
       'action_clear':
-          'Sinusuri lamang nito ang mga nakikitang panlabas na sintomas — hindi nito tinatanggal ang '
-              'panloob o asymptomatic na kondisyon.',
+          'Mga panlabas na sintomas lang ang nakikita nito — hindi ibig sabihin ay walang sakit sa loob ng katawan ang isda.',
 
       // --- History ---
-      'history_title': 'Kasaysayan ng Detection',
-      'history_export_tooltip': 'I-export ang CSV',
+      'history_title': 'Detection History',
+      'history_export_tooltip': 'I-export as CSV',
       'history_retention_notice':
-          'Ang mga nakunang larawan ay awtomatikong natatanggal pagkatapos ng {days} araw upang makatipid ng espasyo. '
-              'Ang mga rekord ng detection ay nananatili sa log na ito hanggang i-delete o i-export mo ang mga ito.',
-      'history_empty': 'Wala pang naka-save na detection.',
-      'history_card_no_lesions': 'Walang Natuklasang Lesyon',
+          'Awtomatikong nabubura ang mga pictures pagkalipas ng {days} araw para makatipid sa space. '
+              'Ang mga record ay mananatili dito hanggang i-delete o i-export mo.',
+      'history_empty': 'Wala pang na-save na records.',
+      'history_card_no_lesions': 'Walang Nakitang Sugat',
       'history_card_hemorrhagic': 'Hemorrhagic Ulcer',
-      'history_expired': 'Nag-expire',
+      'history_expired': 'Expired',
 
       // --- Detail ---
-      'detail_title': 'Mga Detalye ng Detection',
-      'detail_export_tooltip': 'I-export',
-      'detail_label_farm': 'Profile ng Bukid',
+      'detail_title': 'Detection Details',
+      'detail_label_farm': 'Farm Profile',
       'detail_label_datetime': 'Petsa at Oras',
-      'detail_label_confidence': 'Kumpiyansa',
-      'detail_label_class': 'Natuklasang Klase',
-      'detail_delete': 'Burahin',
-      'detail_export': 'I-export',
-      'detail_image_expired': 'Nag-expire ang Larawan',
+      'detail_label_confidence': 'Confidence',
+      'detail_label_class': 'Na-detect',
+      'result_details_heading': 'DETECTION DETAILS',
+      'detail_delete': 'I-delete',
+      'detail_save_gallery': 'I-save sa Gallery',
+      'detail_gallery_saved':
+          'Na-save sa iyong gallery (TilapiaVision album).',
+      'detail_gallery_no_photo':
+          'Expired na ang picture para sa record na ito, kaya walang mai-save.',
+      'detail_gallery_denied':
+          'Hindi na-access ang gallery. Payagan ito sa settings ng iyong phone.',
+      'detail_gallery_failed': 'Hindi na-save sa gallery. Subukan ulit.',
+      'detail_image_expired': 'Expired na ang Picture',
       'detail_image_expired_sub':
-          'Tinatanggal ang mga larawan pagkatapos ng {days} araw',
-      'detail_dialog_title': 'Burahin ang detection na ito?',
+          'Binubura ang mga picture pagkalipas ng {days} araw',
+      'detail_dialog_title': 'I-delete itong record?',
       'detail_dialog_body':
-          'Tinatanggal nito nang permanente mula sa iyong detection log. Hindi ito maaaring i-undo.',
-      'detail_dialog_cancel': 'Kanselahin',
-      'detail_dialog_confirm': 'Burahin',
+          'Tuluyan na itong mabubura sa iyong log. Hindi na ito maibabalik.',
+      'detail_dialog_cancel': 'I-cancel',
+      'detail_dialog_confirm': 'I-delete',
       // detail badges/headings
-      'detail_badge_presumptive': 'Presumptive Positibo',
+      'detail_badge_presumptive': 'Posibleng Positibo',
       'detail_heading_presumptive': 'Hemorrhagic Ulcer',
-      'detail_badge_low_match': 'Mababang Tugma',
-      'detail_heading_low_match': 'Hindi Malinaw na Resulta',
-      'detail_badge_clear': 'Walang Natuklasang Lesyon',
-      'detail_heading_clear': 'Mukhang Malinaw',
+      'detail_badge_low_match': 'Inconclusive',
+      'detail_heading_low_match': 'Hindi Malinaw',
+      'detail_badge_clear': 'Walang Nakitang Sugat',
+      'detail_heading_clear': 'Mukhang Malinis',
 
       // --- Biosecurity ---
-      'bio_title': 'Mga Tip sa Biosecurity',
+      'bio_title': 'Biosecurity Tips',
       'bio_subtitle':
-          'Mga simpleng gawi na nagbabawas ng panganib ng pagkalat ng sakit sa pagitan ng mga pond.',
-      'bio_tip1_title': 'Linisin ang mga kamay sa pagitan ng mga pond',
+          'Mga simpleng habit para hindi kumalat ang sakit sa ibang ponds.',
+      'bio_tip1_title': 'Mag-sanitize ng kamay',
       'bio_tip1_body':
-          'Maghugas o mag-sanitize bago at pagkatapos hawakan ang mga isda mula sa ibang kulungan.',
-      'bio_tip2_title': 'Disinfect ang mga net at kagamitan',
+          'Maghugas o mag-sanitize bago at pagkatapos humawak ng isda mula sa ibang pond.',
+      'bio_tip2_title': 'I-disinfect ang mga net at gamit',
       'bio_tip2_body':
-          'Ang mga ibinabahaging net at basin ay isang karaniwang paraan ng pagkalat ng sakit sa mga grow-out pond.',
-      'bio_tip3_title': 'Panatilihing tuyo ang iyong telepono',
+          'Ang pag-share ng mga net at basin ay madalas maging dahilan ng pagkalat ng sakit.',
+      'bio_tip3_title': 'Panatilihing tuyo ang phone',
       'bio_tip3_body':
-          'Iwasan ang direktang pakikipag-ugnayan ng device sa tubig ng pond kapag kumukuha ng mga scan.',
-      'bio_tip4_title': 'Ihiwalay ang mga pinaghihinalaang kaso',
+          'Huwag hayaang mabasa ng pond water ang phone kapag kumukuha ng picture.',
+      'bio_tip4_title': 'Ihiwalay ang mga posibleng may sakit',
       'bio_tip4_body':
-          'Ilipat ang isang Presumptive Positive na isda sa isang hiwalay na lalagyan habang naghahanap ng kumpirmasyon.',
+          'Ilipat sa hiwalay na lalagyan ang isdang nag-test na Posibleng Positibo habang naghihintay ng kumpirmasyon.',
 
       // --- Settings ---
-      'settings_title': 'Mga Setting',
-      'settings_language': 'Wika',
-      'settings_farm_label': 'Pangalan ng Bukid / May-ari',
-      'settings_farm_hint': 'Pangalan ng bukid',
-      'settings_farm_save': 'I-save ang Pangalan ng Bukid',
-      'settings_farm_saved': 'Na-save ang pangalan ng bukid',
-      'settings_appearance': 'Hitsura',
-      'settings_dark_mode': 'Madilim na Mode',
-      'settings_dark_mode_desc':
-          'Gamitin ang madilim na kulay sa buong app',
-      'settings_thresholds': 'Mga Threshold ng Detection',
+      'settings_title': 'Settings',
+      'settings_language': 'Language',
+      'settings_farm_label': 'PANGALAN NG FARM / MAY-ARI',
+      'settings_farm_hint': 'Pangalan ng farm',
+      'settings_farm_save': 'I-save ang Farm',
+      'settings_farm_saved': 'Na-save na',
+      'settings_appearance': 'Appearance',
+      'settings_dark_mode': 'Dark Mode',
+      'settings_dark_mode_desc': 'Gamitin ang dark theme sa app',
+      'settings_thresholds': 'Detection Thresholds',
       'settings_thresholds_desc':
-          'Ang mas mababang halaga ay nagtatanda ng mas maraming kaso ngunit nagdudulot ng mas maraming maling positibo. '
-              'Ang pagsusuri sa species ay itinakda nang mataas bilang default upang maiwasan ang pagtanggap ng mga random na bagay o maling framed na larawan.',
-      'settings_species_gate': 'Pagsusuri sa species (Tilapia gate)',
-      'settings_positive_threshold': 'Threshold ng positibong resulta',
-      'settings_model_status': 'Katayuan ng Modelo',
-      'settings_verifier': 'Verifier ng species',
-      'settings_detector': 'Detector ng sakit',
-      'settings_stored_data': 'Nakaimbak na Data',
-      'settings_export_csv': 'I-export ang detection log (CSV)',
-      'settings_model_checking': 'Sinusuri…',
-      'settings_model_ready': 'Handa',
-      'settings_model_not_ready': 'Hindi handa',
+          'Kapag binabaan, mas marami ang made-detect pero baka dumami ang false positives. '
+              'Mataas ang species check by default para hindi mag-scan ng ibang bagay o maling picture.',
+      'settings_species_gate': 'Species check (Tilapia gate)',
+      'settings_positive_threshold': 'Positive result threshold',
+      'settings_model_status': 'Model Status',
+      'settings_verifier': 'Species verifier',
+      'settings_detector': 'Disease detector',
+      'settings_stored_data': 'Stored Data',
+      'settings_export_csv': 'I-export ang log (CSV)',
+      'settings_model_checking': 'Checking…',
+      'settings_model_ready': 'Ready',
+      'settings_model_not_ready': 'Not ready',
+
+      // --- Developer options (unlocked from the About screen) ---
+      'dev_options_title': 'Developer Options',
+      'dev_options_hide': 'I-hide',
+      'dev_tap_progress': 'Developer options — taps left: {n}',
+      'dev_unlocked':
+          'Developer options enabled. Makikita mo na sa Settings.',
+      'dev_already': 'Naka-enable na ang developer options.',
 
       // --- About ---
-      'about_title': 'Tungkol Sa',
-      'about_version': 'Bersyon 1.0.0 — offline build',
-      'about_card1_title': 'Ano ang ginagawa ng app na ito',
+      'about_title': 'About',
+      'about_version': 'Version 1.0.0 — offline build',
+      'about_card1_title': 'Tungkol sa app na ito',
       'about_card1_body':
-          'Sinusuri ng TilapiaVision ang mga larawan ng Nile Tilapia para sa mga biswal na '
-              'palatandaan na naaayon sa Motile Aeromonas Septicemia (hemorrhagic lesions). '
-              'Lahat ay tumatakbo sa device — walang internet, walang account.',
+          'Sinusuri ng TilapiaVision ang pictures ng Nile Tilapia para sa senyales ng '
+              'Motile Aeromonas Septicemia (hemorrhagic lesions). '
+              'Gumagana ang lahat sa device mo — walang internet o account na kailangan.',
+      'about_scope_title': 'Ano ang pwede nitong ma-detect',
+      'about_scope_body':
+          'Aeromonas (Motile Aeromonas Septicemia) lang ang nade-detect nito, at sa '
+              'Nile Tilapia lang. Hindi sakop ng app na ito ang ibang sakit, '
+              'parasites, at iba pang uri ng isda.',
       'about_card2_title': 'Paano ito gumagana',
       'about_card2_body':
-          'Dalawang modelo ang tumatakbo nang sunud-sunod. Unang kumpirmahin ng pagsusuri sa species na '
-              'ipinapakita ng larawan ang isang tilapia; pagkatapos lamang ay tatakbo ang lesyon detector. '
-              'Kaya naman ang pagkuha ng larawan ng iba pang bagay ay nagbabalik ng "Hindi Tilapia" '
-              'sa halip na isang resulta ng sakit.',
-      'about_card3_title': 'Mahalagang limitasyon',
+          'May dalawang model na gumagana. Una nitong tinitingnan kung tilapia ang nasa picture '
+              'bago i-run ang disease detector. Kaya "Not a Tilapia" ang lalabas kung ibang bagay ang pinicturan.',
+      'about_card3_title': 'Important limitation',
       'about_card3_body':
-          'Ito ay isang presumptive na kagamitan sa pag-screen, hindi isang beterinaryong diagnosis. '
-              'Natatukoy lamang nito ang mga nakikitang panlabas na sintomas at hindi maaaring '
-              'ibukod ang mga panloob o asymptomatic na kondisyon. Palaging kumpirmahin sa isang '
-              'kwalipikadong propesyonal bago mag-treat.',
+          'Ito ay screening tool lang, at hindi kapalit ng diagnosis sa beterinaryo. '
+              'Nakaka-detect lang ito ng panlabas na sintomas. '
+              'Laging komunsulta sa propesyonal bago magbigay ng lunas.',
       'about_card4_title': 'Ang iyong data',
-      'about_card4_body':
-          'Ang mga larawan ng detection ay awtomatikong natatanggal pagkatapos ng {days} araw. '
-              'Ang mga rekord ng detection ay nananatili hanggang i-delete o i-export mo ang mga ito. '
-              'Walang lumalabas sa iyong device maliban kung ibahagi mo ang mga ito mismo.',
+      'about_card4_body': 'Awtomatikong nabubura ang mga pictures pagkalipas ng {days} araw. '
+          'Ang mga detection record ay mananatili hanggang i-delete o i-export mo. '
+          'Walang data na lalabas sa device mo maliban na lang kung i-share mo ito.',
     },
 
     // ── CEBUANO / BISAYA ──────────────────────────────────────────────────────
     AppLocale.cebuano: {
       // --- Nav bar ---
-      'nav_scan': 'I-scan',
-      'nav_history': 'Kasaysayan',
-      'nav_tips': 'Mga Tip',
+      'nav_scan': 'Scan',
+      'nav_history': 'History',
+      'nav_tips': 'Tips',
 
       // --- Disclaimer gate ---
       'disclaimer_subtitle':
-          'Offline nga pagsusi sa hemorrhagic lesion alang sa Nile Tilapia',
-      'disclaimer_section_title': 'Sa Wala Pa Magsugod',
+          'Offline screening sa hemorrhagic lesion para sa Nile Tilapia',
+      'disclaimer_section_title': 'Sa Di Pa Ka Magsugod',
       'disclaimer_body':
-          'Gisusi sa TilapiaVision ang mga biswal nga timailhan nga nahiuyon sa hemorrhagic nga sakit. '
-              'Kini usa ka himan sa suporta sa pagdepekto — dili usa ka beterinaryong diagnosis. '
-              'Kanunay nga kumpirmahin ang mga resulta sa usa ka kwalipikadong propesyonal sa wala pa mag-treat.',
+          'Ang TilapiaVision mosusi sa mga timailhan sa hemorrhagic disease. '
+              'Guide lang ni — dili hulip sa check-up sa beterinaryo. '
+              'Kanunay mangonsulta sa propesyonal sa dili pa mohatag og tambal.',
       'disclaimer_checkbox':
-          'Nasabtan nako nga kini usa ka presumptive nga himan sa pag-screen, dili usa ka medikal nga diagnosis.',
+          'Nakasabot ko nga guide lang ni ug dili final nga diagnosis.',
       'disclaimer_continue': 'Padayon',
 
       // --- Farm profile setup ---
-      'setup_title': 'I-set Up ang Imong Profile sa Pond',
+      'setup_title': 'I-setup ang Imong Farm Profile',
       'setup_subtitle':
-          'Walay account o internet nga gikinahanglan — ang tanan magpabilin sa device nga kini.',
-      'setup_field_label': 'NGALAN SA POND / TAG-IYA',
-      'setup_field_hint': 'hal., Doongan Grow-Out Pond',
+          'Di kinahanglan og account o internet — tanang data magpabilin sa imong device.',
+      'setup_field_label': 'NGALAN SA FARM / TAG-IYA',
+      'setup_field_hint': 'ex. Doongan Grow-Out Pond',
       'setup_storage_notice':
-          'Ang mga hulagway sa detection awtomatikong mapapala human sa 30 ka adlaw aron makatigom og espasyo. '
-              'Ang mga rekord sa detection magpabilin sa imong lokal nga CSV log hangtod i-clear o i-export nimo kini.',
+          'Automatic nga ma-delete ang mga pictures inig abot sa 30 ka adlaw para makatipid sa space. '
+              'Ang mga detection record magpabilin sa imong log hangtod i-delete o i-export nimo.',
       'setup_checkbox':
-          'Giila nako ang abiso sa 30-ka-adlaw nga pagtipig sa hulagway sa ibabaw.',
-      'setup_cta': 'Paghimo og Profile ug Magsugod sa Pag-scan',
+          'Nakasabot ko sa 30-day storage notice sa mga pictures.',
+      'setup_cta': 'Paghimo og Profile ug Mag-scan',
 
       // --- Camera capture ---
       'camera_pill_offline': 'Offline',
-      'camera_pill_hold': 'Ibitay og 15–30cm ang gilay-on',
-      'camera_pill_glare': 'Likayi ang direktang flash / silaw sa adlaw',
-      'camera_menu_settings': 'Mga Setting',
-      'camera_menu_about': 'Mahitungod Sa',
+      'camera_pill_hold': 'Gunitan og 15–30cm kalayo',
+      'camera_pill_glare': 'Likayi ang direktang adlaw o glare',
+      'camera_menu_settings': 'Settings',
+      'camera_menu_about': 'About',
 
       // --- Result screen ---
-      'result_processing': 'Gisusi ang hulagway…',
+      'result_processing': 'Gi-analyze ang picture…',
       'result_processing_sub':
-          'Nagdagan sa device — walay internet nga gikinahanglan',
-      'result_try_again': 'Sulayi Pag-usab',
+          'Nag-run sa mismong device — walay internet gikinahanglan',
+      'result_try_again': 'Sulayi Usab',
       'result_timeout':
-          'Dugay kaayo ang pagsusi. Sulayi pag-usab sa mas maayong suga o mas duol nga gilay-on.',
-      'result_error':
-          'May nahitabo nga sayop sa pagsusi sa hulagway nga kini.',
-      'result_not_tilapia':
-          'Daw dili kini Tilapia.\n\n'
-              'Palihug kumuha og hulagway sa usa ka Nile Tilapia aron ipadagan ang pagsusi sa sakit.',
+          'Dugay ra ang pag-analyze. Sulayi usab, ipaduol or sa mas hayag nga lugar.',
+      'result_error': 'Naay sayop nahitabo samtang nag-analyze sa picture.',
+      'result_not_tilapia': 'Murag dili ni Tilapia.\n\n'
+          'Pagkuha og picture sa Nile Tilapia aron ma-scan para sa sakit.',
       'result_model_missing':
-          'Ang usa ka kinahanglang modelo wala pa ma-install.',
-      'result_model_failed':
-          'Ang usa ka kinahanglang modelo na-load apan napakyas sa pagdagan.',
-      'result_save': 'I-save sa Kasaysayan',
-      'result_retake': 'Kumuha Pag-usab og Hulagway',
-      'result_scan_another': 'Mag-scan og Lain',
+          'Wala pa ang gikinahanglan nga model.',
+      'result_model_failed': 'Nag-fail sa pag-run ang model.',
+      'result_save': 'I-save sa History',
+      'result_retake': 'Pagkuha Usab og Picture',
+      'result_scan_another': 'Mag-scan Usab',
       // result labels
-      'badge_presumptive': 'Presumptive Positibo',
-      'heading_presumptive': 'Nadiskubreng Hemorrhagic Ulcer',
-      'body_presumptive':
-          'Mga biswal nga timailhan nga nahiuyon sa Aeromonas hydrophila (MAS). '
-              'Kini usa ka presumptive nga resulta sa pag-screen — dili usa ka lab-confirmed nga diagnosis.',
+      'badge_presumptive': 'Posibleng Positibo',
+      'heading_presumptive': 'Adunay Nakitang Hemorrhagic Ulcer',
+      'body_presumptive': 'Naay mga timailhan nga posibleng Aeromonas hydrophila (MAS). '
+          'Pasiunang resulta lang ni — dili kompirmaho nga diagnosis gikan sa lab.',
       'action_presumptive':
-          'Girekomenda: Ihimulag kining isda ug kumonsulta sa usa ka beterinaryo o '
-              'aquaculture technician alang sa kumpirmasyon.',
-      'badge_low_match': 'Ubos nga Katugma',
-      'heading_low_match': 'Dili Klaro nga Resulta',
+          'Recommended: Ilahi kining isda ug mangonsulta sa beterinaryo o technician aron makasiguro.',
+      'badge_low_match': 'Inconclusive',
+      'heading_low_match': 'Di Klaro nga Resulta',
       'body_low_match':
-          'Pipila ka biswal nga timailhan ang nadiskubre, apan ang pagsalig mihulog sa ubos sa kasaligang threshold.',
+          'Naay nakitang mga senyales, pero wa kaabot sa sakto nga confidence level aron makompirmar.',
       'action_low_match':
-          'Girekomenda: Kumuha pag-usab og hulagway sa mas maayong suga, o pasusiha sa usa ka technician.',
-      'badge_clear': 'Walay Nadiskubreng Lesyon',
-      'heading_clear': 'Murag Maayong',
+          'Recommended: Kuhai usab og picture sa mas hayag nga lugar, o ipa-check sa usa ka technician.',
+      'badge_clear': 'Walay Nakitang Samad',
+      'heading_clear': 'Murag Limpyo',
       'body_clear':
-          'Walay hemorrhagic lesyon ang nadiskubre sa hulagway nga kini. Padayon sa regular nga pagmonitor.',
+          'Walay nakitang hemorrhagic lesions sa picture. Ipadayon lang ang naandan nga pag-monitor.',
       'action_clear':
-          'Gisusi lamang niini ang mga makita nga panlabas nga sintomas — dili niini matangtang ang '
-              'sulod o asymptomatic nga kondisyon.',
+          'Mga panggawas nga sintomas lang ang makit-an niini — dili buot pasabot nga walay sakit sa sulod sa lawas ang isda.',
 
       // --- History ---
-      'history_title': 'Kasaysayan sa Detection',
-      'history_export_tooltip': 'I-export ang CSV',
+      'history_title': 'Detection History',
+      'history_export_tooltip': 'I-export as CSV',
       'history_retention_notice':
-          'Ang mga nakuha nga hulagway awtomatikong mapapala human sa {days} ka adlaw aron makatigom og espasyo. '
-              'Ang mga rekord sa detection magpabilin sa log nga kini hangtod i-delete o i-export nimo kini.',
-      'history_empty': 'Wala pay na-save nga detection.',
-      'history_card_no_lesions': 'Walay Nadiskubreng Lesyon',
+          'Automatic nga ma-delete ang mga pictures inig abot sa {days} ka adlaw para makatipid sa space. '
+              'Magpabilin ang mga record diri hangtod i-delete o i-export nimo.',
+      'history_empty': 'Wala pay na-save nga mga record.',
+      'history_card_no_lesions': 'Walay Nakitang Samad',
       'history_card_hemorrhagic': 'Hemorrhagic Ulcer',
-      'history_expired': 'Nag-expire',
+      'history_expired': 'Expired',
 
       // --- Detail ---
-      'detail_title': 'Mga Detalye sa Detection',
-      'detail_export_tooltip': 'I-export',
-      'detail_label_farm': 'Profile sa Pond',
+      'detail_title': 'Detection Details',
+      'detail_label_farm': 'Farm Profile',
       'detail_label_datetime': 'Petsa ug Oras',
-      'detail_label_confidence': 'Pagsalig',
-      'detail_label_class': 'Nadiskubreng Klase',
-      'detail_delete': 'Papason',
-      'detail_export': 'I-export',
-      'detail_image_expired': 'Nag-expire ang Hulagway',
+      'detail_label_confidence': 'Confidence',
+      'detail_label_class': 'Na-detect',
+      'result_details_heading': 'DETECTION DETAILS',
+      'detail_delete': 'I-delete',
+      'detail_save_gallery': 'I-save sa Gallery',
+      'detail_gallery_saved':
+          'Na-save sa imong gallery (TilapiaVision album).',
+      'detail_gallery_no_photo':
+          'Expired na ang picture para niining record, busa walay ma-save.',
+      'detail_gallery_denied':
+          'Wa gi-allow ang gallery access. E-allow sa settings sa imong phone.',
+      'detail_gallery_failed':
+          'Wala ma-save sa gallery. Palihug sulayi usab.',
+      'detail_image_expired': 'Expired na nga Picture',
       'detail_image_expired_sub':
-          'Ang mga hulagway gikuha human sa {days} ka adlaw',
-      'detail_dialog_title': 'Papason ba kining detection?',
+          'I-delete ang mga picture human sa {days} ka adlaw',
+      'detail_dialog_title': 'I-delete kining record?',
       'detail_dialog_body':
-          'Permanente kining matangtang gikan sa imong detection log. Dili kini mabawi.',
-      'detail_dialog_cancel': 'Kanselahon',
-      'detail_dialog_confirm': 'Papason',
+          'Mawala na gyud ni sa imong log. Dili na kini mabalik.',
+      'detail_dialog_cancel': 'I-cancel',
+      'detail_dialog_confirm': 'I-delete',
       // detail badges/headings
-      'detail_badge_presumptive': 'Presumptive Positibo',
+      'detail_badge_presumptive': 'Posibleng Positibo',
       'detail_heading_presumptive': 'Hemorrhagic Ulcer',
-      'detail_badge_low_match': 'Ubos nga Katugma',
-      'detail_heading_low_match': 'Dili Klaro nga Resulta',
-      'detail_badge_clear': 'Walay Nadiskubreng Lesyon',
-      'detail_heading_clear': 'Murag Maayo',
+      'detail_badge_low_match': 'Inconclusive',
+      'detail_heading_low_match': 'Di Klaro nga Resulta',
+      'detail_badge_clear': 'Walay Nakitang Samad',
+      'detail_heading_clear': 'Murag Limpyo',
 
       // --- Biosecurity ---
-      'bio_title': 'Mga Tip sa Biosecurity',
+      'bio_title': 'Biosecurity Tips',
       'bio_subtitle':
-          'Mga simpleng batasan nga nagpaminos sa risgo sa pagkuyanap sa sakit tali sa mga pond.',
-      'bio_tip1_title': 'Limpyoi ang mga kamot tali sa mga pond',
+          'Mga simple nga habit para dili mokatap ang sakit sa ubang ponds.',
+      'bio_tip1_title': 'Pag-sanitize sa kamot',
       'bio_tip1_body':
-          'Hugasi o mag-sanitize sa wala pa ug human makiangay sa mga isda gikan sa laing kulungan.',
-      'bio_tip2_title': 'I-disinfect ang mga pukot ug kagamitan',
+          'Panghugas o pag-sanitize sa kamot una ug human mogunit og isda gikan sa laing pond.',
+      'bio_tip2_title': 'I-disinfect ang mga net ug gamit',
       'bio_tip2_body':
-          'Ang mga gigamit nga pukot ug basin usa ka kasagaran nga paagi sa pagkuyanap sa sakit sa mga grow-out pond.',
-      'bio_tip3_title': 'Ipadayon nga uga ang imong telepono',
+          'Ang pag-share og mga net ug basin sagad rason ngano mokatap ang sakit sa lain-laing pond.',
+      'bio_tip3_title': 'Ayaw basaa ang phone',
       'bio_tip3_body':
-          'Likayi ang direktang kontak sa device sa tubig sa pond kung nagkuha og mga scan.',
-      'bio_tip4_title': 'Ihimulag ang mga gihinayang kaso',
+          'Likayi nga mabasa sa tubig sa pond ang imong phone inig kuha nimo og picture.',
+      'bio_tip4_title': 'Ilahi ang posibleng naay sakit',
       'bio_tip4_body':
-          'Balhin ang usa ka Presumptive Positive nga isda ngadto sa usa ka bulag nga sudlanan samtang nagpangita og kumpirmasyon.',
+          'Ibalhin sa laing butanganan ang isda nga ni-test og Posibleng Positibo samtang naghulat og kompirmasyon.',
 
       // --- Settings ---
-      'settings_title': 'Mga Setting',
-      'settings_language': 'Pinulongan',
-      'settings_farm_label': 'Ngalan sa Pond / Tag-iya',
-      'settings_farm_hint': 'Ngalan sa pond',
-      'settings_farm_save': 'I-save ang Ngalan sa Pond',
-      'settings_farm_saved': 'Na-save ang ngalan sa pond',
-      'settings_appearance': 'Panagway',
-      'settings_dark_mode': 'Ngitngit nga Mode',
-      'settings_dark_mode_desc':
-          'Gamita ang ngitngit nga kolor sa tibuok app',
-      'settings_thresholds': 'Mga Threshold sa Detection',
+      'settings_title': 'Settings',
+      'settings_language': 'Language',
+      'settings_farm_label': 'NGALAN SA FARM / TAG-IYA',
+      'settings_farm_hint': 'Ngalan sa farm',
+      'settings_farm_save': 'I-save ang Farm',
+      'settings_farm_saved': 'Na-save na',
+      'settings_appearance': 'Appearance',
+      'settings_dark_mode': 'Dark Mode',
+      'settings_dark_mode_desc': 'Mogamit og dark theme sa tibuok app',
+      'settings_thresholds': 'Detection Thresholds',
       'settings_thresholds_desc':
-          'Ang mas ubos nga kantidad nagmarka og mas daghang kaso apan nagdugon og mas daghang sayop nga positibo. '
-              'Ang pagsusi sa species gibutang nga taas sa default aron malikayan ang pagtanggap sa random nga mga butang o maling framed nga hulagway.',
-      'settings_species_gate': 'Pagsusi sa species (Tilapia gate)',
-      'settings_positive_threshold': 'Threshold sa positibong resulta',
-      'settings_model_status': 'Kahimtang sa Modelo',
-      'settings_verifier': 'Verifier sa species',
-      'settings_detector': 'Detector sa sakit',
-      'settings_stored_data': 'Gitipig nga Data',
-      'settings_export_csv': 'I-export ang detection log (CSV)',
-      'settings_model_checking': 'Gisusi…',
-      'settings_model_ready': 'Andam',
-      'settings_model_not_ready': 'Dili andam',
+          'Kung paubsan, mas daghan ma-detect pero basig modaghan ang false positives. '
+              'Gituyo nga taas ang species check by default aron dili mo-scan og laing butang o bati nga picture.',
+      'settings_species_gate': 'Species check (Tilapia gate)',
+      'settings_positive_threshold': 'Positive result threshold',
+      'settings_model_status': 'Model Status',
+      'settings_verifier': 'Species verifier',
+      'settings_detector': 'Disease detector',
+      'settings_stored_data': 'Stored Data',
+      'settings_export_csv': 'I-export ang log (CSV)',
+      'settings_model_checking': 'Checking…',
+      'settings_model_ready': 'Ready Na',
+      'settings_model_not_ready': 'Dili pa ready',
+
+      // --- Developer options (unlocked from the About screen) ---
+      'dev_options_title': 'Developer Options',
+      'dev_options_hide': 'I-hide',
+      'dev_tap_progress':
+          'Developer options — nabilin nga taps: {n}',
+      'dev_unlocked':
+          'Naka-enable na ang developer options. Makit-an nimo sa Settings.',
+      'dev_already': 'Naka-enable na ang developer options.',
 
       // --- About ---
-      'about_title': 'Mahitungod Sa',
-      'about_version': 'Bersyon 1.0.0 — offline build',
-      'about_card1_title': 'Unsa ang gibuhat sa app nga kini',
+      'about_title': 'About',
+      'about_version': 'Version 1.0.0 — offline build',
+      'about_card1_title': 'Unsay ginabuhat ani nga app',
       'about_card1_body':
-          'Gisusi sa TilapiaVision ang mga hulagway sa Nile Tilapia alang sa mga biswal nga '
-              'timailhan nga nahiuyon sa Motile Aeromonas Septicemia (hemorrhagic lesions). '
-              'Ang tanan nagdagan sa device — walay internet, walay account.',
-      'about_card2_title': 'Unsaon kini paggana',
+          'Ginasusi sa TilapiaVision ang pictures sa Nile Tilapia para mangita og senyales sa '
+              'Motile Aeromonas Septicemia (hemorrhagic lesions). '
+              'Tanang proseso anaa sa imong device — walay internet o account gikinahanglan.',
+      'about_scope_title': 'Unsay ma-detect niini',
+      'about_scope_body':
+          'Aeromonas (Motile Aeromonas Septicemia) lang ang ma-detect niini, ug sa '
+              'Nile Tilapia lang. Ang ubang sakit, parasites, ug ubang klase sa isda dili ma-detect aning app.',
+      'about_card2_title': 'Unsaon ni paggana',
       'about_card2_body':
-          'Duha ka modelo ang nagdagan sa sunud-sunod. Unang gikumpirma sa pagsusi sa species nga '
-              'gipakita sa hulagway ang usa ka tilapia; pagkahuman lamang nagdagan ang lesyon detector. '
-              'Mao kana ngano nga ang pagkuha og hulagway sa laing butang nagbalik og "Dili Tilapia" '
-              'kaysa sa usa ka resulta sa sakit.',
-      'about_card3_title': 'Importanteng limitasyon',
+          'Naay duha ka model nga mo-run. Una niining tinoon kung tilapia ang naa sa picture, '
+              'una pa mo-run ang disease detector. Mao nang "Not a Tilapia" ang mogawas kung laing butang ang gipicturan.',
+      'about_card3_title': 'Important limitation',
       'about_card3_body':
-          'Kini usa ka presumptive nga himan sa pag-screen, dili usa ka beterinaryong diagnosis. '
-              'Nakit-an lamang niini ang mga makita nga panlabas nga sintomas ug dili kini '
-              'makatangtang sa sulod o asymptomatic nga kondisyon. Kanunay nga kumpirmahin sa usa ka '
-              'kwalipikadong propesyonal sa wala pa mag-treat.',
+          'Screening tool lang ni, ug dili puli sa diagnosis sa beterinaryo. '
+              'Mga panggawas nga sintomas lang ang ma-detect niini. '
+              'Kanunay mangonsulta sa propesyonal sa dili pa mohatag og tambal.',
       'about_card4_title': 'Ang imong data',
-      'about_card4_body':
-          'Ang mga hulagway sa detection awtomatikong mapapala human sa {days} ka adlaw. '
-              'Ang mga rekord sa detection magpabilin hangtod i-delete o i-export nimo kini. '
-              'Walay mogawas sa imong device gawas kung ikaw mismo ang magpaambit niini.',
+      'about_card4_body': 'Automatic nga ma-delete ang mga pictures inig abot sa {days} ka adlaw. '
+          'Ang mga detection record magpabilin hangtod i-delete o i-export nimo. '
+          'Walay data nga mogawas sa imong device gawas lang kung i-share nimo.',
     },
   };
 }
