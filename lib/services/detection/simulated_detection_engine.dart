@@ -59,9 +59,9 @@ class SimulatedDetectionEngine implements IDetectionEngine {
       confidenceScore: confidence,
       imagePath: image.path,
       label: label,
-      boundingBox: label == DetectionLabel.clear
-          ? null
-          : const BoundingBox(left: 0.32, top: 0.30, width: 0.34, height: 0.26),
+      boundingBoxes: label == DetectionLabel.clear
+          ? const []
+          : const [BoundingBox(left: 0.32, top: 0.30, width: 0.34, height: 0.26)],
     );
   }
 

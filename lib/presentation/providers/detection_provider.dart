@@ -2,8 +2,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart' show Canvas, Offset, Paint, Size;
+import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../core/app_theme.dart';
@@ -100,7 +99,7 @@ class DetectionProvider extends ChangeNotifier {
           confidenceScore: result.confidenceScore,
           imagePath: cachedPath,
           label: result.label,
-          boundingBox: result.boundingBox,
+          boundingBoxes: result.boundingBoxes,
         );
       }
 
@@ -151,7 +150,7 @@ class DetectionProvider extends ChangeNotifier {
   /// something to hand to a technician.
   Future<void> exportSingleDetection(DetectionResult result) async {
     final files = <XFile>[];
-    final rendered = await _renderImageWithBox(result);
+    final rendered = await _renderAnnotatedImage(result);
     if (rendered != null) {
       files.add(XFile(rendered.path, mimeType: 'image/png'));
     }
@@ -164,19 +163,23 @@ class DetectionProvider extends ChangeNotifier {
     }
   }
 
-  /// Composites the cached photo and its bounding box into one new
-  /// image file, and returns it.
+  /// Composites the cached photo (with all bounding boxes) and a white
+  /// info panel below it into one PNG file, then returns it.
   ///
-  /// The box seen on screen is a [BoundingBoxPainter] overlay — it is
-  /// never part of the stored JPEG. Sharing `result.imagePath` directly
-  /// exports the raw photo with no box on it, which was the original
-  /// bug here. The composite has to be produced at export time because
-  /// it does not exist anywhere until now.
-  Future<File?> _renderImageWithBox(DetectionResult result) async {
+  /// Layout:
+  ///   ┌────────────────────────────┐
+  ///   │   fish photo + all boxes   │  ← original pixel dimensions
+  ///   ├────────────────────────────┤
+  ///   │   white info panel         │  ← panelH pixels
+  ///   │   • Result badge           │
+  ///   │   • Farm / Date / Count    │
+  ///   │   • Confidence             │
+  ///   │   • TilapiaVision watermark│
+  ///   └────────────────────────────┘
+  Future<File?> _renderAnnotatedImage(DetectionResult result) async {
     if (result.imagePath == null) return null;
     final srcFile = File(result.imagePath!);
     if (!await srcFile.exists()) return null;
-    if (result.boundingBox == null) return srcFile;
 
     try {
       final bytes = await srcFile.readAsBytes();
@@ -186,26 +189,136 @@ class DetectionProvider extends ChangeNotifier {
       final w = srcImage.width.toDouble();
       final h = srcImage.height.toDouble();
 
+      // ── panel dimensions ─────────────────────────────────────────────
+      // Scale with image height — no hard upper cap so that a 2400-px-
+      // tall phone photo gets a readable panel (~720 px), not a postage-
+      // stamp one.
+      final panelH = h * 0.30;
+      final totalH = h + panelH;
+      final pad = panelH * 0.08;
+      final lineH = panelH * 0.15;
+      final fontSize = lineH * 0.60;
+      final labelFontSize = (w < h ? w : h) * 0.025;
+      final strokeWidth = (w < h ? w : h) * 0.010;
+
       final recorder = ui.PictureRecorder();
       final canvas = Canvas(recorder);
+
+      // ── photo ────────────────────────────────────────────────────────
       canvas.drawImage(srcImage, Offset.zero, Paint());
 
-      BoundingBoxPainter(
-        box: result.boundingBox!,
-        color: result.label == DetectionLabel.presumptivePositive
-            ? AppColors.amber
-            : AppColors.slate,
-        label: '${(result.confidenceScore * 100).round()}%',
-        dashed: result.label == DetectionLabel.lowMatch,
-        // The UI overlay is painted in logical pixels, while this export
-        // canvas uses the source photo's full pixel dimensions.
-        strokeWidth: ((w < h ? w : h) * 0.008).clamp(6.0, 14.0).toDouble(),
-        labelFontSize: ((w < h ? w : h) * 0.018).clamp(16.0, 28.0).toDouble(),
-      ).paint(canvas, Size(w, h));
+      // ── bounding boxes ───────────────────────────────────────────────
+      if (result.boundingBoxes.isNotEmpty) {
+        MultiBoxPainter(
+          boxes: result.boundingBoxes,
+          color: result.label == DetectionLabel.presumptivePositive
+              ? AppColors.amber
+              : AppColors.slate,
+          fallbackLabel: '${(result.confidenceScore * 100).round()}%',
+          dashed: result.label == DetectionLabel.lowMatch,
+          strokeWidth: strokeWidth.clamp(6.0, 14.0),
+          labelFontSize: labelFontSize.clamp(16.0, 28.0),
+        ).paint(canvas, Size(w, h));
+      }
 
+      // ── white info panel ─────────────────────────────────────────────
+      final panelTop = h;
+      canvas.drawRect(
+        Rect.fromLTWH(0, panelTop, w, panelH),
+        Paint()..color = const Color(0xFFFFFFFF),
+      );
+
+      // Accent bar at top of panel
+      final accentColor = result.label == DetectionLabel.presumptivePositive
+          ? AppColors.amber
+          : result.label == DetectionLabel.clear
+              ? AppColors.mint
+              : AppColors.slate;
+      canvas.drawRect(
+        Rect.fromLTWH(0, panelTop, w, strokeWidth.clamp(4.0, 8.0)),
+        Paint()..color = accentColor,
+      );
+
+      // Helper to paint a text line
+      void drawText(
+        String text, {
+        required double y,
+        double? x,
+        double? size,
+        Color color = const Color(0xFF1A1A2E),
+        FontWeight weight = FontWeight.normal,
+      }) {
+        final tp = TextPainter(
+          text: TextSpan(
+            text: text,
+            style: TextStyle(
+              fontSize: size ?? fontSize,
+              color: color,
+              fontWeight: weight,
+            ),
+          ),
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: w - pad * 2);
+        tp.paint(canvas, Offset(x ?? pad, y));
+      }
+
+      String labelText;
+      switch (result.label) {
+        case DetectionLabel.presumptivePositive:
+          labelText = 'Presumptive Positive';
+          break;
+        case DetectionLabel.lowMatch:
+          labelText = 'Low Match';
+          break;
+        case DetectionLabel.clear:
+          labelText = 'No Lesions Detected';
+          break;
+      }
+
+      final lesionCount = result.boundingBoxes.length;
+      final dateStr = '${result.timestamp.year}-'
+          '${result.timestamp.month.toString().padLeft(2, '0')}-'
+          '${result.timestamp.day.toString().padLeft(2, '0')}  '
+          '${result.timestamp.hour.toString().padLeft(2, '0')}:'
+          '${result.timestamp.minute.toString().padLeft(2, '0')}';
+
+      var y = panelTop + pad + strokeWidth.clamp(4.0, 8.0) + pad * 0.5;
+
+      drawText(labelText,
+          y: y,
+          size: fontSize * 1.15,
+          color: accentColor,
+          weight: FontWeight.bold);
+      y += lineH;
+
+      drawText('Farm: ${result.farmProfile}', y: y);
+      y += lineH * 0.85;
+
+      drawText('Date: $dateStr', y: y);
+      y += lineH * 0.85;
+
+      if (lesionCount > 0) {
+        drawText(
+          'Lesions detected: $lesionCount  •  '
+          'Top confidence: ${(result.confidenceScore * 100).round()}%',
+          y: y,
+        );
+        y += lineH * 0.85;
+      }
+
+      // Watermark
+      drawText(
+        'TilapiaVision',
+        y: panelTop + panelH - pad - fontSize * 0.9,
+        x: w - pad - fontSize * 6.5,
+        size: fontSize * 0.75,
+        color: const Color(0xFFB0B8C8),
+      );
+
+      // ── composite and save ──────────────────────────────────────────
       final composited = await recorder
           .endRecording()
-          .toImage(srcImage.width, srcImage.height);
+          .toImage(srcImage.width, (totalH).round());
       final pngData =
           await composited.toByteData(format: ui.ImageByteFormat.png);
       if (pngData == null) return srcFile;
@@ -218,7 +331,7 @@ class DetectionProvider extends ChangeNotifier {
       await out.writeAsBytes(pngData.buffer.asUint8List());
       return out;
     } catch (e) {
-      debugPrint('Bounding-box render failed, exporting raw photo: $e');
+      debugPrint('Annotated render failed, exporting raw photo: $e');
       return srcFile;
     }
   }

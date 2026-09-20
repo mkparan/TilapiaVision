@@ -7,7 +7,7 @@ import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../../data/models/detection_result.dart';
 import '../../providers/detection_provider.dart';
-import '../../widgets/bounding_box_painter.dart';
+import '../../widgets/bounding_box_painter.dart'; // exports BoundingBoxPainter & MultiBoxPainter
 
 /// Runs detection on [imageFile] via [DetectionProvider] and renders
 /// whichever state comes back: processing, timeout, error, or one of
@@ -251,13 +251,13 @@ class _ResultView extends StatelessWidget {
                   width: double.infinity,
                   child: Image.file(imageFile, fit: BoxFit.cover),
                 ),
-                if (result.boundingBox != null)
+                if (result.boundingBoxes.isNotEmpty)
                   Positioned.fill(
                     child: CustomPaint(
-                      painter: BoundingBoxPainter(
-                        box: result.boundingBox!,
+                      painter: MultiBoxPainter(
+                        boxes: result.boundingBoxes,
                         color: theme.accentColor,
-                        label: '${(result.confidenceScore * 100).round()}%',
+                        fallbackLabel: '${(result.confidenceScore * 100).round()}%',
                         dashed: theme.dashed,
                       ),
                     ),

@@ -133,15 +133,14 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                               ],
                             ),
                           ),
-                    if (available && result.boundingBox != null)
+                    if (available && result.boundingBoxes.isNotEmpty)
                       CustomPaint(
-                        painter: BoundingBoxPainter(
-                          box: result.boundingBox!,
-                          color:
-                              result.label == DetectionLabel.presumptivePositive
-                                  ? AppColors.amber
-                                  : AppColors.slate,
-                          label: '${(result.confidenceScore * 100).round()}%',
+                        painter: MultiBoxPainter(
+                          boxes: result.boundingBoxes,
+                          color: result.label == DetectionLabel.presumptivePositive
+                              ? AppColors.amber
+                              : AppColors.slate,
+                          fallbackLabel: '${(result.confidenceScore * 100).round()}%',
                           dashed: result.label == DetectionLabel.lowMatch,
                         ),
                       ),

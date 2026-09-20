@@ -103,7 +103,19 @@ class TFLiteDetectionEngine implements IDetectionEngine {
       ));
     }
     rawBoxes.sort((a, b) => b.score.compareTo(a.score));
+
+    debugPrint(
+      'TFLiteDetectionEngine — ${rawBoxes.length} box(es) above '
+      'confidenceFloor(${DetectionConfig.confidenceFloor}) before NMS'
+      '${rawBoxes.isNotEmpty ? "; top scores: ${rawBoxes.take(5).map((b) => b.score.toStringAsFixed(2)).join(", ")}" : ""}',
+    );
+
     final kept = _nms(rawBoxes, DetectionConfig.nmsIouThreshold);
+
+    debugPrint(
+      'TFLiteDetectionEngine — ${kept.length} box(es) kept after '
+      'NMS(iou=${DetectionConfig.nmsIouThreshold})',
+    );
 
     if (kept.isEmpty) {
       return DetectionResult(
@@ -113,35 +125,40 @@ class TFLiteDetectionEngine implements IDetectionEngine {
         confidenceScore: 0.0,
         imagePath: image.path,
         label: DetectionLabel.clear,
-        boundingBox: null,
+        boundingBoxes: const [],
       );
     }
 
-    final best = kept.first;
-    final confidence = best.score;
-    final label = confidence >= DetectionConfig.operatingThreshold
+    // Map every surviving NMS detection to a normalised BoundingBox.
+    // Coordinates from YOLO11n are already in 0.0-1.0 range.
+    final boxes = kept.map((d) {
+      return BoundingBox(
+        left: (d.cx - d.w / 2).clamp(0.0, 1.0),
+        top: (d.cy - d.h / 2).clamp(0.0, 1.0),
+        width: d.w.clamp(0.0, 1.0),
+        height: d.h.clamp(0.0, 1.0),
+        confidence: d.score,
+      );
+    }).toList();
+
+    final topScore = kept.first.score;
+    final label = topScore >= DetectionConfig.operatingThreshold
         ? DetectionLabel.presumptivePositive
         : DetectionLabel.lowMatch;
 
-    // Box coordinates come out already normalised to 0.0-1.0.
-    final normLeft = (best.cx - best.w / 2).clamp(0.0, 1.0);
-    final normTop = (best.cy - best.h / 2).clamp(0.0, 1.0);
-    final normWidth = best.w.clamp(0.0, 1.0);
-    final normHeight = best.h.clamp(0.0, 1.0);
+    debugPrint(
+      'TFLiteDetectionEngine — ${boxes.length} box(es) kept '
+      '(top score: ${topScore.toStringAsFixed(3)})',
+    );
 
     return DetectionResult(
       farmProfile: farmProfile,
       timestamp: DateTime.now(),
       diseaseClass: 'hemorrhagic_ulcer',
-      confidenceScore: confidence,
+      confidenceScore: topScore,
       imagePath: image.path,
       label: label,
-      boundingBox: BoundingBox(
-        left: normLeft,
-        top: normTop,
-        width: normWidth,
-        height: normHeight,
-      ),
+      boundingBoxes: boxes,
     );
   }
 
