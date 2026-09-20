@@ -12,7 +12,7 @@ class SettingsRepository {
   /// or misframed captures — the verifier's own accuracy is still
   /// being improved, so the gate is deliberately strict for now.
   static const defaultVerifierThreshold = 0.85;
-  static const defaultOperatingThreshold = 0.70;
+  static const defaultOperatingThreshold = 0.60; //60 as per calibrated
   static const defaultDarkMode = false;
 
   Future<double> getOperatingThreshold() async {
