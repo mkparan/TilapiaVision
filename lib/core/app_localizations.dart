@@ -106,8 +106,7 @@ class AppLocalizations {
           'Visual signs consistent with Aeromonas hydrophila (MAS). '
               'This is a presumptive screening result — not a lab-confirmed diagnosis.',
       'action_presumptive':
-          'Recommended: Isolate this tilapia and consult a veterinary or '
-              'aquaculture technician for confirmation.',
+          'Recommended: Isolate this tilapia and consult a veterinary or aquaculture technician for proper diagnosis and treatment.',
       'badge_low_match': 'Low Match',
       'heading_low_match': 'Inconclusive Result',
       'body_low_match':
@@ -118,7 +117,9 @@ class AppLocalizations {
       'heading_clear':
           'No lesions detected by the app. This is not confirmation the tilapia is healthy.',
       'body_clear':
-          'No hemorrhagic lesions were detected in this image. Continue routine monitoring.',
+          'No Aeromonas (MAS) hemorrhagic lesions were detected. Ensure the picture is clear. '
+              'If you visibly see a lesion, please consult a technician, as the app specifically detects MAS '
+              'and may not detect lesions from other diseases.',
       'action_clear':
           'This screens only visible external symptoms — it does not rule out '
               'internal or asymptomatic conditions.',
@@ -306,20 +307,22 @@ class AppLocalizations {
       'badge_presumptive': 'Posibleng Positibo',
       'heading_presumptive': 'May Nakitang Hemorrhagic Ulcer',
       'body_presumptive':
-          'May mga senyales na posibleng Aeromonas hydrophila (MAS). '
-              'Ito ay gabay lamang — hindi kumpirmadong diagnosis.',
+          'May mga palatandaan na maaaring Aeromonas hydrophila (MAS). '
+              'Ito ay paunang resulta lamang — hindi isang kumpirmadong diagnosis mula sa laboratoryo.',
       'action_presumptive':
-          'Recommended: Ihiwalay ang isdang ito at kumonsulta sa beterinaryo o technician.',
-      'badge_low_match': 'Inconclusive',
+          'Mungkahi: Ihiwalay ang isdang ito at sumangguni sa isang beterinaryo o technician para sa tamang diagnosis at lunas.',
+      'badge_low_match': 'Hindi Tiyak',
       'heading_low_match': 'Hindi Malinaw ang Resulta',
       'body_low_match':
           'May nakitang ilang senyales, pero hindi umabot sa tamang confidence level para makumpirma.',
       'action_low_match':
           'Recommended: Kumuha ulit ng picture sa mas maliwanag na lugar, o ipa-check sa technician.',
-      'badge_clear': 'Walang Nakitang Sugat',
-      'heading_clear': 'Mukhang Malinis',
+      'badge_clear': 'Walang Natuklasang Sugat',
+      'heading_clear': 'Mukhang Ligtas',
       'body_clear':
-          'Walang nakitang hemorrhagic lesions sa picture. Ipagpatuloy ang regular na pag-monitor.',
+          'Walang nakitang Aeromonas (MAS) hemorrhagic na sugat. Siguruhing malinaw ang larawan. '
+              'Kung may nakikita ka pa ring sugat, sumangguni sa technician dahil MAS lang ang dine-detect ng app '
+              'at posibleng hindi makita ang sugat mula sa ibang sakit.',
       'action_clear':
           'Mga panlabas na sintomas lang ang nakikita nito — hindi ibig sabihin ay walang sakit sa loob ng katawan ang isda.',
 
@@ -502,20 +505,23 @@ class AppLocalizations {
       // result labels
       'badge_presumptive': 'Posibleng Positibo',
       'heading_presumptive': 'Adunay Nakitang Hemorrhagic Ulcer',
-      'body_presumptive': 'Naay mga timailhan nga posibleng Aeromonas hydrophila (MAS). '
-          'Pasiunang resulta lang ni — dili kompirmaho nga diagnosis gikan sa lab.',
+      'body_presumptive':
+          'Adunay mga timailhan sa Aeromonas hydrophila (MAS). '
+              'Kini usa lamang ka pasiunang resulta — dili usa ka kompirmado nga pagdayagnos gikan sa laboratoryo.',
       'action_presumptive':
-          'Recommended: Ilahi kining isda ug mangonsulta sa beterinaryo o technician aron makasiguro.',
-      'badge_low_match': 'Inconclusive',
+          'Pahimangno: Ilahi kining isda ug magpakisayod sa usa ka beterinaryo o technician alang sa saktong pagdayagnos ug pagtambal.',
+      'badge_low_match': 'Dili Tino',
       'heading_low_match': 'Di Klaro nga Resulta',
       'body_low_match':
           'Naay nakitang mga senyales, pero wa kaabot sa sakto nga confidence level aron makompirmar.',
       'action_low_match':
           'Recommended: Kuhai usab og picture sa mas hayag nga lugar, o ipa-check sa usa ka technician.',
       'badge_clear': 'Walay Nakitang Samad',
-      'heading_clear': 'Murag Limpyo',
+      'heading_clear': 'Mopatim-aw nga Luwas',
       'body_clear':
-          'Walay nakitang hemorrhagic lesions sa picture. Ipadayon lang ang naandan nga pag-monitor.',
+          'Walay nakitang Aeromonas (MAS) hemorrhagic nga samad. Siguroha nga klaro ang hulagway. '
+              'Kung aduna gihapon kay makita nga samad, ipatan-aw sa technician tungod kay MAS ra ang ma-detect sa app '
+              'ug posibleng dili makita ang samad gikan sa laing sakit.',
       'action_clear':
           'Mga panggawas nga sintomas lang ang makit-an niini — dili buot pasabot nga walay sakit sa sulod sa lawas ang isda.',
 
