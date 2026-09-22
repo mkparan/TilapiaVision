@@ -15,7 +15,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.tilapiavision"
+        applicationId = "com.mrkkenth.tilapiavision"
         // camera + tflite_flutter both require API 21+; permission_handler
         // and modern camera features are smoother from API 23 on.
         minSdk = flutter.minSdkVersion

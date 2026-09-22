@@ -6,9 +6,12 @@ import 'package:image_picker/image_picker.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../providers/farm_profile_provider.dart';
 import '../result/result_screen.dart';
+import '../settings/about_screen.dart';
+import '../settings/settings_screen.dart';
 
 /// The main "Scan" tab. Guided capture enforces the field-condition
 /// guidance from Chapter 3: hold 15–30cm away, fill roughly 50% of
@@ -120,6 +123,11 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Pre-capture translated labels from the widget-tree context.
+    // PopupMenuButton's itemBuilder receives an overlay context that is
+    // outside the Provider tree, so context.tr() would fail inside it.
+    final menuSettings = context.tr('camera_menu_settings');
+    final menuAbout = context.tr('camera_menu_about');
     return Scaffold(
       backgroundColor: const Color(0xFF0B0F19),
       body: SafeArea(
@@ -170,32 +178,71 @@ class _CameraCaptureScreenState extends State<CameraCaptureScreen> {
                         // for a live status derived from the engine's
                         // isReady/loading state (e.g. "Loading Model…"
                         // -> "Model Ready").
-                        const _Pill(icon: LucideIcons.wifiOff, text: 'Offline'),
-                        _RoundGlassButton(
-                          icon: LucideIcons.zap,
-                          active: _flashMode == FlashMode.torch,
-                          onTap: _toggleFlash,
+                        _Pill(icon: LucideIcons.wifiOff, text: context.tr('camera_pill_offline')),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            PopupMenuButton<String>(
+                              icon: const Icon(LucideIcons.ellipsisVertical,
+                                  color: Colors.white),
+                              tooltip: 'More',
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14)),
+                              onSelected: (value) {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (_) => value == 'settings'
+                                      ? const SettingsScreen()
+                                      : const AboutScreen(),
+                                ));
+                              },
+                              itemBuilder: (_) => [
+                                PopupMenuItem(
+                                  value: 'settings',
+                                  child: Row(children: [
+                                    Icon(LucideIcons.settings,
+                                        size: 17, color: AppColors.ink),
+                                    const SizedBox(width: 10),
+                                    Text(menuSettings),
+                                  ]),
+                                ),
+                                PopupMenuItem(
+                                  value: 'about',
+                                  child: Row(children: [
+                                    Icon(LucideIcons.info,
+                                        size: 17, color: AppColors.ink),
+                                    const SizedBox(width: 10),
+                                    Text(menuAbout),
+                                  ]),
+                                ),
+                              ],
+                            ),
+                            _RoundGlassButton(
+                              icon: LucideIcons.zap,
+                              active: _flashMode == FlashMode.torch,
+                              onTap: _toggleFlash,
+                            ),
+                          ],
                         ),
                       ],
                     ),
                   ),
-                  const Positioned(
+                  Positioned(
                     top: 62,
                     left: 0,
                     right: 0,
                     child: Center(
                       child: _Pill(
-                          icon: LucideIcons.focus, text: 'Hold 15–30cm away'),
+                          icon: LucideIcons.focus, text: context.tr('camera_pill_hold')),
                     ),
                   ),
-                  const Positioned(
+                  Positioned(
                     top: 100,
                     left: 0,
                     right: 0,
                     child: Center(
                       child: _Pill(
                           icon: LucideIcons.sun,
-                          text: 'Avoid direct flash / sunlight glare'),
+                          text: context.tr('camera_pill_glare')),
                     ),
                   ),
                 ],
@@ -256,8 +303,8 @@ class _RoundGlassButton extends StatelessWidget {
         height: 38,
         decoration: BoxDecoration(
           color: active
-              ? AppColors.amber.withOpacity(0.9)
-              : Colors.black.withOpacity(0.4),
+              ? AppColors.amber.withValues(alpha: 0.9)
+              : Colors.black.withValues(alpha: 0.4),
           shape: BoxShape.circle,
         ),
         child: Icon(icon, color: Colors.white, size: 18),
@@ -279,7 +326,7 @@ class _GalleryButton extends StatelessWidget {
         width: 54,
         height: 54,
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.45),
+          color: Colors.black.withValues(alpha: 0.45),
           shape: BoxShape.circle,
           border: Border.all(color: Colors.white24, width: 1.5),
         ),
@@ -300,7 +347,7 @@ class _Pill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.5),
+        color: Colors.black.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(

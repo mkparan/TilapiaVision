@@ -1,19 +1,23 @@
 import 'dart:io';
 import 'dart:math';
 
+
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:image/image.dart' as img;
+import 'package:path_provider/path_provider.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 
 import '../../core/constants.dart';
 import '../../data/models/detection_result.dart';
+import '../model_load_exceptions.dart';
 import 'i_detection_engine.dart';
 
 /// Real, on-device YOLO11n disease-detection engine backed by
 /// `best_int8.tflite`.
 ///
 /// Model tensor contract (verified against the exported model):
-///   INPUT  [1, 3, 640, 640]  float32  — channels-first, pixels ∈ [0, 1]
+///   INPUT  [1, 3, 640, 640]  float32  — channels-first, pixels in [0, 1]
 ///   OUTPUT [1, 5, 8400]      float32  — rows: cx, cy, w, h, score
 ///
 /// **Channels-first** is critical: most Flutter TFLite examples use
@@ -32,21 +36,30 @@ class TFLiteDetectionEngine implements IDetectionEngine {
 
   @override
   Future<void> initialize() async {
-    // XNNPack must be explicit here: without it, tflite_flutter's
-    // plain reference-kernel path fails on this model with
-    // "Input tensor 207 lacks data" inside Interpreter.invoke() — a
-    // native TFLite engine error, not a Dart bug. The model runs
-    // cleanly under a modern runtime (verified directly), so this is
-    // a kernel-version mismatch between the exporter and
-    // tflite_flutter 0.12.1's bundled native library; the XNNPack
-    // delegate takes a different execution path that doesn't hit it.
-    final options = InterpreterOptions()..addDelegate(XNNPackDelegate());
-    _interpreter = await Interpreter.fromAsset(_modelAssetPath, options: options);
-    _interpreter!.allocateTensors();
+    if (_ready) return;
 
-    // Sanity-check tensor shapes at startup so a model mismatch is
-    // caught immediately rather than producing garbage detections.
-    // Shapes are readable from model metadata before allocation.
+    // Load via a real filesystem file rather than Interpreter.fromAsset.
+    // fromAsset reads through Android's AssetManager, which can mmap the
+    // .tflite incorrectly for some builds even with noCompress set,
+    // producing a load that *looks* fine (correct tensor shapes read
+    // from the header) but fails at invoke() with "Input tensor N lacks
+    // data" — the payload for large tensors reads back short or wrong.
+    // Copying to a plain file and using fromFile sidesteps that path
+    // entirely; it is the most-tested loading path in tflite_flutter.
+    final File modelFile;
+    try {
+      modelFile = await _materializeAsset(_modelAssetPath);
+    } on ModelMissingException {
+      rethrow;
+    }
+
+    final options = InterpreterOptions()..addDelegate(XNNPackDelegate());
+    try {
+      _interpreter = Interpreter.fromFile(modelFile, options: options);
+    } catch (e) {
+      throw ModelRunException('disease detector', '$e');
+    }
+
     final inputShape = _interpreter!.getInputTensor(0).shape;
     final outputShape = _interpreter!.getOutputTensor(0).shape;
     debugPrint('TFLiteDetectionEngine — input shape:  $inputShape');
@@ -62,82 +75,48 @@ class TFLiteDetectionEngine implements IDetectionEngine {
   }) async {
     assert(_ready, 'Call initialize() before analyze()');
 
-    // ----------------------------------------------------------
-    // 1. Decode & resize to 640×640
-    // ----------------------------------------------------------
     final bytes = await image.readAsBytes();
-    final decoded = img.decodeImage(bytes);
-    if (decoded == null) {
-      throw StateError('Could not decode image: ${image.path}');
-    }
-    final resized = img.copyResize(decoded, width: _inputSize, height: _inputSize);
 
-    // ----------------------------------------------------------
-    // 2. Build channels-first flat input buffer [1, 3, 640, 640]
-    //    Pixel values normalised to 0.0-1.0
-    // ----------------------------------------------------------
-    final input = Float32List(1 * 3 * _inputSize * _inputSize);
-    int idx = 0;
+    // Decode, resize, and lay out the channels-first float buffer on a
+    // background isolate. A 12 MP phone photo takes long enough to
+    // decode that doing this on the main thread visibly freezes the UI.
+    final input = await compute(_prepareChannelsFirst, bytes);
 
-    // R channel
-    for (int y = 0; y < _inputSize; y++) {
-      for (int x = 0; x < _inputSize; x++) {
-        input[idx++] = resized.getPixel(x, y).r / 255.0;
-      }
-    }
-    // G channel
-    for (int y = 0; y < _inputSize; y++) {
-      for (int x = 0; x < _inputSize; x++) {
-        input[idx++] = resized.getPixel(x, y).g / 255.0;
-      }
-    }
-    // B channel
-    for (int y = 0; y < _inputSize; y++) {
-      for (int x = 0; x < _inputSize; x++) {
-        input[idx++] = resized.getPixel(x, y).b / 255.0;
-      }
-    }
-
-    // ----------------------------------------------------------
-    // 3. Allocate flat output buffer [1, 5, 8400] and run inference
-    // ----------------------------------------------------------
     final output = Float32List(1 * 5 * _numDetections);
+    try {
+      _interpreter!.run(input.buffer, output.buffer);
+    } catch (e) {
+      throw ModelRunException('disease detector', '$e');
+    }
 
-    // Passing .buffer bypasses tflite_flutter's slow list conversion
-    _interpreter!.run(input.buffer, output.buffer);
-
-    // ----------------------------------------------------------
-    // 4. Parse detections: confidence floor -> NMS -> threshold
-    // ----------------------------------------------------------
+    // 1. confidence floor -> 2. NMS -> 3. operating threshold
     final rawBoxes = <_RawDetection>[];
-
-    // output layout: [cx_0..cx_8399, cy_0..cy_8399, w_0..w_8399, h_0..h_8399, score_0..score_8399]
     for (int i = 0; i < _numDetections; i++) {
       final score = output[4 * _numDetections + i];
       if (score < DetectionConfig.confidenceFloor) continue;
-
-      final cx = output[0 * _numDetections + i];
-      final cy = output[1 * _numDetections + i];
-      final w  = output[2 * _numDetections + i];
-      final h  = output[3 * _numDetections + i];
-
       rawBoxes.add(_RawDetection(
-        cx: cx,
-        cy: cy,
-        w: w,
-        h: h,
+        cx: output[0 * _numDetections + i],
+        cy: output[1 * _numDetections + i],
+        w: output[2 * _numDetections + i],
+        h: output[3 * _numDetections + i],
         score: score,
       ));
     }
-
-    // Sort descending by score for NMS
     rawBoxes.sort((a, b) => b.score.compareTo(a.score));
+
+    debugPrint(
+      'TFLiteDetectionEngine — ${rawBoxes.length} box(es) above '
+      'confidenceFloor(${DetectionConfig.confidenceFloor}) before NMS'
+      '${rawBoxes.isNotEmpty ? "; top scores: ${rawBoxes.take(5).map((b) => b.score.toStringAsFixed(2)).join(", ")}" : ""}',
+    );
 
     final kept = _nms(rawBoxes, DetectionConfig.nmsIouThreshold);
 
-    // ----------------------------------------------------------
-    // 5. Build DetectionResult from the top surviving detection
-    // ----------------------------------------------------------
+    debugPrint(
+      'TFLiteDetectionEngine — ${kept.length} box(es) kept after '
+      'NMS(iou=${DetectionConfig.nmsIouThreshold})',
+    );
+
     if (kept.isEmpty) {
       return DetectionResult(
         farmProfile: farmProfile,
@@ -146,99 +125,123 @@ class TFLiteDetectionEngine implements IDetectionEngine {
         confidenceScore: 0.0,
         imagePath: image.path,
         label: DetectionLabel.clear,
-        boundingBox: null,
+        boundingBoxes: const [],
       );
     }
 
-    final best = kept.first;
-    final confidence = best.score;
+    // Map every surviving NMS detection to a normalised BoundingBox.
+    // Coordinates from YOLO11n are already in 0.0-1.0 range.
+    final boxes = kept.map((d) {
+      return BoundingBox(
+        left: (d.cx - d.w / 2).clamp(0.0, 1.0),
+        top: (d.cy - d.h / 2).clamp(0.0, 1.0),
+        width: d.w.clamp(0.0, 1.0),
+        height: d.h.clamp(0.0, 1.0),
+        confidence: d.score,
+      );
+    }).toList();
 
-    final DetectionLabel label;
-    if (confidence >= DetectionConfig.operatingThreshold) {
-      label = DetectionLabel.presumptivePositive;
-    } else {
-      label = DetectionLabel.lowMatch;
-    }
+    final topScore = kept.first.score;
+    final label = topScore >= DetectionConfig.operatingThreshold
+        ? DetectionLabel.presumptivePositive
+        : DetectionLabel.lowMatch;
 
-    // This export's box coordinates come out already normalised to
-    // 0.0-1.0 (verified directly against the model's raw output) —
-    // NOT pixel coordinates in 0-640 space, despite the 640x640 input
-    // size. Dividing by `_inputSize` again here was a bug: it shrank
-    // every box down to a few-pixel dot in the top-left corner.
-    final normLeft   = (best.cx - best.w / 2).clamp(0.0, 1.0);
-    final normTop    = (best.cy - best.h / 2).clamp(0.0, 1.0);
-    final normWidth  = best.w.clamp(0.0, 1.0);
-    final normHeight = best.h.clamp(0.0, 1.0);
+    debugPrint(
+      'TFLiteDetectionEngine — ${boxes.length} box(es) kept '
+      '(top score: ${topScore.toStringAsFixed(3)})',
+    );
 
     return DetectionResult(
       farmProfile: farmProfile,
       timestamp: DateTime.now(),
       diseaseClass: 'hemorrhagic_ulcer',
-      confidenceScore: confidence,
+      confidenceScore: topScore,
       imagePath: image.path,
       label: label,
-      boundingBox: BoundingBox(
-        left: normLeft,
-        top: normTop,
-        width: normWidth,
-        height: normHeight,
-      ),
+      boundingBoxes: boxes,
     );
   }
 
-  // ============================================================
-  // Non-Max Suppression
-  // ============================================================
-
-  /// Greedy NMS: walk the score-sorted list; for each kept box,
-  /// suppress all later boxes whose IoU with it exceeds [iouThreshold].
   List<_RawDetection> _nms(List<_RawDetection> boxes, double iouThreshold) {
     final kept = <_RawDetection>[];
     final suppressed = List.filled(boxes.length, false);
-
     for (int i = 0; i < boxes.length; i++) {
       if (suppressed[i]) continue;
       kept.add(boxes[i]);
       for (int j = i + 1; j < boxes.length; j++) {
         if (suppressed[j]) continue;
-        if (_iou(boxes[i], boxes[j]) > iouThreshold) {
-          suppressed[j] = true;
-        }
+        if (_iou(boxes[i], boxes[j]) > iouThreshold) suppressed[j] = true;
       }
     }
     return kept;
   }
 
-  /// Intersection-over-Union between two centre-format boxes.
   double _iou(_RawDetection a, _RawDetection b) {
-    final ax1 = a.cx - a.w / 2;
-    final ay1 = a.cy - a.h / 2;
-    final ax2 = a.cx + a.w / 2;
-    final ay2 = a.cy + a.h / 2;
-
-    final bx1 = b.cx - b.w / 2;
-    final by1 = b.cy - b.h / 2;
-    final bx2 = b.cx + b.w / 2;
-    final by2 = b.cy + b.h / 2;
-
-    final ix1 = max(ax1, bx1);
-    final iy1 = max(ay1, by1);
-    final ix2 = min(ax2, bx2);
-    final iy2 = min(ay2, by2);
-
-    final interW = max(0.0, ix2 - ix1);
-    final interH = max(0.0, iy2 - iy1);
+    final ax1 = a.cx - a.w / 2, ay1 = a.cy - a.h / 2;
+    final ax2 = a.cx + a.w / 2, ay2 = a.cy + a.h / 2;
+    final bx1 = b.cx - b.w / 2, by1 = b.cy - b.h / 2;
+    final bx2 = b.cx + b.w / 2, by2 = b.cy + b.h / 2;
+    final ix1 = max(ax1, bx1), iy1 = max(ay1, by1);
+    final ix2 = min(ax2, bx2), iy2 = min(ay2, by2);
+    final interW = max(0.0, ix2 - ix1), interH = max(0.0, iy2 - iy1);
     final intersection = interW * interH;
-
-    final areaA = a.w * a.h;
-    final areaB = b.w * b.h;
-    final union = areaA + areaB - intersection;
-
+    final union = a.w * a.h + b.w * b.h - intersection;
     return union > 0 ? intersection / union : 0.0;
   }
 }
 
-/// Internal representation of a candidate detection before NMS.
+/// Copies a Flutter asset to a real file in temporary storage the
+/// first time it's needed, and reuses that file afterward. Throws
+/// [ModelMissingException] if the asset isn't bundled at all.
+Future<File> _materializeAsset(String assetPath) async {
+  final tmp = await getTemporaryDirectory();
+  final fileName = assetPath.split('/').last;
+  final file = File('${tmp.path}/$fileName');
+
+  ByteData data;
+  try {
+    data = await rootBundle.load(assetPath);
+  } catch (_) {
+    final name = fileName.contains('verifier') ? 'species verifier' : 'disease detector';
+    throw ModelMissingException(assetPath, name);
+  }
+
+  // Re-copy if missing or a different size (e.g. the model was updated).
+  if (!await file.exists() || (await file.length()) != data.lengthInBytes) {
+    await file.writeAsBytes(data.buffer.asUint8List(), flush: true);
+  }
+  return file;
+}
+
+/// Runs on a background isolate via [compute]. Decodes the photo,
+/// resizes to 640x640, and lays out a channels-first [1,3,640,640]
+/// float32 buffer normalised to 0.0-1.0.
+Float32List _prepareChannelsFirst(Uint8List bytes) {
+  final decoded = img.decodeImage(bytes);
+  if (decoded == null) throw StateError('Could not decode image');
+  const n = TFLiteDetectionEngine._inputSize;
+  final resized = img.copyResize(decoded, width: n, height: n);
+
+  final input = Float32List(3 * n * n);
+  var idx = 0;
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < n; x++) {
+      input[idx++] = resized.getPixel(x, y).r / 255.0;
+    }
+  }
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < n; x++) {
+      input[idx++] = resized.getPixel(x, y).g / 255.0;
+    }
+  }
+  for (int y = 0; y < n; y++) {
+    for (int x = 0; x < n; x++) {
+      input[idx++] = resized.getPixel(x, y).b / 255.0;
+    }
+  }
+  return input;
+}
+
 class _RawDetection {
   const _RawDetection({
     required this.cx,
@@ -247,10 +250,5 @@ class _RawDetection {
     required this.h,
     required this.score,
   });
-
-  final double cx;
-  final double cy;
-  final double w;
-  final double h;
-  final double score;
+  final double cx, cy, w, h, score;
 }

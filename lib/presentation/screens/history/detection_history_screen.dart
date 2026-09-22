@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../../core/constants.dart';
 import '../../../data/models/detection_result.dart';
@@ -51,10 +52,10 @@ class _DetectionHistoryScreenState extends State<DetectionHistoryScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detection History'),
+        title: Text(context.tr('history_title')),
         actions: [
           IconButton(
-            tooltip: 'Export CSV',
+            tooltip: context.tr('history_export_tooltip'),
             onPressed: history.isEmpty || _exporting ? null : _handleExport,
             icon: _exporting
                 ? const SizedBox(
@@ -103,10 +104,8 @@ class _RetentionNotice extends StatelessWidget {
             const SizedBox(width: 9),
             Expanded(
               child: Text(
-                'Captured photos are automatically deleted after '
-                '${DetectionConfig.imageRetentionDays} days to save space. '
-                'Detection records stay in this log until you delete or export them.',
-                style: const TextStyle(fontSize: 11.3, height: 1.5, color: AppColors.ink),
+                context.trFmt('history_retention_notice', {'days': '${DetectionConfig.imageRetentionDays}'}),
+                style: TextStyle(fontSize: 11.3, height: 1.5, color: AppColors.ink),
               ),
             ),
           ],
@@ -132,7 +131,7 @@ class _EmptyState extends StatelessWidget {
             child: const Icon(LucideIcons.history, size: 26, color: AppColors.teal),
           ),
           const SizedBox(height: 14),
-          const Text('No detections saved yet.', style: TextStyle(color: AppColors.slate, fontSize: 13)),
+          Text(context.tr('history_empty'), style: TextStyle(color: AppColors.slate, fontSize: 13)),
         ],
       ),
     );
@@ -160,7 +159,7 @@ class _HistoryCard extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               borderRadius: BorderRadius.circular(16),
               boxShadow: AppTheme.cardShadow,
             ),
@@ -175,13 +174,13 @@ class _HistoryCard extends StatelessWidget {
                         ? Image.file(File(result.imagePath!), fit: BoxFit.cover)
                         : Container(
                             color: AppColors.slateLight,
-                            child: const Column(
+                            child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(LucideIcons.imageOff, size: 17, color: AppColors.slate),
-                                SizedBox(height: 2),
+                                const SizedBox(height: 2),
                                 Text(
-                                  'Expired',
+                                  context.tr('history_expired'),
                                   style: TextStyle(fontSize: 7, color: AppColors.slate, fontWeight: FontWeight.bold),
                                 ),
                               ],
@@ -194,7 +193,7 @@ class _HistoryCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(_titleFor(result), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                      Text(_titleFor(context, result), style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                       const SizedBox(height: 3),
                       Row(
                         children: [
@@ -206,7 +205,7 @@ class _HistoryCard extends StatelessWidget {
                           const SizedBox(width: 5),
                           Text(
                             DateFormat('MMM d, h:mm a').format(result.timestamp),
-                            style: const TextStyle(fontSize: 11, color: AppColors.slate),
+                            style: TextStyle(fontSize: 11, color: AppColors.slate),
                           ),
                         ],
                       ),
@@ -218,7 +217,7 @@ class _HistoryCard extends StatelessWidget {
                   style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12, color: _dotColorFor(result.label)),
                 ),
                 const SizedBox(width: 6),
-                const Icon(LucideIcons.chevronRight, size: 14, color: AppColors.slate),
+                Icon(LucideIcons.chevronRight, size: 14, color: AppColors.slate),
               ],
             ),
           ),
@@ -227,9 +226,9 @@ class _HistoryCard extends StatelessWidget {
     );
   }
 
-  String _titleFor(DetectionResult r) {
-    if (r.label == DetectionLabel.clear) return 'No Lesions Detected';
-    return 'Hemorrhagic Ulcer';
+  String _titleFor(BuildContext context, DetectionResult r) {
+    if (r.label == DetectionLabel.clear) return context.tr('history_card_no_lesions');
+    return context.tr('history_card_hemorrhagic');
   }
 
   Color _dotColorFor(DetectionLabel label) {

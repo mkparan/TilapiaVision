@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:provider/provider.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
+import '../../providers/locale_provider.dart';
 import 'farm_profile_setup_screen.dart';
 
 /// Mandatory click-through establishing TilapiaVision as a
@@ -26,18 +29,66 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, right: 16),
+                child: Consumer<LocaleProvider>(
+                  builder: (context, localeProvider, _) {
+                    return DropdownButton<AppLocale>(
+                      value: localeProvider.locale,
+                      icon: const Padding(
+                        padding: EdgeInsets.only(left: 6.0),
+                        child: Icon(LucideIcons.globe, color: Colors.white70, size: 16),
+                      ),
+                      dropdownColor: AppColors.surface,
+                      underline: const SizedBox(),
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      onChanged: (AppLocale? newLocale) {
+                        if (newLocale != null) {
+                          localeProvider.setLocale(newLocale);
+                        }
+                      },
+                      items: AppLocale.values.map((AppLocale locale) {
+                        return DropdownMenuItem<AppLocale>(
+                          value: locale,
+                          child: Text(
+                            locale.displayName,
+                            style: TextStyle(
+                              color: localeProvider.locale == locale ? AppColors.deepBlue : AppColors.ink,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      selectedItemBuilder: (BuildContext context) {
+                        return AppLocale.values.map<Widget>((AppLocale locale) {
+                          return Container(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              locale.displayName,
+                              style: const TextStyle(color: Colors.white70),
+                            ),
+                          );
+                        }).toList();
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
             Expanded(
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      width: 68,
-                      height: 68,
-                      decoration: const BoxDecoration(
-                          color: AppColors.teal, shape: BoxShape.circle),
-                      child: const Icon(LucideIcons.fish,
-                          color: Colors.white, size: 30),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16),
+                      child: Image.asset(
+                        'assets/images/tilapiavision_logo.png',
+                        width: 68,
+                        height: 68,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     const SizedBox(height: 18),
                     Text(
@@ -48,12 +99,12 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                           ?.copyWith(color: Colors.white, fontSize: 26),
                     ),
                     const SizedBox(height: 8),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 40),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 40),
                       child: Text(
-                        'Offline hemorrhagic lesion screening for Nile Tilapia',
+                        context.tr('disclaimer_subtitle'),
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Colors.white70, fontSize: 13),
+                        style: const TextStyle(color: Colors.white70, fontSize: 13),
                       ),
                     ),
                   ],
@@ -63,9 +114,9 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
             Container(
               width: double.infinity,
               padding: const EdgeInsets.fromLTRB(24, 26, 24, 28),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -83,17 +134,15 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                             size: 17, color: AppColors.teal),
                       ),
                       const SizedBox(width: 10),
-                      Text('Before You Begin',
+                      Text(context.tr('disclaimer_section_title'),
                           style: Theme.of(context).textTheme.headlineSmall),
                     ],
                   ),
                   const SizedBox(height: 14),
-                  const Text(
-                    'TilapiaVision screens for visual signs consistent with hemorrhagic disease. '
-                    'It is a detection support tool — not a veterinary diagnosis. Always confirm '
-                    'results with a qualified professional before treatment.',
+                  Text(
+                    context.tr('disclaimer_body'),
                     style: TextStyle(
-                        fontSize: 13, color: Colors.black87, height: 1.55),
+                        fontSize: 13, color: AppColors.ink, height: 1.55),
                   ),
                   const SizedBox(height: 18),
                   InkWell(
@@ -113,12 +162,12 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                             onChanged: (v) =>
                                 setState(() => _acknowledged = v ?? false),
                           ),
-                          const Expanded(
+                          Expanded(
                             child: Padding(
-                              padding: EdgeInsets.only(top: 12),
+                              padding: const EdgeInsets.only(top: 12),
                               child: Text(
-                                'I understand this is a presumptive screening tool, not a medical diagnosis.',
-                                style: TextStyle(fontSize: 12.5),
+                                context.tr('disclaimer_checkbox'),
+                                style: const TextStyle(fontSize: 12.5),
                               ),
                             ),
                           ),
@@ -137,7 +186,7 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
                                         const FarmProfileSetupScreen()),
                               )
                           : null,
-                      child: const Text('Continue'),
+                      child: Text(context.tr('disclaimer_continue')),
                     ),
                   ),
                 ],

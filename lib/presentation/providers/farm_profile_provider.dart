@@ -32,5 +32,19 @@ class FarmProfileProvider extends ChangeNotifier {
     profile = newProfile;
     notifyListeners();
   }
+
+  /// Reconfigures the farm name from Settings, keeping the original
+  /// creation date and acknowledgement. Saved to disk immediately.
+  Future<void> updateName(String name) async {
+    final current = profile;
+    final updated = FarmProfile(
+      name: name,
+      createdAt: current?.createdAt ?? DateTime.now(),
+      acknowledgedStorageNotice: current?.acknowledgedStorageNotice ?? true,
+    );
+    await _repository.saveProfile(updated);
+    profile = updated;
+    notifyListeners();
+  }
 }
 

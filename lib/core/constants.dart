@@ -28,16 +28,19 @@ class DetectionConfig {
   DetectionConfig._();
 
   /// Pre-NMS confidence floor. Detections below this are discarded
-  /// before Non-Max Suppression ever runs. Fixed by design, not tuned.
+  /// before Non-Max Suppression ever runs. Fixed per Section 3.x of
+  /// the research paper — do not lower without a formal re-evaluation.
   static const double confidenceFloor = 0.50;
 
   /// IoU threshold used during Non-Max Suppression to collapse
-  /// duplicate boxes around the same lesion.
+  /// duplicate boxes around the same lesion. Set to 0.70 per the
+  /// manuscript — a higher threshold means less aggressive suppression,
+  /// so two boxes sharing <70% overlap are kept as distinct detections.
   static const double nmsIouThreshold = 0.70;
 
   /// Operating threshold that separates "Presumptive Positive" from
-  /// "Low Match". PLACEHOLDER — replace after Sprint 5 calibration.
-  static double operatingThreshold = 0.70;
+  /// "Low Match". Set to 0.60 per the detection specification.
+  static double operatingThreshold = 0.60;
 
   /// Hard cap on how long inference is allowed to run before the UI
   /// gives up and shows a timeout state.

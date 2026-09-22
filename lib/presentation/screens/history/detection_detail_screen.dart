@@ -5,18 +5,20 @@ import 'package:intl/intl.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../../core/constants.dart';
 import '../../../data/models/detection_result.dart';
 import '../../../services/storage_service.dart';
 import '../../providers/detection_provider.dart';
 import '../../widgets/bounding_box_painter.dart';
+import '../../widgets/save_to_gallery_button.dart';
 
 /// Full detail view for one detection record — reachable by tapping
 /// any card on [DetectionHistoryScreen]. Shows the cached photo (or
 /// the expired-archive fallback if it's past the 30-day window),
-/// every stored field, and lets the farmer delete the record or
-/// export the photo + a text summary together.
+/// every stored field, and lets the farmer delete the record or save
+/// the annotated photo to the phone's gallery.
 class DetectionDetailScreen extends StatefulWidget {
   const DetectionDetailScreen({super.key, required this.result});
 
@@ -29,35 +31,28 @@ class DetectionDetailScreen extends StatefulWidget {
 class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
   bool _busy = false;
 
-  Future<void> _handleExport() async {
-    setState(() => _busy = true);
-    try {
-      await context
-          .read<DetectionProvider>()
-          .exportSingleDetection(widget.result);
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
   Future<void> _handleDelete() async {
+    // Capture the provider before any await so context is never accessed
+    // across an async gap (use_build_context_synchronously).
+    final detectionProvider = context.read<DetectionProvider>();
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete this detection?'),
-        content: const Text(
-          'This removes it from your detection log permanently. This cannot be undone.',
-        ),
+        title: Text(context.tr('detail_dialog_title')),
+        content: Text(context.tr('detail_dialog_body')),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Cancel'),
+            child: Text(context.tr('detail_dialog_cancel')),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Delete',
-                style: TextStyle(
-                    color: AppColors.amberDark, fontWeight: FontWeight.bold)),
+            child: Text(
+              context.tr('detail_dialog_confirm'),
+              style: const TextStyle(
+                  color: AppColors.amberDark, fontWeight: FontWeight.bold),
+            ),
           ),
         ],
       ),
@@ -68,7 +63,7 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
     if (id == null) return;
 
     setState(() => _busy = true);
-    await context.read<DetectionProvider>().deleteDetection(id);
+    await detectionProvider.deleteDetection(id);
     if (mounted) Navigator.of(context).pop();
   }
 
@@ -78,17 +73,7 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
     final theme = _detailThemeFor(result.label);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Detection Details'),
-        actions: [
-          IconButton(
-            tooltip: 'Export',
-            onPressed: _busy ? null : _handleExport,
-            icon: const Icon(LucideIcons.share2),
-          ),
-          const SizedBox(width: 6),
-        ],
-      ),
+      appBar: AppBar(title: Text(context.tr('detail_title'))),
       body: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -109,33 +94,34 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Icon(LucideIcons.imageOff,
+                                Icon(LucideIcons.imageOff,
                                     size: 34, color: AppColors.slate),
                                 const SizedBox(height: 10),
-                                const Text(
-                                  'Image Expired',
+                                Text(
+                                  context.tr('detail_image_expired'),
                                   style: TextStyle(
                                       color: AppColors.slate,
                                       fontWeight: FontWeight.bold),
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  'Photos are removed after ${DetectionConfig.imageRetentionDays} days',
-                                  style: const TextStyle(
+                                  context.trFmt('detail_image_expired_sub',
+                                      {'days': '${DetectionConfig.imageRetentionDays}'}),
+                                  style: TextStyle(
                                       color: AppColors.slate, fontSize: 11.5),
                                 ),
                               ],
                             ),
                           ),
-                    if (available && result.boundingBox != null)
+                    if (available && result.boundingBoxes.isNotEmpty)
                       CustomPaint(
-                        painter: BoundingBoxPainter(
-                          box: result.boundingBox!,
+                        painter: MultiBoxPainter(
+                          boxes: result.boundingBoxes,
                           color:
                               result.label == DetectionLabel.presumptivePositive
                                   ? AppColors.amber
                                   : AppColors.slate,
-                          label: '${(result.confidenceScore * 100).round()}%',
+                          fallbackLabel: '${(result.confidenceScore * 100).round()}%',
                           dashed: result.label == DetectionLabel.lowMatch,
                         ),
                       ),
@@ -156,7 +142,7 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                       color: theme.badgeBg,
                       borderRadius: BorderRadius.circular(20)),
                   child: Text(
-                    theme.badgeText,
+                    context.tr(theme.badgeKey),
                     style: TextStyle(
                         color: theme.badgeFg,
                         fontWeight: FontWeight.bold,
@@ -164,28 +150,28 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                   ),
                 ),
                 const SizedBox(height: 14),
-                Text(theme.heading,
+                Text(context.tr(theme.headingKey),
                     style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 20),
                 _InfoRow(
                     icon: LucideIcons.user,
-                    label: 'Farm Profile',
+                    label: context.tr('detail_label_farm'),
                     value: result.farmProfile),
                 _InfoRow(
                   icon: LucideIcons.clock,
-                  label: 'Date & Time',
+                  label: context.tr('detail_label_datetime'),
                   value: DateFormat('MMM d, yyyy — h:mm a')
                       .format(result.timestamp),
                 ),
                 if (result.label != DetectionLabel.clear)
                   _InfoRow(
                     icon: LucideIcons.circleAlert,
-                    label: 'Confidence',
+                    label: context.tr('detail_label_confidence'),
                     value: '${(result.confidenceScore * 100).round()}%',
                   ),
                 _InfoRow(
                     icon: LucideIcons.fileSpreadsheet,
-                    label: 'Detected Class',
+                    label: context.tr('detail_label_class'),
                     value: result.diseaseClass),
               ],
             ),
@@ -194,8 +180,8 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
       ),
       bottomNavigationBar: Container(
         padding: const EdgeInsets.fromLTRB(22, 14, 22, 20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
           border: Border(top: BorderSide(color: AppColors.border)),
         ),
         child: Row(
@@ -207,22 +193,16 @@ class _DetectionDetailScreenState extends State<DetectionDetailScreen> {
                   foregroundColor: AppColors.amberDark,
                   side: const BorderSide(color: AppColors.amberDark),
                 ),
-                child: const Text('Delete'),
+                child: Text(context.tr('detail_delete')),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               flex: 2,
-              child: ElevatedButton(
-                onPressed: _busy ? null : _handleExport,
-                child: _busy
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white),
-                      )
-                    : const Text('Export'),
+              child: SaveToGalleryButton(
+                result: result,
+                filled: true,
+                enabled: !_busy,
               ),
             ),
           ],
@@ -255,7 +235,7 @@ class _InfoRow extends StatelessWidget {
               children: [
                 Text(
                   label,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 11,
                       color: AppColors.slate,
                       fontWeight: FontWeight.w600),
@@ -263,7 +243,7 @@ class _InfoRow extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   value,
-                  style: const TextStyle(
+                  style: TextStyle(
                       fontSize: 14,
                       color: AppColors.ink,
                       fontWeight: FontWeight.w600),
@@ -281,38 +261,39 @@ class _DetailTheme {
   const _DetailTheme({
     required this.badgeBg,
     required this.badgeFg,
-    required this.badgeText,
-    required this.heading,
+    required this.badgeKey,
+    required this.headingKey,
   });
 
   final Color badgeBg;
   final Color badgeFg;
-  final String badgeText;
-  final String heading;
+  final String badgeKey;
+  final String headingKey;
 }
 
 _DetailTheme _detailThemeFor(DetectionLabel label) {
+  final isDark = AppColors.isDark;
   switch (label) {
     case DetectionLabel.presumptivePositive:
-      return const _DetailTheme(
-        badgeBg: Color(0xFFFFF3DC),
+      return _DetailTheme(
+        badgeBg: isDark ? const Color(0xFF3D2E0F) : const Color(0xFFFFF3DC),
         badgeFg: AppColors.amberDark,
-        badgeText: 'Presumptive Positive',
-        heading: 'Hemorrhagic Ulcer',
+        badgeKey: 'detail_badge_presumptive',
+        headingKey: 'detail_heading_presumptive',
       );
     case DetectionLabel.lowMatch:
-      return const _DetailTheme(
+      return _DetailTheme(
         badgeBg: AppColors.slateLight,
-        badgeFg: Color(0xFF475569),
-        badgeText: 'Low Match',
-        heading: 'Inconclusive Result',
+        badgeFg: isDark ? const Color(0xFFC3CCDA) : const Color(0xFF475569),
+        badgeKey: 'detail_badge_low_match',
+        headingKey: 'detail_heading_low_match',
       );
     case DetectionLabel.clear:
-      return const _DetailTheme(
-        badgeBg: Color(0xFFDBF7EF),
+      return _DetailTheme(
+        badgeBg: isDark ? const Color(0xFF10382E) : const Color(0xFFDBF7EF),
         badgeFg: AppColors.mintDark,
-        badgeText: 'No Lesions Detected',
-        heading: 'Looks Clear',
+        badgeKey: 'detail_badge_clear',
+        headingKey: 'detail_heading_clear',
       );
   }
 }

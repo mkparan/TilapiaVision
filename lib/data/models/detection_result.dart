@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// The three UI-facing outcome categories a scan can resolve to.
 ///
 /// [lowMatch] is deliberately NOT the same thing as [clear] — a Low
@@ -20,27 +22,45 @@ enum DetectionLabel { presumptivePositive, lowMatch, clear }
 /// source image's width/height so it can be rendered onto any
 /// display size without needing the original image's pixel dimensions.
 ///
-/// Persisted to the CSV log as four extra columns (bbox_left,
-/// bbox_top, bbox_width, bbox_height) so it survives a reload — this
-/// is what lets the History/Detail screens redraw the same box a
-/// fresh detection shows, not just the Result screen right after
-/// capture.
+/// Persisted to the CSV log as a JSON object inside the `bboxes` column
+/// so multiple boxes per detection can be stored in a single row.
 class BoundingBox {
   const BoundingBox({
     required this.left,
     required this.top,
     required this.width,
     required this.height,
+    this.confidence,
   });
 
   final double left;
   final double top;
   final double width;
   final double height;
+
+  /// Per-box confidence score — present on fresh detections, may be
+  /// null when loaded from old CSV rows that pre-date this field.
+  final double? confidence;
+
+  Map<String, dynamic> toJson() => {
+        'l': left,
+        't': top,
+        'w': width,
+        'h': height,
+        if (confidence != null) 'c': confidence,
+      };
+
+  factory BoundingBox.fromJson(Map<String, dynamic> j) => BoundingBox(
+        left: (j['l'] as num).toDouble(),
+        top: (j['t'] as num).toDouble(),
+        width: (j['w'] as num).toDouble(),
+        height: (j['h'] as num).toDouble(),
+        confidence: j['c'] != null ? (j['c'] as num).toDouble() : null,
+      );
 }
 
 /// One row of the `detection_log.csv` file (see [csvHeader] for exact
-/// column order) including the [boundingBox], if any.
+/// column order) including all detected [boundingBoxes], if any.
 class DetectionResult {
   const DetectionResult({
     this.id,
@@ -50,7 +70,7 @@ class DetectionResult {
     required this.confidenceScore,
     this.imagePath,
     required this.label,
-    this.boundingBox,
+    this.boundingBoxes = const [],
   });
 
   final int? id;
@@ -63,10 +83,21 @@ class DetectionResult {
   final double confidenceScore;
   final String? imagePath;
   final DetectionLabel label;
-  final BoundingBox? boundingBox;
+
+  /// All detected lesion boxes for this scan, sorted highest-confidence
+  /// first. May be empty (e.g. [DetectionLabel.clear] results).
+  final List<BoundingBox> boundingBoxes;
+
+  /// Convenience getter — the primary (highest-confidence) box, or null.
+  BoundingBox? get boundingBox =>
+      boundingBoxes.isNotEmpty ? boundingBoxes.first : null;
 
   /// Column order for the CSV log. Keep [toCsvRow] and [fromCsvRow]
   /// in sync with this if the schema ever changes.
+  ///
+  /// v2 schema: the four individual bbox_* columns are replaced by a
+  /// single `bboxes` column containing a compact JSON array so multiple
+  /// lesion boxes can be stored per row.
   static const csvHeader = [
     'id',
     'farm_profile',
@@ -75,13 +106,13 @@ class DetectionResult {
     'confidence_score',
     'image_path',
     'label',
-    'bbox_left',
-    'bbox_top',
-    'bbox_width',
-    'bbox_height',
+    'bboxes', // JSON array of {l,t,w,h,c} objects  (v2 schema)
   ];
 
   List<Object?> toCsvRow() {
+    final bboxJson = boundingBoxes.isEmpty
+        ? ''
+        : jsonEncode(boundingBoxes.map((b) => b.toJson()).toList());
     return [
       id,
       farmProfile,
@@ -90,10 +121,7 @@ class DetectionResult {
       confidenceScore,
       imagePath ?? '',
       label.name,
-      boundingBox?.left ?? '',
-      boundingBox?.top ?? '',
-      boundingBox?.width ?? '',
-      boundingBox?.height ?? '',
+      bboxJson,
     ];
   }
 
@@ -101,6 +129,49 @@ class DetectionResult {
     double? parseOrNull(dynamic v) =>
         v == null || v.toString().isEmpty ? null : double.tryParse(v.toString());
 
+    // ── v2 schema: 8 columns, last is JSON bbox array ──────────────
+    // v1 rows also have ≥ 8 columns (11) but column 7 is a plain
+    // numeric string (bbox_left), NOT JSON. Detect v2 by checking that
+    // col 7 starts with '[' or '{' or is empty.
+    if (row.length >= 8) {
+      final col7 = row[7].toString().trim();
+      final isJsonBboxes = col7.isEmpty || col7.startsWith('[') || col7.startsWith('{');
+
+      if (isJsonBboxes) {
+        List<BoundingBox> boxes = [];
+        if (col7.isNotEmpty && col7.startsWith('[')) {
+          try {
+            final decoded = jsonDecode(col7) as List<dynamic>;
+            boxes = decoded
+                .map((e) => BoundingBox.fromJson(e as Map<String, dynamic>))
+                .toList();
+          } catch (_) {
+            boxes = [];
+          }
+        } else if (col7.isNotEmpty && col7.startsWith('{')) {
+          try {
+            boxes = [BoundingBox.fromJson(jsonDecode(col7) as Map<String, dynamic>)];
+          } catch (_) {}
+        }
+
+        return DetectionResult(
+          id: int.tryParse(row[0].toString()),
+          farmProfile: row[1].toString(),
+          timestamp: DateTime.parse(row[2].toString()),
+          diseaseClass: row[3].toString(),
+          confidenceScore: double.tryParse(row[4].toString()) ?? 0.0,
+          imagePath: row[5].toString().isEmpty ? null : row[5].toString(),
+          label: DetectionLabel.values.firstWhere(
+            (e) => e.name == row[6].toString(),
+            orElse: () => DetectionLabel.lowMatch,
+          ),
+          boundingBoxes: boxes,
+        );
+      }
+    }
+
+    // ── v1 schema: 11 columns with individual bbox_* columns ────────
+    // Kept so old CSV files still load correctly after an update.
     final left = parseOrNull(row.length > 7 ? row[7] : null);
     final top = parseOrNull(row.length > 8 ? row[8] : null);
     final width = parseOrNull(row.length > 9 ? row[9] : null);
@@ -117,9 +188,9 @@ class DetectionResult {
         (e) => e.name == row[6].toString(),
         orElse: () => DetectionLabel.lowMatch,
       ),
-      boundingBox: (left != null && top != null && width != null && height != null)
-          ? BoundingBox(left: left, top: top, width: width, height: height)
-          : null,
+      boundingBoxes: (left != null && top != null && width != null && height != null)
+          ? [BoundingBox(left: left, top: top, width: width, height: height)]
+          : [],
     );
   }
 }

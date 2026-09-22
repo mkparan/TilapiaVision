@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 
+import '../core/app_localizations.dart';
 import '../core/app_theme.dart';
 import 'screens/biosecurity/biosecurity_tips_screen.dart';
 import 'screens/capture/camera_capture_screen.dart';
@@ -30,8 +31,8 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       body: IndexedStack(index: _index, children: _screens),
       bottomNavigationBar: Container(
-        decoration: const BoxDecoration(
-          color: Colors.white,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
           border: Border(top: BorderSide(color: AppColors.border)),
         ),
         child: SafeArea(
@@ -40,9 +41,21 @@ class _AppShellState extends State<AppShell> {
             height: 62,
             child: Row(
               children: [
-                _NavItem(icon: LucideIcons.camera, label: 'Scan', active: _index == 0, onTap: () => setState(() => _index = 0)),
-                _NavItem(icon: LucideIcons.history, label: 'History', active: _index == 1, onTap: () => setState(() => _index = 1)),
-                _NavItem(icon: LucideIcons.shieldCheck, label: 'Tips', active: _index == 2, onTap: () => setState(() => _index = 2)),
+                _NavItem(
+                    icon: LucideIcons.camera,
+                    label: context.tr('nav_scan'),
+                    active: _index == 0,
+                    onTap: () => setState(() => _index = 0)),
+                _NavItem(
+                    icon: LucideIcons.history,
+                    label: context.tr('nav_history'),
+                    active: _index == 1,
+                    onTap: () => setState(() => _index = 1)),
+                _NavItem(
+                    icon: LucideIcons.shieldCheck,
+                    label: context.tr('nav_tips'),
+                    active: _index == 2,
+                    onTap: () => setState(() => _index = 2)),
               ],
             ),
           ),
@@ -53,7 +66,11 @@ class _AppShellState extends State<AppShell> {
 }
 
 class _NavItem extends StatelessWidget {
-  const _NavItem({required this.icon, required this.label, required this.active, required this.onTap});
+  const _NavItem(
+      {required this.icon,
+      required this.label,
+      required this.active,
+      required this.onTap});
 
   final IconData icon;
   final String label;
@@ -71,7 +88,9 @@ class _NavItem extends StatelessWidget {
           children: [
             Icon(icon, size: 22, color: color),
             const SizedBox(height: 3),
-            Text(label, style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.w700, color: color)),
+            Text(label,
+                style: TextStyle(
+                    fontSize: 10.5, fontWeight: FontWeight.w700, color: color)),
           ],
         ),
       ),

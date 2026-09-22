@@ -1,10 +1,10 @@
 name: tilapiavision
 description: "Offline presumptive screening for hemorrhagic lesions in Nile Tilapia."
-publish_to: 'none'
-version: 1.0.0+1
+publish_to: "none"
+version: 1.0.0-alpha+5
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
+  sdk: ">=3.3.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -35,10 +35,16 @@ dependencies:
   intl: ^0.19.0
   share_plus: ^10.0.2
 
+  # "Save to Gallery" on the detection detail screen — writes the
+  # annotated result photo into the phone's photo gallery (MediaStore
+  # on Android 10+, so no storage permission is needed there).
+  gal: ^2.3.3
+
   # Icons — matches the shipped UI prototype exactly
   lucide_icons_flutter: ^3.0.5
 
   cupertino_icons: ^1.0.8
+  rename: ^3.1.0
 
 dev_dependencies:
   flutter_test:
@@ -50,3 +56,4 @@ flutter:
 
   assets:
     - assets/models/
+    - assets/images/tilapiavision_logo.png
