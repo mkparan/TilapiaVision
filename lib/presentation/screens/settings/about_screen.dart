@@ -8,6 +8,7 @@ import '../../../core/constants.dart';
 import '../../../core/tap_sequence.dart';
 import '../../providers/locale_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../widgets/terms_and_conditions_modal.dart';
 
 class AboutScreen extends StatefulWidget {
   const AboutScreen({super.key});
@@ -97,6 +98,12 @@ class _AboutScreenState extends State<AboutScreen> {
                   const SizedBox(height: 4),
                   Text(context.tr('about_version'),
                       style: TextStyle(fontSize: 12, color: AppColors.slate)),
+                  const SizedBox(height: 8),
+                  TextButton(
+                    onPressed: () => showTermsAndConditionsModal(context),
+                    child: Text(context.tr('tc_button'),
+                        style: TextStyle(fontSize: 12, color: AppColors.deepBlue, fontWeight: FontWeight.bold)),
+                  ),
                 ],
               ),
             ),
@@ -105,6 +112,7 @@ class _AboutScreenState extends State<AboutScreen> {
         const SizedBox(height: 14),
         _card(context, 'about_card1_title', 'about_card1_body'),
         _card(context, 'about_scope_title', 'about_scope_body'),
+        _card(context, 'about_dataset_title', 'about_dataset_body'),
         _card(context, 'about_card2_title', 'about_card2_body'),
         _card(context, 'about_card3_title', 'about_card3_body'),
         _cardFmt(context, 'about_card4_title', 'about_card4_body',

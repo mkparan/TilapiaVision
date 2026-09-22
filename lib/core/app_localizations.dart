@@ -226,9 +226,12 @@ class AppLocalizations {
               'lesions). Everything runs on-device — no internet, no account.',
       'about_scope_title': 'What it can detect',
       'about_scope_body':
-          'Only Aeromonas (Motile Aeromonas Septicemia) is detected, and only '
-              'in Nile Tilapia. Other diseases, parasites, and other fish '
-              'species are not covered by this app.',
+          'This app only checks for external hemorrhagic ulcer lesions, not the bacteria itself or internal conditions. '
+              'It is designed for matured Nile Tilapia only, no fingerlings. '
+              'Other diseases, parasites, and other fish species are not covered.',
+      'about_dataset_title': 'Dataset Source',
+      'about_dataset_body':
+          'The dataset used for training the models is sourced from online datasets, not from BFAR.',
       'about_card2_title': 'How it works',
       'about_card2_body':
           'Two models run in sequence. A species check first confirms the '
@@ -246,6 +249,20 @@ class AppLocalizations {
           'Detection photos are deleted automatically after {days} days. '
               'Detection records stay until you delete or export them. Nothing leaves your '
               'device unless you share it yourself.',
+      'tc_button': 'Terms & Conditions',
+      'tc_title': 'Terms & Conditions',
+      'tc_retention_title': 'Data Retention',
+      'tc_retention_body':
+          'Detection photos are automatically deleted after 30 days to save space on your device. '
+              'Detection logs remain until manually deleted.',
+      'tc_scope_title': 'Scope of Detection',
+      'tc_scope_body':
+          'The app screens only for external hemorrhagic ulcer lesions, not bacterial or internal infections. '
+              'It is intended for matured Nile Tilapia only (no fingerlings).',
+      'tc_dataset_title': 'Dataset Origin',
+      'tc_dataset_body': 'The dataset used for the models is gathered online and not from BFAR.',
+      'tc_close': 'Close',
+      'tc_agree': 'I Agree',
     },
 
     // ── TAGALOG ──────────────────────────────────────────────────────────────
@@ -429,9 +446,12 @@ class AppLocalizations {
               'Gumagana ang lahat sa device mo — walang internet o account na kailangan.',
       'about_scope_title': 'Ano ang pwede nitong ma-detect',
       'about_scope_body':
-          'Aeromonas (Motile Aeromonas Septicemia) lang ang nade-detect nito, at sa '
-              'Nile Tilapia lang. Hindi sakop ng app na ito ang ibang sakit, '
-              'parasites, at iba pang uri ng isda.',
+          'Panlabas na hemorrhagic ulcer lesions lang ang sinusuri nito, hindi ang bacteria mismo o sakit sa loob. '
+              'Ito ay para sa matured na Nile Tilapia lamang, hindi para sa fingerlings. '
+              'Hindi sakop ng app na ito ang ibang sakit, parasites, at iba pang uri ng isda.',
+      'about_dataset_title': 'Pinagmulan ng Dataset',
+      'about_dataset_body':
+          'Ang mga litratong ginamit sa pag-train ng models ay kinuha mula sa online datasets, at hindi mula sa BFAR.',
       'about_card2_title': 'Paano ito gumagana',
       'about_card2_body':
           'May dalawang model na gumagana. Una nitong tinitingnan kung tilapia ang nasa picture '
@@ -445,6 +465,20 @@ class AppLocalizations {
       'about_card4_body': 'Awtomatikong nabubura ang mga pictures pagkalipas ng {days} araw. '
           'Ang mga detection record ay mananatili hanggang i-delete o i-export mo. '
           'Walang data na lalabas sa device mo maliban na lang kung i-share mo ito.',
+      'tc_button': 'Terms & Conditions',
+      'tc_title': 'Terms & Conditions',
+      'tc_retention_title': 'Data Retention',
+      'tc_retention_body':
+          'Awtomatikong nabubura ang mga pictures pagkalipas ng 30 araw para makatipid sa space. '
+              'Ang mga logs ay mananatili hanggang i-delete.',
+      'tc_scope_title': 'Sakop ng Detection',
+      'tc_scope_body':
+          'Ang app ay sumusuri lamang ng panlabas na hemorrhagic ulcer lesions, hindi bacterial o internal. '
+              'Para lang ito sa matured Nile Tilapia (walang fingerlings).',
+      'tc_dataset_title': 'Pinagmulan ng Dataset',
+      'tc_dataset_body': 'Ang dataset na ginamit ay kinuha online at hindi mula sa BFAR.',
+      'tc_close': 'I-close',
+      'tc_agree': 'Sumasang-ayon Ako',
     },
 
     // ── CEBUANO / BISAYA ──────────────────────────────────────────────────────
@@ -630,8 +664,12 @@ class AppLocalizations {
               'Tanang proseso anaa sa imong device — walay internet o account gikinahanglan.',
       'about_scope_title': 'Unsay ma-detect niini',
       'about_scope_body':
-          'Aeromonas (Motile Aeromonas Septicemia) lang ang ma-detect niini, ug sa '
-              'Nile Tilapia lang. Ang ubang sakit, parasites, ug ubang klase sa isda dili ma-detect aning app.',
+          'Mga panggawas nga hemorrhagic ulcer lesions lang ang masusi niini, dili ang bacteria mismo o sakit sa sulod sa lawas. '
+              'Para ra kini sa matured nga Nile Tilapia, walay labot ang mga fingerlings. '
+              'Ang ubang sakit, parasites, ug ubang klase sa isda dili ma-detect aning app.',
+      'about_dataset_title': 'Gigikanan sa Dataset',
+      'about_dataset_body':
+          'Ang mga hulagway nga gigamit sa pag-train sa mga models naggikan sa online datasets, ug dili gikan sa BFAR.',
       'about_card2_title': 'Unsaon ni paggana',
       'about_card2_body':
           'Naay duha ka model nga mo-run. Una niining tinoon kung tilapia ang naa sa picture, '
@@ -645,6 +683,20 @@ class AppLocalizations {
       'about_card4_body': 'Automatic nga ma-delete ang mga pictures inig abot sa {days} ka adlaw. '
           'Ang mga detection record magpabilin hangtod i-delete o i-export nimo. '
           'Walay data nga mogawas sa imong device gawas lang kung i-share nimo.',
+      'tc_button': 'Terms & Conditions',
+      'tc_title': 'Terms & Conditions',
+      'tc_retention_title': 'Data Retention',
+      'tc_retention_body':
+          'Automatic nga ma-delete ang mga pictures inig abot sa 30 ka adlaw para makatipid sa space. '
+              'Ang mga logs magpabilin hangtod i-delete.',
+      'tc_scope_title': 'Sakop sa Detection',
+      'tc_scope_body':
+          'Mga panggawas nga hemorrhagic ulcer lesions lang ang masusi, dili bacterial o sa sulod sa lawas. '
+              'Para ra kini sa matured nga Nile Tilapia (walay fingerlings).',
+      'tc_dataset_title': 'Gigikanan sa Dataset',
+      'tc_dataset_body': 'Ang dataset nga gigamit naggikan online ug dili gikan sa BFAR.',
+      'tc_close': 'Sira',
+      'tc_agree': 'Uyon Ko',
     },
   };
 }

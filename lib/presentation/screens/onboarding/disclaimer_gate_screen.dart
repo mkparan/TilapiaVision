@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
+import '../../providers/locale_provider.dart';
 import 'farm_profile_setup_screen.dart';
 
 /// Mandatory click-through establishing TilapiaVision as a
@@ -27,6 +29,53 @@ class _DisclaimerGateScreenState extends State<DisclaimerGateScreen> {
       body: SafeArea(
         child: Column(
           children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8, right: 16),
+                child: Consumer<LocaleProvider>(
+                  builder: (context, localeProvider, _) {
+                    return DropdownButton<AppLocale>(
+                      value: localeProvider.locale,
+                      icon: const Padding(
+                        padding: EdgeInsets.only(left: 6.0),
+                        child: Icon(LucideIcons.globe, color: Colors.white70, size: 16),
+                      ),
+                      dropdownColor: AppColors.surface,
+                      underline: const SizedBox(),
+                      style: const TextStyle(color: Colors.white, fontSize: 13),
+                      onChanged: (AppLocale? newLocale) {
+                        if (newLocale != null) {
+                          localeProvider.setLocale(newLocale);
+                        }
+                      },
+                      items: AppLocale.values.map((AppLocale locale) {
+                        return DropdownMenuItem<AppLocale>(
+                          value: locale,
+                          child: Text(
+                            locale.displayName,
+                            style: TextStyle(
+                              color: localeProvider.locale == locale ? AppColors.deepBlue : AppColors.ink,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                      selectedItemBuilder: (BuildContext context) {
+                        return AppLocale.values.map<Widget>((AppLocale locale) {
+                          return Container(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              locale.displayName,
+                              style: const TextStyle(color: Colors.white70),
+                            ),
+                          );
+                        }).toList();
+                      },
+                    );
+                  },
+                ),
+              ),
+            ),
             Expanded(
               child: Center(
                 child: Column(

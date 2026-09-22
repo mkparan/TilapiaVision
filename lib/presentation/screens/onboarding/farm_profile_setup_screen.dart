@@ -6,6 +6,7 @@ import '../../../core/app_localizations.dart';
 import '../../../core/app_theme.dart';
 import '../../app_shell.dart';
 import '../../providers/farm_profile_provider.dart';
+import '../../widgets/terms_and_conditions_modal.dart';
 
 /// No-Login Architecture: a local Farm Profile replaces passwords or
 /// cloud accounts, so a farmer gets instant access even in an
@@ -29,6 +30,19 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
   void dispose() {
     _nameController.dispose();
     super.dispose();
+  }
+
+  void _showTermsModal() {
+    showTermsAndConditionsModal(
+      context,
+      onAgree: _acknowledged
+          ? null
+          : () {
+              setState(() {
+                _acknowledged = true;
+              });
+            },
+    );
   }
 
   Future<void> _createProfile() async {
@@ -92,9 +106,27 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
                               size: 18, color: AppColors.teal),
                           const SizedBox(width: 10),
                           Expanded(
-                            child: Text(
-                              context.tr('setup_storage_notice'),
-                              style: const TextStyle(fontSize: 11.5, height: 1.55),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  context.tr('setup_storage_notice'),
+                                  style: const TextStyle(fontSize: 11.5, height: 1.55),
+                                ),
+                                const SizedBox(height: 8),
+                                InkWell(
+                                  onTap: _showTermsModal,
+                                  child: Text(
+                                    context.tr('tc_button'),
+                                    style: const TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.deepBlue,
+                                      decoration: TextDecoration.underline,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -102,8 +134,13 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
                     ),
                     const SizedBox(height: 12),
                     InkWell(
-                      onTap: () =>
-                          setState(() => _acknowledged = !_acknowledged),
+                      onTap: () {
+                        if (!_acknowledged) {
+                          _showTermsModal();
+                        } else {
+                          setState(() => _acknowledged = false);
+                        }
+                      },
                       borderRadius: BorderRadius.circular(14),
                       child: Container(
                         padding: const EdgeInsets.all(12),
@@ -115,8 +152,13 @@ class _FarmProfileSetupScreenState extends State<FarmProfileSetupScreen> {
                             Checkbox(
                               value: _acknowledged,
                               activeColor: AppColors.deepBlue,
-                              onChanged: (v) =>
-                                  setState(() => _acknowledged = v ?? false),
+                              onChanged: (v) {
+                                if (v == true) {
+                                  _showTermsModal();
+                                } else {
+                                  setState(() => _acknowledged = false);
+                                }
+                              },
                             ),
                             Expanded(
                               child: Text(
